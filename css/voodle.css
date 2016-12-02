@@ -1,0 +1,106 @@
+body {
+    margin:0;
+    font-family:"Helvetica Nueue", sans-serif;
+}
+
+.myClass {
+    background-color: #FF0000;
+    height: 2vh;
+    width: 20vw;
+
+}
+.slider {
+	width:100px;
+	height:10px;
+
+
+}
+#leftPanel {
+	font-family: "Helvetica Nueue", sans-serif;
+	color: #DDD;
+	float:left;
+	position: relative;
+    left: 5px; 
+    top: 25px;
+    opacity: 0.9;
+	
+	
+}
+
+#rightPanel {
+	font-family: "Helvetica Nueue", sans-serif;
+	color: #DDD;
+	float:right;
+	position: relative;
+    right: 5px; 
+    top: 25px;
+    opacity: 0.9;
+}
+#overlay {
+	top:0px;
+	left:0px;
+	position: absolute;
+	width:100vw;
+	height:100vh;
+	padding:10px;
+}
+#readOut{
+	font-family: "Helvetica Nueue", sans-serif;
+	color: #DDD;
+	background-color: #222;
+	color:#FFF;
+	width: 150px;
+	padding: 20px;
+    left: 0px; 
+    top: 5px;
+    position: relative;
+}
+
+#edit {
+	background-color: #222;
+	color: #AAA;
+	padding: 20px;
+    top: 5px;
+}
+
+#canvas {
+	background-color: #333;
+	height:100vh;
+	width: 100vw;
+	
+}
+#title {
+	color:#AC0;
+	font-weight: bold;
+	font-style: italic;
+}
+#circleContainer {
+	height: 100vh;
+	width: 100vw;
+
+}
+
+#button {
+    background-color: #AAA;
+    border: none;
+    color: black;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+
+#powerButton {
+    background-color: #AC0;
+    border: none;
+    color: black;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+}

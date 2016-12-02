@@ -1,0 +1,8 @@
+node_modules/
+package.json
+*npm-debug.log
+recordings/*.csv
+recordings/*.wav
+recordings/*.json
+recordings/*parameters_snapshot.txt
+npm-debug.log.*
