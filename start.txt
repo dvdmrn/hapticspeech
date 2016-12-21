@@ -1,3 +1,0 @@
-#!/bin/bash
-npm start
-open -a "Google Chrome" http://localhost:2000
