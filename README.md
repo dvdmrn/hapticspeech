@@ -1,6 +1,6 @@
 # Haptic speech
 
-### Produces a sine wave coupled to the RMS amplitude of a sound file.
+### Generates a sine wave coupled to the RMS amplitude of a sound file.
 
 - Left channel: input signal (i.e. speech)  
 - Right channel: output signal (i.e. sine wave)  
