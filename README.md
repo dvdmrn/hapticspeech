@@ -6,8 +6,9 @@
 - Right channel: output signal (i.e. sine wave)  
 
 The right channel may be piped to a vibrotactile actuator for a haptic representation of vocal amplitude.
-<<<<<<< HEAD
+
 
 ####Requirements:
-- (Processing 3)[https://processing.org/download/?processing]
-- (Processing Sound library)[https://processing.org/reference/libraries/sound/index.html]
+
+- [Processing 3](https://processing.org/download/?processing)  
+- [Processing Sound library](https://processing.org/reference/libraries/sound/index.html)  
