@@ -8,6 +8,9 @@
             | |                      | |                         
             |_|                      |_|                         
 
+
+NOTE: watch your headphones volume when running this sketch!
+
 */
 
 
@@ -60,6 +63,14 @@ String[] listFileNames(String dir) {
   }
 }
 
+//cues up and loads a sound file
+void loadSound(int inputIndex){
+        input.stop();
+        input = new SoundFile(this, filenames[inputIndex]);
+        input.play();
+        rms.input(input);
+}
+
 
 //-----------------------------------------------------------------------
 // setup
@@ -110,9 +121,13 @@ void setup() {
 // draw loop
 //-----------------------------------------------------------------------
 void draw() {
-  
+    //Left channel for voice
     input.pan(-1);
+    
+    //right channel for sine wave
     sine.pan(1);
+    
+    //grey background
     background(60,60,60);
     
     
@@ -121,11 +136,12 @@ void draw() {
     
     //smooth input values
     smoothRMS = smoothFactor * smoothRMS + (1-smoothFactor) * rms.analyze();
+    
+    //read outs
     text("smoothRMS: "+rms.analyze(),20,20);
     text("current file: "+filenames[fileIndex],20,40);
-    if (rms.analyze()>1){
-      println("YUP");
-    }
+    text("file index: "+fileIndex,20,60);
+    text("file array length: "+filenames.length,20,80);
     
     // rms.analyze() return a value between 0 and 1. To adjust
     // the scaling and mapping of an ellipse we scale from 0 to 0.5
@@ -134,23 +150,42 @@ void draw() {
     
     //amplitude and frequency are coupled to smoothRMS
     sine.amp(smoothRMS*scaleFactor);
-    //sine.freq(smoothRMS*1000);
     
-    fill(255,0,100);
+    //circle and text color
+    fill(255,200,100);
+    
     // We draw an ellispe coupled to the audio analysis
     ellipse(width/2, height/2, 1*scale, 1*scale); 
 }
 
 
 void keyPressed(){
+  //"WASD" key navigation.
+
   //load up next file
   if(key=='d' || key=='D'){
-        fileIndex++;
         fill(255,255,255);
-        input.stop();
-        input = new SoundFile(this, filenames[fileIndex]);
-        input.play();
-        rms.input(input);
+	//for indexOutOfBounds exception
+        if(fileIndex+1<filenames.length){
+          fileIndex++;
+	  loadSound(fileIndex);
+        }
+        else{  
+          text("end of file list!",20,100);
+        }
+      }
+
+  //load up previous file    
+  if(key=='a' || key=='A'){
+        fill(255,255,255);
+	//for indexOutOfBounds exception
+        if (fileIndex>0){
+          fileIndex--;
+	  loadSound(fileIndex);
+        }
+        else{
+          text("end of file list!",20,100);
+        }
       }
 }
 
