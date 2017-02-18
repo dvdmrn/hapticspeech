@@ -54,8 +54,18 @@ String[] filenames;
 // This function returns all the files in a directory as an array of Strings  
 String[] listFileNames(String dir) {
   File file = new File(dir);
+  String[] names = new String[5];
   if (file.isDirectory()) {
-    String names[] = file.list();
+  int n = 0;
+    
+    for (int i = 0; i < file.list().length; i++) {
+      if (!file.list()[i].equals(".DS_Store")) {
+        names[n] = file.list()[i];
+        System.out.println(file.list()[i]);
+        n++;
+      }
+    }
+
     return names;
   } else {
     // If it's not a directory
@@ -63,7 +73,7 @@ String[] listFileNames(String dir) {
   }
 }
 
-//cues up and loads a sound file
+// cues up and loads a sound file
 void loadSound(int inputIndex){
         input.stop();
         input = new SoundFile(this, filenames[inputIndex]);
@@ -79,8 +89,8 @@ void setup() {
     size(640,360);
     background(255);
         
-    //gets list of all filenames in `data`, for some reason we can only
-    //run this in setup.
+    // gets list of all filenames in `data`, for some reason we can only
+    // run this in setup.
     String[] filenames = listFileNames(sketchPath()+"/data/");
     pushNames(filenames);
     
