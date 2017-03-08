@@ -6,6 +6,40 @@ import wave
 import struct
 import math
 
+
+# ----------------------------------------------
+# settings for sine wave
+# ----------------------------------------------
+
+#See http://en.wikipedia.org/wiki/Bit_rate#Audio
+bitrate = 16000 #number of frames per second/frameset.      
+
+freq = 500 #Hz, waves per second, 261.63=C4-note.
+length = 1 #seconds to play sound
+
+amplitude = 1	# must be between 0-1
+
+frameNum = 0
+
+if freq > bitrate:
+    bitrate = freq+100
+
+numberofframes = int(bitrate * length)
+restframes = numberofframes % bitrate
+wavedata = ''
+
+# for x in xrange(numberofframes):
+#  wavedata = wavedata+chr(int(amplitude*math.sin(x/((bitrate/freq)/math.pi))*127+128))
+     
+
+# for x in xrange(restframes): 
+#  wavedata = wavedata+chr(128)    
+
+
+# ----------------------------------------------
+# load and read wav file
+# ----------------------------------------------
+
 #define stream chunk   
 chunk = 1024  
 
@@ -44,12 +78,23 @@ def mapRange(value, leftMin, leftMax, rightMin, rightMax):
     # Convert the 0-1 range into a value in the right range.
     return rightMin + (valueScaled * rightSpan)
 
+for frame in data:
+	data = f.readframes(chunk)
+	frameNum += 1
+	rmsAmp = mapRange(rms(data), 0,0.01,0,1)
+	print rmsAmp
+	wavedata = wavedata+chr(int(rmsAmp*math.sin(1/((bitrate/freq)/math.pi))*127+128))
+
+for x in xrange(restframes): 
+ wavedata = wavedata+chr(128)    
+
 #play stream  
 while data:  
+    # print mapRange(rms(data), 0,0.01,0,1)
+    data = f.readframes(chunk)
     stream.write(data)
-    print mapRange(rms(data), 0,0.01,0,100)
-    data = f.readframes(chunk)  
 
+    stream.write(wavedata)
 #stop stream  
 stream.stop_stream()  
 stream.close()  
