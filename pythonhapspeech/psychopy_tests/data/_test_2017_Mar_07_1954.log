@@ -1,0 +1,23 @@
+15.7933 	DATA 	Mouse: Left button down, pos=(462,304)
+15.8622 	DATA 	Mouse:  Left button up, pos=(462,304)
+16.6614 	DATA 	Mouse: Left button down, pos=(443,287)
+16.7612 	DATA 	Mouse:  Left button up, pos=(443,287)
+16.9621 	DATA 	Keypress: space
+17.0923 	WARNING 	Couldn't measure a consistent frame rate.
+  - Is your graphics card set to sync to vertical blank?
+  - Are you running other processes on your computer?
+
+17.0929 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color=array([ 0.,  0.,  0.]), colorSpace='rgb', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x159CDA30>, name='window1', pos=[0, 0], screen=0, size=array([1366,  768]), stereo=False, units=u'norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+17.0930 	EXP 	window1: recordFrameIntervals = False
+17.4298 	EXP 	window1: recordFrameIntervals = True
+17.4920 	WARNING 	t of last frame was 30.98ms (=1/32)
+17.5290 	WARNING 	t of last frame was 37.09ms (=1/26)
+17.5606 	WARNING 	t of last frame was 31.57ms (=1/31)
+17.5920 	WARNING 	t of last frame was 31.39ms (=1/31)
+17.6301 	WARNING 	Multiple dropped frames have occurred - I'll stop bothering you about them!
+17.8308 	DATA 	Keypress: escape
+19.6309 	DATA 	Keypress: lalt
+20.6623 	WARNING 	Couldn't measure a consistent frame rate.
+  - Is your graphics card set to sync to vertical blank?
+  - Are you running other processes on your computer?
+
