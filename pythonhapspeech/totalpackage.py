@@ -24,7 +24,6 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
     return rightMin + (valueScaled * rightSpan)
 
 f = wave.open(r"PHRASE_dramatist_female_edited.wav","rb")  
-
 ## GENERATE STEREO FILE ##
 wv = wave.open('temp.wav', 'w')
 wv.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
@@ -63,6 +62,32 @@ wv.writeframes(wvData)
 wv.close()
 
 
+
 # --------------------------------------------------------
 # playback processed audio
 # --------------------------------------------------------
+
+#open a wav format music  
+f = wave.open(r"temp.wav","rb")  
+#instantiate PyAudio  
+p = pyaudio.PyAudio()  
+#open stream  
+stream = p.open(format = p.get_format_from_width(f.getsampwidth()),  
+                channels = 2,  
+                rate = f.getframerate(),  
+                output = True)  
+#read data  
+data = f.readframes(chunk)
+
+while data:
+    stream.write(data)
+    data = f.readframes(chunk)
+
+
+
+#stop stream  
+stream.stop_stream()  
+stream.close()  
+
+#close PyAudio  
+p.terminate()  
