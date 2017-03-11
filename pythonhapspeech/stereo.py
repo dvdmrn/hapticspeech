@@ -16,11 +16,13 @@ wv.writeframes(wvData)
 wv.close()
 
 ## GENERATE STERIO FILE ##
-wv = wave.open('PHRASE_dramatist_female_edited.wav', 'w')
+wv = wave.open('test_stereo.wav', 'w')
 wv.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
 maxVol=2**15-1.0 #maximum amplitude
 wvData=""
 for i in range(0, RATE*3):
+	print i
+	# print wvData 
 	wvData+=pack('h', maxVol*sin(i*500.0/RATE)) #500Hz left
 	wvData+=pack('h', maxVol*sin(i*200.0/RATE)) #200Hz right
 wv.writeframes(wvData)

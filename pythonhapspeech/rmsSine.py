@@ -52,7 +52,7 @@ f = wave.open(r"PHRASE_dramatist_female_edited.wav","rb")
 p = pyaudio.PyAudio()  
 #open stream  
 stream = p.open(format = p.get_format_from_width(f.getsampwidth()),  
-                channels = 1,  
+                channels = 2,  
                 rate = f.getframerate(),  
                 output = True)  
 #read data  
@@ -103,14 +103,34 @@ print "yo"
 # wv.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
 # maxVol=2**15-1.0 #maximum amplitude
 i = 0
+
+wvData = ""
+maxVol=2**15-1.0 #maximum amplitude
+RATE = 44100
+for i in range(0, 44100*3):
+    wvData+=pack('h', maxVol*sin(i*500.0/RATE)) #500Hz left
+    wvData+=pack('h', maxVol*sin(i*200.0/RATE)) #200Hz right
+    stream.write(wvData)
+
+wvData=""
 while data:
-    wvData=""
+    # print data
+    newData = ""
     i += 1
     maxVol=2**15-1.0 #maximum amplitude
+    dataArray = map(ord,f.readframes(chunk))
+    
     wvData+=f.readframes(chunk) # left
     # print sample
     wvData+=pack('h', maxVol*sin(i*200.0/f.getframerate())) #200Hz right
+
+print "out of while"
+
+while wvData:
+    print "in wvData"
+    # wvData = f.readframes
     stream.write(wvData)
+
 
 
 # # print rmsVals
