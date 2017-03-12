@@ -83,8 +83,6 @@ while data:
     stream.write(data)
     data = f.readframes(chunk)
 
-
-
 #stop stream  
 stream.stop_stream()  
 stream.close()  
