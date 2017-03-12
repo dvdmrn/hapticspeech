@@ -21,30 +21,34 @@ gameDisplay = pygame.display.set_mode((width,height))
 pygame.display.set_caption('Haptic Speech Experiment')
 clock = pygame.time.Clock()
 
+wavpath = "../processing_hapticspeech/data"
+
 """============================================================="""
-def text_objects(text, font):
-	textSurface = font.render(text, True, black)
-	return textSurface, textSurface.get_rect()
+# # creates text boxes
+# def text_objects(text, font):
+# 	textSurface = font.render(text, True, black)
+# 	return textSurface, textSurface.get_rect()
 
-def message_display(text):
-	largeText = pygame.font.Font('freesansbold.ttf',115)
-	TextSurf, TextRect = text_objects(text, largeText)
-	TextRect.center = ((display_width/2),(display_height/2))
-	gameDisplay.blit(TextSurf, TextRect)
+# # displays text in a textbox
+# def message_display(text):
+# 	largeText = pygame.font.Font('freesansbold.ttf',115)
+# 	TextSurf, TextRect = text_objects(text, largeText)
+# 	TextRect.center = ((display_width/2),(display_height/2))
+# 	gameDisplay.blit(TextSurf, TextRect)
 
-	pygame.display.update()
+# 	pygame.display.update()
 
-	time.sleep(2)
+# 	time.sleep(2)
 	
-	game_loop()
+# 	game_loop()
 
-def playwav(index):
-	"""load the sound file from the given directory"""
-	fullname = os.path.join(wavpath, wavfiles[index])
+# grabs a song from directory and plays it
+def play_wavfile(filename):
+	fullname = os.path.join(wavpath, filename)
 	sound = pygame.mixer.Sound(fullname)
 	sound.play()
-	message_display("You are playing: " + wavfiles[index])
 
+# returns a randomized list of songs in the directory
 def get_wavfiles():
 	path = "../processing_hapticspeech/data"
 	# put names of wavfiles in a list
@@ -54,16 +58,15 @@ def get_wavfiles():
 	return wavfiles
 """============================================================="""
 
-wavpath = "../processing_hapticspeech/data"
-wavfiles = get_wavfiles()
-
 def game_loop():
+
+	wavfiles = get_wavfiles()
 
 	gameExit = False
 	num_of_files = len(wavfiles)
 	file_index = 0
 
-	playwav(file_index)
+	play_wavfile(wavfiles[file_index])
 
 	while not gameExit:
 
@@ -78,15 +81,18 @@ def game_loop():
 						pass
 					else:
 						file_index -= 1
-						playwav(file_index)
+						pygame.mixer.stop()
+						play_wavfile(wavfiles[file_index])
 
 				if event.key == pygame.K_RIGHT:
 					if file_index == num_of_files:
 						pass
 					else:
 						file_index += 1
-						playwav(file_index)
+						pygame.mixer.stop()
+						play_wavfile(wavfiles[file_index])
 
+			# may not need this part
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
 					pass
