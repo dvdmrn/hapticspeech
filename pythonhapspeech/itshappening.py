@@ -3,7 +3,11 @@ from os.path import isfile, join
 import os
 
 import random
-
+from struct import pack, unpack
+from math import sin, pi
+import wave
+import pyaudio  
+import math
 import pygame
 import time
 
@@ -21,7 +25,7 @@ gameDisplay = pygame.display.set_mode((width,height))
 pygame.display.set_caption('Haptic Speech Experiment')
 clock = pygame.time.Clock()
 
-wavpath = "../processing_hapticspeech/data"
+wavpath = "stimuli/"
 
 """============================================================="""
 # # creates text boxes
@@ -44,14 +48,103 @@ wavpath = "../processing_hapticspeech/data"
 
 # grabs a song from directory and plays it
 def play_wavfile(filename):
-	print "inside play_wavfile"
-	fullname = os.path.join(wavpath, filename)
-	sound = pygame.mixer.Sound(fullname)
-	sound.play()
+	RATE=44100
+	chunk = 1024
+
+	filepath = os.path.join(wavpath, filename)
+
+	def translate(value, leftMin, leftMax, rightMin, rightMax):
+	    # Figure out how 'wide' each range is
+	    leftSpan = leftMax - leftMin
+	    rightSpan = rightMax - rightMin
+
+	    # Convert the left range into a 0-1 range (float)
+	    valueScaled = float(value - leftMin) / float(leftSpan)
+
+	    # Convert the 0-1 range into a value in the right range.
+	    return rightMin + (valueScaled * rightSpan)
+
+	f = wave.open(filepath,"rb")  
+	print("opening: "+filepath)
+	print("samplerate: "+str(f.getframerate()))
+	print("frames: "+str(f.getnframes()))
+	print("channels: "+str(f.getnchannels()))
+	print("sample width: "+str(f.getsampwidth()))
+
+
+	## GENERATE STEREO FILE ##
+	wv = wave.open('temp.wav', 'w')
+	wv.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
+	maxVol=2**14-1.0 #maximum amplitude
+	wvData=""
+	i = 0
+	tick = True
+
+	for i in range(0, f.getnframes()):
+		if tick:
+			tick = not tick
+			frameSample = f.readframes(1)
+			if len(frameSample):
+				data = unpack('h',f.readframes(1))
+			else:
+				data = 0
+			if data:
+				amp = math.sqrt(data[0]**2)
+				wvData+=pack('h', data[0])
+				wvData+=pack('h', amp*sin(i*800.0/RATE)) #200Hz right
+			else:
+				break
+		else:
+			tick = not tick
+			
+			# print data 
+			if data:
+				# print "sinewave: "+str(maxVol*sin(i*400.0/RATE))
+				wvData+=pack('h', data[0])
+				wvData+=pack('h', amp*sin(i*800.0/RATE)) #200Hz right
+			else:
+				break
+
+	# wv.setframerate(f.getframerate())
+	wv.writeframes(wvData)
+	wv.close()
+
+	print("processed file!")
+
+
+	# --------------------------------------------------------
+	# playback processed audio
+	# --------------------------------------------------------
+
+	#open a wav format music  
+	f = wave.open(r"temp.wav","rb")  
+	#instantiate PyAudio  
+	p = pyaudio.PyAudio()  
+	#open stream  
+	stream = p.open(format = p.get_format_from_width(f.getsampwidth()), 
+	                channels = 2,  
+	                rate = f.getframerate(),  
+	                output = True)  
+	#read data  
+	data = f.readframes(chunk)
+
+	print("playback initialized!")
+
+	while data:
+	    stream.write(data)
+	    data = f.readframes(chunk)
+
+	#stop stream  
+	stream.stop_stream()  
+	stream.close()  
+
+	print("playback ended.")
+	#close PyAudio  
+	p.terminate()  
 
 # returns a randomized list of songs in the directory
 def get_wavfiles():
-	path = "../processing_hapticspeech/data"
+	path = "stimuli/"
 	# put names of wavfiles in a list
 	wavfiles = [f for f in listdir(path) if isfile(join(path, f))]
 	if '.DS_Store' in wavfiles:
@@ -83,7 +176,6 @@ def game_loop():
 						pass
 					else:
 						file_index -= 1
-						pygame.mixer.stop()
 						play_wavfile(wavfiles[file_index])
 
 				if event.key == pygame.K_RIGHT:
@@ -91,10 +183,9 @@ def game_loop():
 						pass
 					else:
 						file_index += 1
-						pygame.mixer.stop()
 						play_wavfile(wavfiles[file_index])
-						print "file index: "+str(file_index)
-						print "wave file: "+str(wavfiles[file_index])
+						print("file index: "+str(file_index))
+						print("wave file: "+str(wavfiles[file_index]))
 						break
 
 			# may not need this part
