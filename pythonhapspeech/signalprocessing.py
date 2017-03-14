@@ -8,9 +8,7 @@ import math
 RATE=44100
 chunk = 1024
 
-## GENERATE MONO FILE ##
-wv = wave.open('test_mono.wav', 'w')
-wv.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
+filepath = r"PHRASE_dramatist_female_edited.wav"
 
 def translate(value, leftMin, leftMax, rightMin, rightMax):
     # Figure out how 'wide' each range is
@@ -23,7 +21,14 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
     # Convert the 0-1 range into a value in the right range.
     return rightMin + (valueScaled * rightSpan)
 
-f = wave.open(r"PHRASE_dramatist_female_edited.wav","rb")  
+f = wave.open(filepath,"rb")  
+print "opening: "+filepath
+print "samplerate: "+str(f.getframerate())
+print "frames: "+str(f.getnframes())
+print "channels: "+str(f.getnchannels())
+print "sample width: "+str(f.getsampwidth())
+
+
 ## GENERATE STEREO FILE ##
 wv = wave.open('temp.wav', 'w')
 wv.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
@@ -31,6 +36,7 @@ maxVol=2**14-1.0 #maximum amplitude
 wvData=""
 i = 0
 tick = True
+
 for i in range(0, f.getnframes()):
 	if tick:
 		tick = not tick
@@ -56,11 +62,11 @@ for i in range(0, f.getnframes()):
 		else:
 			break
 
-print f.getframerate()
 # wv.setframerate(f.getframerate())
 wv.writeframes(wvData)
 wv.close()
 
+print "processed file!"
 
 
 # --------------------------------------------------------
@@ -72,12 +78,14 @@ f = wave.open(r"temp.wav","rb")
 #instantiate PyAudio  
 p = pyaudio.PyAudio()  
 #open stream  
-stream = p.open(format = p.get_format_from_width(f.getsampwidth()),  
+stream = p.open(format = p.get_format_from_width(f.getsampwidth()), 
                 channels = 2,  
                 rate = f.getframerate(),  
                 output = True)  
 #read data  
 data = f.readframes(chunk)
+
+print "playback initialized!"
 
 while data:
     stream.write(data)
@@ -87,5 +95,6 @@ while data:
 stream.stop_stream()  
 stream.close()  
 
+print "playback ended."
 #close PyAudio  
 p.terminate()  

@@ -44,6 +44,7 @@ wavpath = "../processing_hapticspeech/data"
 
 # grabs a song from directory and plays it
 def play_wavfile(filename):
+	print "inside play_wavfile"
 	fullname = os.path.join(wavpath, filename)
 	sound = pygame.mixer.Sound(fullname)
 	sound.play()
@@ -53,7 +54,8 @@ def get_wavfiles():
 	path = "../processing_hapticspeech/data"
 	# put names of wavfiles in a list
 	wavfiles = [f for f in listdir(path) if isfile(join(path, f))]
-	wavfiles.remove('.DS_Store')
+	if '.DS_Store' in wavfiles:
+		wavfiles.remove('.DS_Store')
 	random.shuffle(wavfiles)
 	return wavfiles
 """============================================================="""
@@ -91,6 +93,9 @@ def game_loop():
 						file_index += 1
 						pygame.mixer.stop()
 						play_wavfile(wavfiles[file_index])
+						print "file index: "+str(file_index)
+						print "wave file: "+str(wavfiles[file_index])
+						break
 
 			# may not need this part
 			if event.type == pygame.KEYUP:
@@ -100,6 +105,7 @@ def game_loop():
 		gameDisplay.fill(white)
 		pygame.display.update()
 		clock.tick(60)
+
 
 game_loop()
 pygame.quit()
