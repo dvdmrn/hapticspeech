@@ -65,7 +65,7 @@ def play_wavfile(filename):
 	    return rightMin + (valueScaled * rightSpan)
 
 	f = wave.open(filepath,"rb")  
-	print("opening: "+filepath)
+	print("\n\nopening: "+filepath)
 	print("samplerate: "+str(f.getframerate()))
 	print("frames: "+str(f.getnframes()))
 	print("channels: "+str(f.getnchannels()))
@@ -78,34 +78,27 @@ def play_wavfile(filename):
 	maxVol=2**14-1.0 #maximum amplitude
 	wvData=""
 	i = 0
-	tick = True
 
 	for i in range(0, f.getnframes()):
-		if tick:
-			tick = not tick
-			frameSample = f.readframes(1)
-			if len(frameSample):
-				data = unpack('h',f.readframes(1))
-			else:
-				data = 0
-			if data:
-				amp = math.sqrt(data[0]**2)
-				wvData+=pack('h', data[0])
-				wvData+=pack('h', amp*sin(i*800.0/RATE)) #200Hz right
-			else:
-				break
-		else:
-			tick = not tick
+	
+		frameSample = f.readframes(1)
+		# print len(frameSample)
+		if len(frameSample):
+			try:
+				data = unpack('h',frameSample)
+			except:
+				print ("Unpacking error, may be from an invalid frameSample")
+				print ("frame sample length: "+str(len(frameSample)))
+				print ("frame sample string: "+frameSample)
 			
-			# print data 
-			if data:
-				# print "sinewave: "+str(maxVol*sin(i*400.0/RATE))
-				wvData+=pack('h', data[0])
-				wvData+=pack('h', amp*sin(i*800.0/RATE)) #200Hz right
-			else:
-				break
-
-	# wv.setframerate(f.getframerate())
+		else:
+			data = 0
+		if data:
+			amp = math.sqrt(data[0]**2)
+			wvData+=pack('h', data[0])
+			wvData+=pack('h', amp*sin(i*800.0/RATE)) #200Hz right
+		else:
+			break
 	wv.writeframes(wvData)
 	wv.close()
 
