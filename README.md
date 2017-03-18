@@ -8,7 +8,13 @@
 The right channel may be piped to a vibrotactile actuator for a haptic representation of vocal amplitude.
 
 
-####Requirements:
+#### Requirements:
 
-- [Processing 3](https://processing.org/download/?processing)  
-- [Processing Sound library](https://processing.org/reference/libraries/sound/index.html)  
+- [Python 2.7](https://python.org)  
+- Pygame  
+- Pyaudio  
+
+#### Setup instructions:
+You can install modules using the pip package manager:
+- pygame: `pip install pygame`
+- pyaudio: `pip install pyaudio` 
