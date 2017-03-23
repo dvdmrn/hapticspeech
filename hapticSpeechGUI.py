@@ -3,14 +3,14 @@ import time
 
 pygame.init()
 
-screen_width = 800  # how do ensure this fullscreen?? 
-screen_height = 600
+screen_width = 1280  # how do ensure this fullscreen?? 
+screen_height = 720
 
 BLACK = (0,0,0)
 WHITE = (255, 255, 255)
 GREY = (190, 190, 190)
 
-screenDisplay= pygame.display.set_mode((screen_width,screen_height))
+screenDisplay= pygame.display.set_mode((screen_width,screen_height),pygame.FULLSCREEN )
 pygame.display.set_caption( ' Haptic Speech Experiment ')
 clock = pygame.time.Clock()
 
