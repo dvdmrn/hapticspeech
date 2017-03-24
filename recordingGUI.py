@@ -21,7 +21,6 @@ welcomeDescriptor= "During the experiment you will hear a series of words and ph
 
 titleText = pygame.font.Font('freesansbold.ttf',40)
 bodyText = pygame.font.Font('freesansbold.ttf', 32)
-
 drawn = False
 
 # ----------------------------------------------
@@ -29,14 +28,21 @@ drawn = False
 # ----------------------------------------------
 
 def  welcomeScreen():
-    global drawn
-    if not drawn:
-        screenDisplay.fill(GREY)
-        text_display(welcomeTitle,"top", 30)
+	global drawn
+	if not drawn:
+	    screenDisplay.fill(GREY)
 
-        render_textrect(welcomeDescriptor, bodyText, pygame.Rect((40,40,screen_width, 300)), BLACK, GREY, 1) 
+	    text_display(welcomeTitle,"top", 30)
 
-        drawn = True
+	    render_textrect(welcomeDescriptor, bodyText, pygame.Rect((40,40,screen_width, 300)), BLACK, GREY, 1) 
+
+	    drawn = True
+
+    # horizontal_center = (description_text.get_rect().right - description_text.get_rect().left)/2
+    # vertical_center = (description_text.get_rect().bottom - description_text.get_rect().top)/2
+
+
+    # screenDisplay.blit(description_text, ((screen_width/2) - horizontal_center , (screen_height/2) - vertical_center+75)) 
 
     #text_display(welcomeStart, "bottom", 18)
 
@@ -83,7 +89,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
             # if any of our words are too long to fit, return.
             for word in words:
                 if font.size(word)[0] >= rect.width:
-                    raise TextRectException("The word " + word + " is too long to fit in the rect passed.")
+                    raise TextRectException, "The word " + word + " is too long to fit in the rect passed."
             # Start a new line
             accumulated_line = ""
             for word in words:
@@ -106,7 +112,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
     accumulated_height = 0 
     for line in final_lines: 
         if accumulated_height + font.size(line)[1] >= rect.height:
-            raise TextRectException("Once word-wrapped, the text string was too tall to fit in the rect.")
+            raise TextRectException, "Once word-wrapped, the text string was too tall to fit in the rect."
         if line != "":
             tempsurface = font.render(line, 1, text_color)
             if justification == 0:
@@ -116,7 +122,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
             elif justification == 2:
                 surface.blit(tempsurface, (rect.width - tempsurface.get_width(), accumulated_height))
             else:
-                raise TextRectException("Invalid justification argument: " + str(justification))
+                raise TextRectException, "Invalid justification argument: " + str(justification)
         accumulated_height += font.size(line)[1]
 
 
@@ -125,8 +131,8 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
 
 
     screenDisplay.blit(surface, ((screen_width/2) - horizontal_center , (screen_height/2) - vertical_center+75)) 
-    return surface
 
+    return surface
 
     
     # game_loop()
@@ -194,6 +200,7 @@ def game_loop() :
                     print("right key pressed!")
                     exitWindow = True
         
+        # print("exit window val: ",exitWindow)
         welcomeScreen()
         
         pygame.display.update()  
