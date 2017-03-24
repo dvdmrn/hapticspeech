@@ -6,7 +6,7 @@ import random
 from struct import pack, unpack
 from math import sin, pi
 import wave
-import pyaudio  
+import pyaudio  s
 import math
 import pygame
 import time

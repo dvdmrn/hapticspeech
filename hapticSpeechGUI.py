@@ -84,7 +84,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
             # if any of our words are too long to fit, return.
             for word in words:
                 if font.size(word)[0] >= rect.width:
-                    raise TextRectException, "The word " + word + " is too long to fit in the rect passed."
+                    raise TextRectException("The word " + word + " is too long to fit in the rect passed.")
             # Start a new line
             accumulated_line = ""
             for word in words:
@@ -107,7 +107,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
     accumulated_height = 0 
     for line in final_lines: 
         if accumulated_height + font.size(line)[1] >= rect.height:
-            raise TextRectException, "Once word-wrapped, the text string was too tall to fit in the rect."
+            raise TextRectException("Once word-wrapped, the text string was too tall to fit in the rect.")
         if line != "":
             tempsurface = font.render(line, 1, text_color)
             if justification == 0:
@@ -117,7 +117,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
             elif justification == 2:
                 surface.blit(tempsurface, (rect.width - tempsurface.get_width(), accumulated_height))
             else:
-                raise TextRectException, "Invalid justification argument: " + str(justification)
+                raise TextRectException("Invalid justification argument: " + str(justification))
         accumulated_height += font.size(line)[1]
 
     return surface
