@@ -1,7 +1,19 @@
+from os import listdir
+from os.path import isfile, join
+import os
+import random
+from struct import pack, unpack
+from math import sin, pi
+import wave
+import pyaudio
+import math
+import pygame
+import time
 import pygame
 import time
 import textwrap
 
+# settings
 pygame.init()
 
 screen_width = 1280   
@@ -11,35 +23,38 @@ BLACK = (0,0,0)
 WHITE = (255, 255, 255)
 GREY = (190, 190, 190)
 
-screenDisplay= pygame.display.set_mode((screen_width,screen_height),pygame.FULLSCREEN )
-pygame.display.set_caption( ' Haptic Speech Experiment ')
+screenDisplay = pygame.display.set_mode((screen_width,screen_height),pygame.FULLSCREEN)
+pygame.display.set_caption('Haptic Speech Experiment')
 clock = pygame.time.Clock()
 
-welcomeTitle= "Welcome to the Haptic Speech Experiment!"
-#welcomeDescriptor = "A \n B \n C \n"
-welcomeDescriptor= "During the experiment you will hear a series of words and phrases. Thereafter, you will be prompted to record yourself repeating what you've heard. Ocassionally you will feel a slight vibration.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
+welcomeTitle = "Welcome to the Haptic Speech Experiment!"
+welcomeDescriptor = "During the experiment you will hear a series of words and phrases. Thereafter, you will be prompted to record yourself repeating what you've heard. Ocassionally you will feel a slight vibration.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
 
-titleText = pygame.font.Font('freesansbold.ttf',40)
+titleText = pygame.font.Font('freesansbold.ttf', 40)
 bodyText = pygame.font.Font('freesansbold.ttf', 32)
 
 drawn = False
+
+wavpath = "stimuli/"
 
 # ----------------------------------------------
 # Welcome Screen
 # ----------------------------------------------
 
-def  welcomeScreen():
+def welcomeScreen():
     global drawn
+    
     if not drawn:
         screenDisplay.fill(GREY)
-        text_display(welcomeTitle,"top", 30)
-
-        render_textrect(welcomeDescriptor, bodyText, pygame.Rect((40,40,screen_width, 300)), BLACK, GREY, 1) 
+        text_display(welcomeTitle, "top", 30)
+        render_textrect(welcomeDescriptor, bodyText, pygame.Rect((40, 40, screen_width, 300)), BLACK, GREY, 1) 
 
         drawn = True
 
-    #text_display(welcomeStart, "bottom", 18)
 
+# ----------------------------------------------
+# Text Display Functions
+# ----------------------------------------------
 class TextRectException:
     def __init__(self, message = None):
         self.message = message
@@ -69,7 +84,6 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
     Failure - raises a TextRectException if the text won't fit onto the surface.
     """
 
-    
     final_lines = []
 
     requested_lines = string.splitlines()
@@ -122,39 +136,9 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
 
     horizontal_center = (surface.get_rect().right - surface.get_rect().left)/2
     vertical_center = (surface.get_rect().bottom - surface.get_rect().top)/2
-
-
-    screenDisplay.blit(surface, ((screen_width/2) - horizontal_center , (screen_height/2) - vertical_center+75)) 
+    screenDisplay.blit(surface, ((screen_width/2) - horizontal_center, (screen_height/2) - vertical_center+75)) 
+    
     return surface
-
-
-    
-    # game_loop()
-
-    # welcomeTitleFont = pygame.font.Font('freesansbold.ttf ', 100)
-    # welcomeDescriptorFont = pygame.font.Font('freesansbold.ttf ', 50)
-    # welcomeStartFont = pygame.font.Font('freesansbold.ttf ', 50)
-
-    # incorporate key event to take user to stimulusPlayScreen()
-    
-# ----------------------------------------------
-#  Stimulus Play Screen
-# ----------------------------------------------    
-def stimulusPlayScreen():
-     # blank screen while stimuli plays
-    # how move to next screen????
-    return
-# ----------------------------------------------
-#  Recording  Screen
-# ----------------------------------------------
-def recordScreen():
-    recordDescriptorFont = pygame.font.Font('freesansbold.ttf ', 50)
-    recordStartFont = pygame.font.Font('freesansbold.ttf ', 50)
-    recordDescriptorSurf= recordDescriptorFont.render( "Now you will record yourself saying what you have just heard!", True, BLACK) #use the render_textrect()
-    recordStartSurf =  recordStartFont.render(  'You are able to make as many recordings as you like.When you are ready to begin press and hold the SPACE bar', True, BLACK) 
-
-# key event that takes them to 
-    
 
 def text_objects(text, font):
     textSurface = font.render(text, True, BLACK)
@@ -178,30 +162,197 @@ def text_display(text, height, fontsize):
     pygame.display.update()
 
 
+# ----------------------------------------------
+#  Stimulus Play Screen
+# ----------------------------------------------    
+def stimulusPlayScreen():
+    # blank screen while stimuli plays
+    # how move to next screen????
+    return
+
+
+# ----------------------------------------------
+#  Recording  Screen
+# ----------------------------------------------
+def recordScreen():
+    recordDescriptorFont = pygame.font.Font('freesansbold.ttf ', 50)
+    recordStartFont = pygame.font.Font('freesansbold.ttf ', 50)
+    recordDescriptorSurf = recordDescriptorFont.render( "Now you will record yourself saying what you have just heard!", True, BLACK) #use the render_textrect()
+    recordStartSurf =  recordStartFont.render(  'You are able to make as many recordings as you like.When you are ready to begin press and hold the SPACE bar', True, BLACK) 
+
+
+# ----------------------------------------------
+#  Playback
+# ----------------------------------------------
+def play_wavfile(filename):
+    RATE=44100
+    chunk = 1024
+
+    filepath = os.path.join(wavpath, filename)
+
+    f = wave.open(filepath,"rb")  
+    print("\n\nopening: "+filepath)
+    print("samplerate: "+str(f.getframerate()))
+    print("frames: "+str(f.getnframes()))
+    print("channels: "+str(f.getnchannels()))
+    print("sample width: "+str(f.getsampwidth()))
+
+    ## GENERATE STEREO FILE ##
+    wv = wave.open('temp.wav', 'w')
+    wv.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
+    maxVol=2**14-1.0 #maximum amplitude
+    wvData=""
+    i = 0
+
+    for i in range(0, f.getnframes()):
+    
+        frameSample = f.readframes(1)
+        # print len(frameSample)
+        if len(frameSample):
+            try:
+                data = unpack('h',frameSample)
+            except:
+                print ("Unpacking error, may be from an invalid frameSample")
+                print ("frame sample length: "+str(len(frameSample)))
+                print ("frame sample string: "+frameSample)
+            
+        else:
+            data = 0
+        if data:
+            amp = math.sqrt(data[0]**2)
+            wvData+=pack('h', data[0])
+            wvData+=pack('h', amp*sin(i*800.0/RATE)) #200Hz right
+        else:
+            break
+    wv.writeframes(wvData)
+    wv.close()
+
+    print("processed file!")
+
+
+    # --------------------------------------------------------
+    # playback processed audio
+    # --------------------------------------------------------
+
+    #open a wav format music  
+    f = wave.open(r"temp.wav","rb")  
+    #instantiate PyAudio  
+    p = pyaudio.PyAudio()  
+    #open stream  
+    stream = p.open(format = p.get_format_from_width(f.getsampwidth()), 
+                    channels = 2,  
+                    rate = f.getframerate(),  
+                    output = True)  
+    #read data  
+    data = f.readframes(chunk)
+
+    print("playback initialized!")
+
+    while data:
+        stream.write(data)
+        data = f.readframes(chunk)
+
+    #stop stream  
+    stream.stop_stream()  
+    stream.close()  
+
+    print("playback ended.")
+    #close PyAudio  
+    p.terminate()  
+
+# returns a randomized list of songs in the directory
+def get_wavfiles():
+    path = "stimuli/"
+    # put names of wavfiles in a list
+    wavfiles = [f for f in listdir(path) if isfile(join(path, f))]
+    if '.DS_Store' in wavfiles:
+        wavfiles.remove('.DS_Store')
+    random.shuffle(wavfiles)
+    return wavfiles
+
+def translate(value, leftMin, leftMax, rightMin, rightMax):
+    # Figure out how 'wide' each range is
+    leftSpan = leftMax - leftMin
+    rightSpan = rightMax - rightMin
+
+    # Convert the left range into a 0-1 range (float)
+    valueScaled = float(value - leftMin) / float(leftSpan)
+
+    # Convert the 0-1 range into a value in the right range.
+    return rightMin + (valueScaled * rightSpan)
+
+
+# ----------------------------------------------
+#  Playback Screen
+# ----------------------------------------------
+def playbackScreen():
+    wavfiles = get_wavfiles()
+    gameExit = False
+    num_of_files = len(wavfiles)
+    file_index = 0
+
+    screenDisplay.fill(GREY)
+    pygame.display.update()
+    play_wavfile(wavfiles[file_index])
+    print("file index: "+str(file_index))
+    print("wave file: "+str(wavfiles[file_index]))
+
+
+# ----------------------------------------------
+#  Record Screen
+# ----------------------------------------------
+def recordScreen():
+    text_display("Press space to record", "top", 30)
+    pygame.display.update()
+
+
+# ----------------------------------------------
+#  Recording Screen
+# ----------------------------------------------
+def recordingScreen():
+    screenDisplay.fill(GREY)
+    text_display("Recoding...", "top", 30)
+    pygame.display.update() 
+
+
+# ----------------------------------------------
+#  Game Loop
+# ----------------------------------------------
 def game_loop() :
     
     # event handling loop
     exitWindow = False  
-
 
     while not exitWindow:
 
         for event in pygame.event.get() :
             if event.type == pygame.QUIT: 
                 exitWindow = True
+            
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    print("right key pressed!")
+                    print("ESC key pressed!")
                     exitWindow = True
+
+                if event.key == pygame.K_RETURN:
+                    print("Enter key pressed!")
+                    playbackScreen()
+                    recordScreen()
+
+                if event.key == pygame.K_SPACE:
+                    recordingScreen()
+                    # implement record
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    # implement stop recording?
+                    pass
         
         welcomeScreen()
         
         pygame.display.update()  
-        
         clock.tick(60)
         
-
-    # game_loop()
     print("exited game loop")
     pygame.quit()
     print("called pygame quit")
