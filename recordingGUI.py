@@ -1,6 +1,8 @@
 import pygame
 import time
 import textwrap
+import pyaudio
+import wave
 
 pygame.init()
 
@@ -10,41 +12,45 @@ screen_height = 720
 BLACK = (0,0,0)
 WHITE = (255, 255, 255)
 GREY = (190, 190, 190)
+RED = (255,0,0)
 
 screenDisplay= pygame.display.set_mode((screen_width,screen_height),pygame.FULLSCREEN )
 pygame.display.set_caption( ' Haptic Speech Experiment ')
 clock = pygame.time.Clock()
 
 welcomeTitle= "Welcome to the Haptic Speech Experiment!"
-#welcomeDescriptor = "A \n B \n C \n"
 welcomeDescriptor= "During the experiment you will hear a series of words and phrases. Thereafter, you will be prompted to record yourself repeating what you've heard. Ocassionally you will feel a slight vibration.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
 
 titleText = pygame.font.Font('freesansbold.ttf',40)
 bodyText = pygame.font.Font('freesansbold.ttf', 32)
+
 drawn = False
+recording = False
+
+def translate(value, leftMin, leftMax, rightMin, rightMax):
+        # Figure out how 'wide' each range is
+        leftSpan = leftMax - leftMin
+        rightSpan = rightMax - rightMin
+
+        # Convert the left range into a 0-1 range (float)
+        valueScaled = float(value - leftMin) / float(leftSpan)
+
+        # Convert the 0-1 range into a value in the right range.
+        return rightMin + (valueScaled * rightSpan)
 
 # ----------------------------------------------
 # Welcome Screen
 # ----------------------------------------------
 
 def  welcomeScreen():
-	global drawn
-	if not drawn:
-	    screenDisplay.fill(GREY)
+    global drawn
+    if not drawn:
+        screenDisplay.fill(GREY)
+        text_display(welcomeTitle,"top", 30)
 
-	    text_display(welcomeTitle,"top", 30)
+        render_textrect(welcomeDescriptor, bodyText, pygame.Rect((40,40,screen_width, 300)), BLACK, GREY, 1) 
 
-	    render_textrect(welcomeDescriptor, bodyText, pygame.Rect((40,40,screen_width, 300)), BLACK, GREY, 1) 
-
-	    drawn = True
-
-    # horizontal_center = (description_text.get_rect().right - description_text.get_rect().left)/2
-    # vertical_center = (description_text.get_rect().bottom - description_text.get_rect().top)/2
-
-
-    # screenDisplay.blit(description_text, ((screen_width/2) - horizontal_center , (screen_height/2) - vertical_center+75)) 
-
-    #text_display(welcomeStart, "bottom", 18)
+        drawn = True
 
 class TextRectException:
     def __init__(self, message = None):
@@ -89,7 +95,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
             # if any of our words are too long to fit, return.
             for word in words:
                 if font.size(word)[0] >= rect.width:
-                    raise TextRectException, "The word " + word + " is too long to fit in the rect passed."
+                    raise TextRectException("The word " + word + " is too long to fit in the rect passed.")
             # Start a new line
             accumulated_line = ""
             for word in words:
@@ -112,7 +118,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
     accumulated_height = 0 
     for line in final_lines: 
         if accumulated_height + font.size(line)[1] >= rect.height:
-            raise TextRectException, "Once word-wrapped, the text string was too tall to fit in the rect."
+            raise TextRectException("Once word-wrapped, the text string was too tall to fit in the rect.")
         if line != "":
             tempsurface = font.render(line, 1, text_color)
             if justification == 0:
@@ -122,7 +128,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
             elif justification == 2:
                 surface.blit(tempsurface, (rect.width - tempsurface.get_width(), accumulated_height))
             else:
-                raise TextRectException, "Invalid justification argument: " + str(justification)
+                raise TextRectException("Invalid justification argument: " + str(justification))
         accumulated_height += font.size(line)[1]
 
 
@@ -131,17 +137,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
 
 
     screenDisplay.blit(surface, ((screen_width/2) - horizontal_center , (screen_height/2) - vertical_center+75)) 
-
     return surface
-
-    
-    # game_loop()
-
-    # welcomeTitleFont = pygame.font.Font('freesansbold.ttf ', 100)
-    # welcomeDescriptorFont = pygame.font.Font('freesansbold.ttf ', 50)
-    # welcomeStartFont = pygame.font.Font('freesansbold.ttf ', 50)
-
-    # incorporate key event to take user to stimulusPlayScreen()
     
 # ----------------------------------------------
 #  Stimulus Play Screen
@@ -154,12 +150,98 @@ def stimulusPlayScreen():
 #  Recording  Screen
 # ----------------------------------------------
 def recordScreen():
-    recordDescriptorFont = pygame.font.Font('freesansbold.ttf ', 50)
-    recordStartFont = pygame.font.Font('freesansbold.ttf ', 50)
-    recordDescriptorSurf= recordDescriptorFont.render( "Now you will record yourself saying what you have just heard!", True, BLACK) #use the render_textrect()
-    recordStartSurf =  recordStartFont.render(  'You are able to make as many recordings as you like.When you are ready to begin press and hold the SPACE bar', True, BLACK) 
 
-# key event that takes them to 
+    global drawn
+    recordDescriptor="Now you will record yourself saying what you have just heard!\nYou are allowed to make as many recordings as you like.\nWhen you are ready to begin press and hold the SPACE bar."
+
+    if not drawn:
+
+        screenDisplay.fill(GREY)
+        render_textrect(recordDescriptor, bodyText, pygame.Rect((40,40,screen_width, 300)), BLACK, GREY, 1) 
+
+        drawn = True
+
+def renderTimer(i,maxLength):
+
+    currentIndex = int(translate(i, 0, maxLength, 0, 300)) +1
+
+    pygame.draw.rect(screenDisplay,BLACK, pygame.Rect((screen_width-320,20),(300,30)))
+    pygame.draw.rect(screenDisplay,RED, pygame.Rect((screen_width-320,20),(300-currentIndex,30)))
+
+    pygame.display.update()
+  
+ 
+
+
+
+def record():
+
+    global recording 
+
+    if not recording:
+        # set recording to True at the beginning
+        # insert recorder.py
+        # render timer
+
+        recording = True
+
+        #start of wave recording---------------------------------------------------------------------------------------
+
+        FORMAT = pyaudio.paInt16
+        CHANNELS = 2
+        RATE = 44100
+        CHUNK = 1024
+        RECORD_SECONDS = 4
+
+        currentFile = "PHRASE_"
+        participantID = "1337"
+        WAVE_OUTPUT_FILENAME = participantID+"_"+currentFile+"_RESPONSE.wav"
+        savepath = "responses/"+participantID+"/"
+
+         
+        audio = pyaudio.PyAudio()
+         
+        # start Recording
+        stream = audio.open(format=FORMAT, channels=CHANNELS,
+                        rate=RATE, input=True,
+                        frames_per_buffer=CHUNK)
+        print "recording..."
+        frames = []
+
+        maxLength = int(RATE / CHUNK * RECORD_SECONDS)
+        for i in range(0, maxLength):
+            data = stream.read(CHUNK)
+            frames.append(data)
+
+            renderTimer(i, maxLength)
+        print "finished recording"
+         
+         
+        # stop Recording
+        stream.stop_stream()
+        stream.close()
+        audio.terminate()
+         
+        waveFile = wave.open(savepath+WAVE_OUTPUT_FILENAME, 'wb')
+        waveFile.setnchannels(CHANNELS)
+        waveFile.setsampwidth(audio.get_sample_size(FORMAT))
+        waveFile.setframerate(RATE)
+        waveFile.writeframes(b''.join(frames))
+        waveFile.close()
+
+        #end of wave recording-------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
     
 
 def text_objects(text, font):
@@ -184,6 +266,7 @@ def text_display(text, height, fontsize):
     pygame.display.update()
 
 
+
 def game_loop() :
     
     # event handling loop
@@ -199,9 +282,15 @@ def game_loop() :
                 if event.key == pygame.K_ESCAPE:
                     print("right key pressed!")
                     exitWindow = True
-        
-        # print("exit window val: ",exitWindow)
-        welcomeScreen()
+                
+                if event.key == pygame.K_SPACE:
+                    record()
+                    print "space bar pressed!"
+                
+
+        recordScreen()
+
+
         
         pygame.display.update()  
         
