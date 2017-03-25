@@ -18,3 +18,13 @@ The right channel may be piped to a vibrotactile actuator for a haptic represent
 You can install modules using the pip package manager:
 - pygame: `pip install pygame`
 - pyaudio: `pip install pyaudio` 
+
+#### Module structure:
+```
+main.py
+	|- utilities.py (helper functions)
+	|- playback.py (playback functions)
+	|- recorder.py (recording functions)
+	|- parameters.py (static variables)
+	|- textdisplay.py (text rendering)
+```
