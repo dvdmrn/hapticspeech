@@ -4,7 +4,6 @@
 
 import pygame
 import time
-# import textwrap
 import pyaudio
 import wave
 import sys
@@ -13,6 +12,7 @@ import utilities as util
 import parameters as p
 import record
 import playback
+
 # init pygame
 pygame.init()
 
