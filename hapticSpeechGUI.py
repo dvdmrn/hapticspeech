@@ -290,12 +290,13 @@ def playbackScreen():
     gameExit = False
     num_of_files = len(wavfiles)
     file_index = 0
+    print("file index: "+str(file_index))
+    print("wave file: "+str(wavfiles[file_index]))
+    print("files: "+str(wavfiles))
 
     screenDisplay.fill(GREY)
     pygame.display.update()
     play_wavfile(wavfiles[file_index])
-    print("file index: "+str(file_index))
-    print("wave file: "+str(wavfiles[file_index]))
 
 
 # ----------------------------------------------
@@ -311,7 +312,7 @@ def recordScreen():
 # ----------------------------------------------
 def recordingScreen():
     screenDisplay.fill(GREY)
-    text_display("Recoding...", "top", 30)
+    text_display("Recording...", "top", 30)
     pygame.display.update() 
 
 

@@ -14,4 +14,8 @@ GREY = (190, 190, 190)
 DARKGREY = (80,80,80)
 PINK = (40,180,40)
 
+# files --
+wavpath = "stimuli/"
+responsePath = "responses/"
+
 # ----------------------/

@@ -4,13 +4,14 @@
 
 import pygame
 import time
-import textwrap
+# import textwrap
 import pyaudio
 import wave
 import sys
 import textdisplay as txt
 import utilities as util
 import parameters as p
+import record
 
 # init pygame
 pygame.init()
@@ -29,11 +30,12 @@ recording = False
 # pygame setup ---------\
 
 # accepts CL input `-w` for windowed mode
-if (sys.argv[1]=="-w"):
-    screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height))
-    pygame.display.set_caption( ' Haptic Speech Experiment ')
-    clock = pygame.time.Clock()
-    print "window mode"
+if (len(sys.argv)>1):
+    if (sys.argv[1]=="-w"):
+        screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height))
+        pygame.display.set_caption( ' Haptic Speech Experiment ')
+        clock = pygame.time.Clock()
+        print "window mode"
 else:
     screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height),pygame.FULLSCREEN )
     pygame.display.set_caption( ' Haptic Speech Experiment ')
@@ -87,87 +89,90 @@ def recordScreen():
 
         drawn = True
 
-# ----------------------------------------------
-#  Render Timer
-#      - draws the timer bar
-# ----------------------------------------------
+# # ----------------------------------------------
+# #  Render Timer
+# #      - draws the timer bar
+# # ----------------------------------------------
 
-def renderTimer(i,maxLength):
-    """
-    maxLength: an int of the number of samples in our wave file
-    i: current index of the wave file we are writing
-    """
-    currentIndex = int(util.translate(i, 0, maxLength, 0, p.recBarWidth)) +1
-    if(maxLength-i <= 1):
-        pygame.display.update()
-        print "render complete"
-        return
-    else:
-        pygame.draw.rect(screenDisplay,p.DARKGREY, pygame.Rect((p.screen_width-320,p.cornerPadding),(p.recBarWidth,p.recBarHeight)))
-        pygame.draw.rect(screenDisplay,p.PINK, pygame.Rect((p.screen_width-320,p.cornerPadding),(p.recBarWidth-currentIndex,p.recBarHeight)))
-        txt.textLine(screenDisplay,"recording!","custom", bodyText,p.screen_width-(p.recBarWidth/2)-p.cornerPadding,p.recBarHeight+p.cornerPadding+30)
+# def renderTimer(i,maxLength):
+#     """
+#     maxLength: an int of the number of samples in our wave file
+#     i: current index of the wave file we are writing
+#     """
+#     currentIndex = int(util.translate(i, 0, maxLength, 0, p.recBarWidth)) +1
+    
+#     # if recording length is maxed out exit
+#     if(maxLength-i <= 1):
+#         pygame.display.update()
+#         print "render complete"
+#         return
+#     # renders the timer bar
+#     else:
+#         pygame.draw.rect(screenDisplay,p.DARKGREY, pygame.Rect((p.screen_width-320,p.cornerPadding),(p.recBarWidth,p.recBarHeight)))
+#         pygame.draw.rect(screenDisplay,p.PINK, pygame.Rect((p.screen_width-320,p.cornerPadding),(p.recBarWidth-currentIndex,p.recBarHeight)))
+#         txt.textLine(screenDisplay,"recording!","custom", bodyText,p.screen_width-(p.recBarWidth/2)-p.cornerPadding,p.recBarHeight+p.cornerPadding+30)
 
-        pygame.display.update()
+#         pygame.display.update()
 
-# ----------------------------------------------
-#  Record
-#      - handles wave recording
-# ----------------------------------------------
-def record():
+# # ----------------------------------------------
+# #  Record
+# #      - handles wave recording
+# # ----------------------------------------------
+# def record():
 
-    global recording 
+#     global recording 
 
-    if not recording:
-        # set recording to True at the beginning
-        # insert recorder.py
-        # render timer
+#     if not recording:
+#         # set recording to True at the beginning
+#         # insert recorder.py
+#         # render timer
 
-        recording = True
+#         recording = True
 
-        #start of wave recording---------------------------------------------------------------------------------------
+#         #start of wave recording---------------------------------------------------------------------------------------
 
-        FORMAT = pyaudio.paInt16
-        CHANNELS = 2
-        RATE = 44100
-        CHUNK = 1024
-        RECORD_SECONDS = 4
+#         FORMAT = pyaudio.paInt16
+#         CHANNELS = 2
+#         RATE = 44100
+#         CHUNK = 1024
+#         RECORD_SECONDS = 4
 
-        currentFile = "PHRASE_"
-        participantID = "1337"
-        WAVE_OUTPUT_FILENAME = participantID+"_"+currentFile+"_RESPONSE.wav"
-        savepath = "responses/"+participantID+"/"
+#         currentFile = "PHRASE_"
+#         participantID = "1337"
+#         WAVE_OUTPUT_FILENAME = participantID+"_"+currentFile+"_RESPONSE.wav"
+#         savepath = "responses/"+participantID+"/"
 
          
-        audio = pyaudio.PyAudio()
+#         audio = pyaudio.PyAudio()
          
-        # start Recording
-        stream = audio.open(format=FORMAT, channels=CHANNELS,
-                        rate=RATE, input=True,
-                        frames_per_buffer=CHUNK)
-        print "recording..."
-        frames = []
+#         # start Recording
+#         stream = audio.open(format=FORMAT, channels=CHANNELS,
+#                         rate=RATE, input=True,
+#                         frames_per_buffer=CHUNK)
+#         print "recording..."
+#         frames = []
 
-        maxLength = int(RATE / CHUNK * RECORD_SECONDS)
-        for i in range(0, maxLength):
-            data = stream.read(CHUNK)
-            frames.append(data)
-            renderTimer(i, maxLength)
-        print "finished recording"
+#         maxLength = int(RATE / CHUNK * RECORD_SECONDS)
+#         for i in range(0, maxLength):
+#             data = stream.read(CHUNK)
+#             frames.append(data)
+#             renderTimer(i, maxLength)
+#         print "finished recording"
          
          
-        # stop Recording
-        stream.stop_stream()
-        stream.close()
-        audio.terminate()
+#         # stop Recording
+#         stream.stop_stream()
+#         stream.close()
+#         audio.terminate()
          
-        waveFile = wave.open(savepath+WAVE_OUTPUT_FILENAME, 'wb')
-        waveFile.setnchannels(CHANNELS)
-        waveFile.setsampwidth(audio.get_sample_size(FORMAT))
-        waveFile.setframerate(RATE)
-        waveFile.writeframes(b''.join(frames))
-        waveFile.close()
+#         waveFile = wave.open(savepath+WAVE_OUTPUT_FILENAME, 'wb')
+#         waveFile.setnchannels(CHANNELS)
+#         waveFile.setsampwidth(audio.get_sample_size(FORMAT))
+#         waveFile.setframerate(RATE)
+#         waveFile.writeframes(b''.join(frames))
+#         waveFile.close()
 
-        #end of wave recording-------------------------------------------------------------------------------------------
+#         #end of wave recording-------------------------------------------------------------------------------------------
 
 def main_loop() :
     global drawn
@@ -186,9 +191,16 @@ def main_loop() :
                     exitWindow = True
                 
                 if event.key == pygame.K_SPACE:
-                    record()
-                    drawn = False
+                    if not record.recording:
+                        record.rec(screenDisplay,bodyText)
+                        drawn = False
                     print "space bar pressed!"
+            # if event.type == pygame.KEYUP:
+            #         if event.key == pygame.K_SPACE:
+            #             record.stopRec()
+            #             print "key up event!"
+
+
                 
 
         recordScreen()
