@@ -7,6 +7,9 @@
 
 The right channel may be piped to a vibrotactile actuator for a haptic representation of vocal amplitude.
 
+### Running the software:
+- In terminal run `python main.py`
+- You may specify windowed mode with the `-w` flag (`python main.py -w`)
 
 #### Requirements:
 
