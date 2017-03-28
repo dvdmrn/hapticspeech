@@ -25,9 +25,12 @@ bodyText = pygame.font.Font('freesansbold.ttf', 32)
 # state control --------\
 drawn = False
 recording = False
+endoftrial = False
 # ----------------------/
 
 wavfiles = util.get_wavfiles()
+# phrases = util.get_wavfiles()
+file_index = 0
 
 
 
@@ -71,13 +74,14 @@ def  welcomeScreen():
 # ----------------------------------------------
 #  Stimulus Play Screen
 # ----------------------------------------------    
-def playbackScreen():
+def playbackScreen(file_index):
     global drawn
+    # global file_index
 
     if not drawn:
         # gameExit = False
         num_of_files = len(wavfiles)
-        file_index = 0
+        
         print("file index: "+str(file_index))
         print("wave file: "+str(wavfiles[file_index]))
         print("files: "+str(wavfiles))
@@ -92,23 +96,66 @@ def playbackScreen():
 # ----------------------------------------------
 #  Recording  Screen
 # ----------------------------------------------
-def recordScreen():
+def recordScreen(file_index):
     """
     draws main record screen
     """
     global drawn
-    recordDescriptor="Now you will record yourself saying what you have just heard!\nYou are allowed to make as many recordings as you like.\nWhen you are ready to begin press and hold the SPACE bar."
+    global endoftrial
+
+    recordDescriptor="Now you will record yourself saying what you have just heard!\nYou are allowed to make as many recordings as you like. We will only use the last recording.\nWhen you are ready to begin press and hold the SPACE bar."
 
     if not drawn:
 
         screenDisplay.fill(p.GREY)
         txt.textWrap(screenDisplay, recordDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
+        pygame.display.update()
+
+        endoftrial = True
+
+        drawn = True
+
+def breakScreen():
+
+    global drawn
+
+    breakDescriptor = "Take a break!\nPress C when you are ready to begin."
+
+    if not drawn:
+
+        screenDisplay.fill(p.GREY)
+        txt.textWrap(screenDisplay, breakDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
+        pygame.display.update()
+
+        endoftrial = True
 
         drawn = True
 
 
+def trial(file_index):
+
+    global drawn 
+    global endoftrial
+
+    if file_index < 5:
+        playbackScreen(file_index)
+        drawn = False
+        recordScreen(file_index)
+
+    else: 
+        drawn = False
+        breakScreen() 
+
+
+
+
 def main_loop() :
     global drawn
+    global wavfiles
+    global file_index
+    global endoftrial
+
+    ID = "1"
     # event handling loop
     exitWindow = False  
 
@@ -125,21 +172,32 @@ def main_loop() :
                 
                 if event.key == pygame.K_SPACE:
                     if not record.recording:
-                        record.rec(screenDisplay,bodyText)
-                        drawn = False
+                        record.rec(screenDisplay,bodyText, wavfiles[file_index], ID)
+                    
                     print "space bar pressed!"
+
+
+
+                if event.key == pygame.K_RETURN:
+
+                    print "enter key pressed!"
+                    if endoftrial: 
+                        drawn = False
+                        file_index +=1
+                        print "enter key pressed in if clause!"
+                        endoftrial = False
+
+
+
             # if event.type == pygame.KEYUP:
             #         if event.key == pygame.K_SPACE:
             #             record.stopRec()
-            #             print "key up event!"
+            #             print "key up event!
+       
+        
+       
 
-
-                
-
-        playbackScreen()
-        recordScreen()
-
-
+        trial(file_index)
         
         pygame.display.update()  
         

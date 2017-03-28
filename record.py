@@ -42,7 +42,7 @@ def renderTimer(surface,i,maxLength,font):
 #  Record
 #      - handles wave recording
 # ----------------------------------------------
-def rec(surface,font):
+def rec(surface,font, filename, ID):
 
     global recording, stop
 
@@ -61,10 +61,10 @@ def rec(surface,font):
         CHUNK = 1024
         RECORD_SECONDS = 4
 
-        currentFile = "PHRASE_"
-        participantID = "1337"
-        WAVE_OUTPUT_FILENAME = participantID+"_"+currentFile+"_RESPONSE.wav"
-        savepath = "responses/"+participantID+"/"
+        # currentFile = "PHRASE_"
+        # participantID = "1337"
+        WAVE_OUTPUT_FILENAME = ID+"_"+filename+"_RESPONSE.wav"
+        savepath = "responses/"+ID+"/"
 
          
         audio = pyaudio.PyAudio()
