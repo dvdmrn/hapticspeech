@@ -15,7 +15,8 @@ DARKGREY = (80,80,80)
 PINK = (40,180,40)
 
 # files --
-wavpath = "stimuli/"
+wordpath = "stimuli/words/"
+phrasepath = "stimuli/phrases/"
 responsePath = "responses/"
 
 # ----------------------/

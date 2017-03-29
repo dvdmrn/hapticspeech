@@ -83,12 +83,15 @@ def rec(surface,font, filename, ID):
             for event in pygame.event.get():
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_SPACE:
+                        print "keyup event in record"
+                        pygame.display.update()
                         breakFor = True
                         break
             # for some reason break doesn't work in that scope
             # so we defer the break function in the logic below
             # and I'm too lazy to make this prettier
             if breakFor:
+                pygame.display.update()
                 break
             data = stream.read(CHUNK)
             frames.append(data)

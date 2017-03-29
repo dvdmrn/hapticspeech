@@ -13,8 +13,7 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
         # Convert the 0-1 range into a value in the right range.
         return rightMin + (valueScaled * rightSpan)
 
-def get_wavfiles():
-    path = "stimuli/"
+def get_wavfiles(path):
     # put names of wavfiles in a list
     wavfiles = [f for f in listdir(path) if isfile(join(path, f))]
     if '.DS_Store' in wavfiles:
