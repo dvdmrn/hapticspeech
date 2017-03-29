@@ -14,6 +14,7 @@ import record
 import playback
 
 # init pygame
+ID = str(input("Participant ID: "))
 pygame.init()
 
 # typefaces ------------\
@@ -33,11 +34,6 @@ words = util.get_wavfiles("stimuli/words/")
 file_index = 0
 
 
-# user data ------------\
-ID = "1"
-# ----------------------/
-
-
 # pygame setup ---------\
 
 # accepts CL input `-w` for windowed mode
@@ -51,6 +47,7 @@ else:
     screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height),pygame.FULLSCREEN )
     pygame.display.set_caption( ' Haptic Speech Experiment ')
     clock = pygame.time.Clock()
+
 # ----------------------/
 
 # ============================================================================================
@@ -260,18 +257,14 @@ def experimentCtrlFlow():
             trial(file_index,phrases,p.phrasepath)
             file_index+=1
 
-def setup():
-    global ID
-    ID = str(input("Participant ID: "))
-
 
 def main():
     setup()
+    pygame.init()
     experimentCtrlFlow()
 
 
 # main()
-setup()
 experimentCtrlFlow()
 pygame.quit()
 quit()
