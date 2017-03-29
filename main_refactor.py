@@ -262,6 +262,7 @@ def experimentCtrlFlow():
 
 def setup():
     global ID
+    ID = str(input("Participant ID: "))
 
 
 def main():
@@ -270,6 +271,7 @@ def main():
 
 
 # main()
+setup()
 experimentCtrlFlow()
 pygame.quit()
 quit()

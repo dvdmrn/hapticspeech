@@ -4,6 +4,7 @@ import wave
 import utilities as util
 import parameters as p
 import textdisplay as txt
+import os
 
 
 recording = False
@@ -65,7 +66,8 @@ def rec(surface,font, filename, ID):
         # participantID = "1337"
         WAVE_OUTPUT_FILENAME = ID+"_"+filename+"_RESPONSE.wav"
         savepath = "responses/"+ID+"/"
-
+        if not os.path.exists(savepath):
+            os.makedirs("responses/"+ID+"/")
          
         audio = pyaudio.PyAudio()
          
