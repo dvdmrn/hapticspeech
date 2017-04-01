@@ -15,12 +15,39 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
 
 def get_wavfiles(path):
     # put names of wavfiles in a list
-    wavfiles = [f for f in listdir(path) if isfile(join(path, f))]
-    if '.DS_Store' in wavfiles:
-        wavfiles.remove('.DS_Store')
+    # temp_wavfiles = [f for f in listdir(path) if isfile(join(path, f))]
+    temp_wavfiles = listdir(path)
+    if '.DS_Store' in temp_wavfiles:
+        temp_wavfiles.remove('.DS_Store')
+    
+    male_files = []
+    female_files = []
+    wavfiles = []
+    
+    for f in temp_wavfiles:
+        if 'female' in f:
+            female_files.append(f)
+        else:
+            male_files.append(f)
+
+    for f in female_files:
+        if bool(random.getrandbits(1)):
+            wavfiles.append(f)
+        else:
+            m = f.replace('female', 'male')
+            wavfiles.append(m)
+
+    del male_files
+    del female_files
     random.shuffle(wavfiles)
+    
     return wavfiles
 
 def constructPath(path,filename):
 	filepath = join(path, filename)
 	return filepath
+
+def get_token(filename):
+    first = filename.index('_')
+    second = filename.index('_', first + 1)
+    return filename[first+1:second]
