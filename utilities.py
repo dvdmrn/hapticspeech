@@ -35,7 +35,10 @@ def get_wavfiles(path):
             wavfiles.append(f)
         else:
             m = f.replace('female', 'male')
-            wavfiles.append(m)
+            if m in male_files:
+                wavfiles.append(m)
+            else:
+                wavfiles.append(f)
 
     del male_files
     del female_files
