@@ -14,6 +14,7 @@ import record
 import playback
 
 # init pygame
+ID = str(input("Participant ID: "))
 pygame.init()
 
 # typefaces ------------\
@@ -28,10 +29,9 @@ recording = False
 endoftrial = False
 # ----------------------/
 
-wavfiles = util.get_wavfiles()
-# phrases = util.get_wavfiles()
+phrases = util.get_wavfiles("stimuli/phrases/")
+words = util.get_wavfiles("stimuli/words/")
 file_index = 0
-
 
 
 # pygame setup ---------\
@@ -47,6 +47,7 @@ else:
     screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height),pygame.FULLSCREEN )
     pygame.display.set_caption( ' Haptic Speech Experiment ')
     clock = pygame.time.Clock()
+
 # ----------------------/
 
 # ============================================================================================
@@ -74,143 +75,196 @@ def  welcomeScreen():
 # ----------------------------------------------
 #  Stimulus Play Screen
 # ----------------------------------------------    
-def playbackScreen(file_index):
+def playbackScreen(file_index,files,path):
+    """
+    Renders the screen for signal playback
+    @param file_index: an int
+    """
+
     global drawn
-    # global file_index
+
 
     if not drawn:
-        # gameExit = False
-        num_of_files = len(wavfiles)
-        
+        num_of_files = len(files)
+            
         print("file index: "+str(file_index))
-        print("wave file: "+str(wavfiles[file_index]))
-        print("files: "+str(wavfiles))
+        print("wave file: "+str(files[file_index]))
+        print("files: "+str(files))
 
         screenDisplay.fill(p.GREY)
         pygame.display.update()
-        filepath = util.constructPath(p.wavpath,wavfiles[file_index])
+        filepath = util.constructPath(path,files[file_index])
         playback.play_wavfile(filepath)
         drawn = True
-
+    
 
 # ----------------------------------------------
 #  Recording  Screen
 # ----------------------------------------------
-def recordScreen(file_index):
+def recordScreen(file_index,files):
     """
-    draws main record screen
+    draws main record screen for a given file_index
+    file_index : an int
     """
-    global drawn
-    global endoftrial
-
-    recordDescriptor="Now you will record yourself saying what you have just heard!\nYou are allowed to make as many recordings as you like. We will only use the last recording.\nWhen you are ready to begin press and hold the SPACE bar."
-
-    if not drawn:
-
-        screenDisplay.fill(p.GREY)
-        txt.textWrap(screenDisplay, recordDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
-        pygame.display.update()
-
-        endoftrial = True
-
-        drawn = True
-
-def breakScreen():
 
     global drawn
+    global ID
+    endoftrial = False
+    complete = False
+    exitWindow = False
+    recordDescriptor="Now you will record yourself saying what you have just heard!\nYou are allowed to make as many recordings as you like. We will only use the last recording.\nWhen you are ready to begin press and hold the SPACE bar.\nWhen you are satisfied with your recording press ENTER to continue with the rest of the study."
 
-    breakDescriptor = "Take a break!\nPress C when you are ready to begin."
+    # event loop -- 
+    """
+        SPACE: record
+        ESC: quit
+        RETURN: next
+    """
+    while not complete:
+        if not drawn:
+            screenDisplay.fill(p.GREY)
+            txt.textWrap(screenDisplay, recordDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
+            pygame.display.update()
+            drawn = True
 
-    if not drawn:
-
-        screenDisplay.fill(p.GREY)
-        txt.textWrap(screenDisplay, breakDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
-        pygame.display.update()
-
-        endoftrial = True
-
-        drawn = True
-
-
-def trial(file_index):
-
-    global drawn 
-    global endoftrial
-
-    if file_index < 5:
-        playbackScreen(file_index)
-        drawn = False
-        recordScreen(file_index)
-
-    else: 
-        drawn = False
-        breakScreen() 
-
-
-
-
-def main_loop() :
-    global drawn
-    global wavfiles
-    global file_index
-    global endoftrial
-
-    ID = "1"
-    # event handling loop
-    exitWindow = False  
-
-
-    while not exitWindow:
+        if exitWindow:
+            pygame.quit()
+            quit()
 
         for event in pygame.event.get() :
             if event.type == pygame.QUIT: 
                 exitWindow = True
+
+            # KEYDOWN events ---------------
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    print("right key pressed!")
+                    print("Escape pressed!")
                     exitWindow = True
                 
+                # record
                 if event.key == pygame.K_SPACE:
                     if not record.recording:
-                        record.rec(screenDisplay,bodyText, wavfiles[file_index], ID)
-                    
-                    print "space bar pressed!"
-
-
-
-                if event.key == pygame.K_RETURN:
-
-                    print "enter key pressed!"
-                    if endoftrial: 
+                        record.rec(screenDisplay,bodyText, files[file_index], ID)
                         drawn = False
-                        file_index +=1
-                        print "enter key pressed in if clause!"
-                        endoftrial = False
+                        endoftrial = True
+                
+                # move on 
+                if event.key == pygame.K_RETURN:
+                    if endoftrial: 
+                        print "end of trial clause"
+                        complete = True
+
+            pygame.display.update()  
+            clock.tick(60)
+
+    drawn = False
 
 
 
-            # if event.type == pygame.KEYUP:
-            #         if event.key == pygame.K_SPACE:
-            #             record.stopRec()
-            #             print "key up event!
-       
-        
-       
+def breakScreen():
 
-        trial(file_index)
-        
-        pygame.display.update()  
-        
-        clock.tick(60)
-        
+    global drawn
+    exitWindow = False
+    complete = False
+    breakDescriptor = "Take a break!\nPress C to continue the rest of the study."
 
-    pygame.quit()
-    quit()
+    
+    # event loop -- 
+    """
+    Press C to continue
+    Press esc to quit
+    """
+    while not complete:
+
+        if not drawn:
+            screenDisplay.fill(p.GREY)
+            # render thing here
+            txt.textWrap(screenDisplay, breakDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
+
+            pygame.display.update()
+            drawn = True
+
+        if exitWindow:
+            pygame.quit()
+            quit()
+
+        for event in pygame.event.get() :
+            if event.type == pygame.QUIT: 
+                exitWindow = True
+
+            # KEYDOWN events ---------------
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    print("Escape pressed!")
+                    exitWindow = True
+                
+                # record
+                if event.key == pygame.K_c:
+                    complete = True
+
+            pygame.display.update()  
+            clock.tick(60)
+    drawn = False
 
 
-main_loop()
-print("exited game loop")
+
+def trial(file_index,files,path):
+
+    global drawn 
+    global endoftrial
+    playbackScreen(file_index,files,path)
+    drawn = False
+    recordScreen(file_index,files)
+    drawn = False
+
+
+def experimentCtrlFlow():
+
+    """
+    Main experiment control flow.
+    The number of trials is based off how many stimuli are contained
+    in `stimuli/words/` and `stimuli/phrases/`.
+    Counterbalancing is conducted based off the participant ID.
+    If the participant ID is even then we go phrases->words. If it is
+    odd then we go words->phrases.
+    """
+
+    global file_index
+    # if participant ID is even then go phrases->words
+    # else go words->phrases
+    if (int(ID)%2==0):
+        print  "phrases->words"
+        # phrases --
+        for file in xrange(0,len(phrases)-1):
+            trial(file_index,phrases,p.phrasepath)
+            file_index+=1
+        breakScreen()
+        file_index=0
+        # words --
+        for file in xrange(1,len(words)-1):
+            trial(file_index,words,p.wordpath)
+            file_index+=1
+    else: 
+        # words --
+        print  "words->phrases"
+        for file in xrange(1,len(words)-1):
+            trial(file_index,words,p.wordpath)
+            file_index+=1
+        breakScreen()
+        file_index=0
+        # phrases --
+        for file in xrange(0,len(phrases)-1):
+            trial(file_index,phrases,p.phrasepath)
+            file_index+=1
+
+
+def main():
+    setup()
+    pygame.init()
+    experimentCtrlFlow()
+
+
+# main()
+experimentCtrlFlow()
 pygame.quit()
-print("called pygame quit")
 quit()
-print("should've quit by now")
