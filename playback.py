@@ -6,6 +6,10 @@ import os
 import parameters as p
 
 def play_wavfile(filepath):
+    """
+        processes a wavfile so the left channel is sinewave output and right channel is raw wave data
+        and then outputs to speakers
+    """
     RATE=44100
     chunk = 1024
 
@@ -76,5 +80,36 @@ def play_wavfile(filepath):
     stream.close()  
 
     print("playback ended.")
+    #close PyAudio  
+    p.terminate()  
+
+def normal_playback(filepath):
+    """
+        plays the wavfile specified by filepath
+    """
+    #define stream chunk   
+    chunk = 1024  
+
+    #open a wav format music  
+    f = wave.open(filepath,"rb")  
+    #instantiate PyAudio  
+    p = pyaudio.PyAudio()  
+    #open stream  
+    stream = p.open(format = p.get_format_from_width(f.getsampwidth()),  
+                    channels = f.getnchannels(),  
+                    rate = f.getframerate(),  
+                    output = True)  
+    #read data  
+    data = f.readframes(chunk)  
+
+    #play stream  
+    while data:  
+        stream.write(data)  
+        data = f.readframes(chunk)  
+
+    #stop stream  
+    stream.stop_stream()  
+    stream.close()  
+
     #close PyAudio  
     p.terminate()  

@@ -14,8 +14,10 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
         return rightMin + (valueScaled * rightSpan)
 
 def get_wavfiles(path):
-    # put names of wavfiles in a list
-    # temp_wavfiles = [f for f in listdir(path) if isfile(join(path, f))]
+    """
+        Populates a list of wavfiles and randomizes for gender.
+    """
+
     temp_wavfiles = listdir(path)
     if '.DS_Store' in temp_wavfiles:
         temp_wavfiles.remove('.DS_Store')

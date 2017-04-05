@@ -62,15 +62,38 @@ def  welcomeScreen():
     global drawn
     welcomeTitle= "Welcome to the Haptic Speech Experiment!"
     welcomeDescriptor= "During the experiment you will hear a series of words and phrases. Thereafter, you will be prompted to record yourself repeating what you've heard. Ocassionally you will feel a slight vibration.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
+    complete = False
+    exitWindow = False
+    while not complete:
 
+        if not drawn:
+            screenDisplay.fill(p.GREY)
+            txt.textLine(screenDisplay, welcomeTitle,"top", titleText)
+            txt.textWrap(screenDisplay, welcomeDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
 
-    if not drawn:
-        screenDisplay.fill(p.GREY)
-        txt.textLine(screenDisplay, welcomeTitle,"top", titleText)
+            drawn = True
 
-        txt.textWrap(screenDisplay, welcomeDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
+        if exitWindow:
+            pygame.quit()
+            quit()
 
-        drawn = True
+        for event in pygame.event.get() :
+            if event.type == pygame.QUIT: 
+                exitWindow = True
+
+            # KEYDOWN events ---------------
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    print("Escape pressed!")
+                    exitWindow = True
+                
+                # record
+                if event.key == pygame.K_RETURN:
+                    complete = True
+
+            pygame.display.update()  
+            clock.tick(60)
+    drawn = False
 
 # ----------------------------------------------
 #  Stimulus Play Screen
@@ -230,6 +253,9 @@ def experimentCtrlFlow():
     """
 
     global file_index
+
+    welcomeScreen()
+
     # if participant ID is even then go phrases->words
     # else go words->phrases
     if (int(ID)%2==0):
