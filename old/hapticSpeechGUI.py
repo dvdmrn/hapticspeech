@@ -184,102 +184,102 @@ def recordScreen():
 # ----------------------------------------------
 #  Playback
 # ----------------------------------------------
-def play_wavfile(filename):
-    RATE=44100
-    chunk = 1024
+# def play_wavfile(filename):
+#     RATE=44100
+#     chunk = 1024
 
-    filepath = os.path.join(wavpath, filename)
+#     filepath = os.path.join(wavpath, filename)
 
-    f = wave.open(filepath,"rb")  
-    print("\n\nopening: "+filepath)
-    print("samplerate: "+str(f.getframerate()))
-    print("frames: "+str(f.getnframes()))
-    print("channels: "+str(f.getnchannels()))
-    print("sample width: "+str(f.getsampwidth()))
+#     f = wave.open(filepath,"rb")  
+#     print("\n\nopening: "+filepath)
+#     print("samplerate: "+str(f.getframerate()))
+#     print("frames: "+str(f.getnframes()))
+#     print("channels: "+str(f.getnchannels()))
+#     print("sample width: "+str(f.getsampwidth()))
 
-    ## GENERATE STEREO FILE ##
-    wv = wave.open('temp.wav', 'w')
-    wv.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
-    maxVol=2**14-1.0 #maximum amplitude
-    wvData=""
-    i = 0
+#     ## GENERATE STEREO FILE ##
+#     wv = wave.open('temp.wav', 'w')
+#     wv.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
+#     maxVol=2**14-1.0 #maximum amplitude
+#     wvData=""
+#     i = 0
 
-    for i in range(0, f.getnframes()):
+#     for i in range(0, f.getnframes()):
     
-        frameSample = f.readframes(1)
-        # print len(frameSample)
-        if len(frameSample):
-            try:
-                data = unpack('h',frameSample)
-            except:
-                print ("Unpacking error, may be from an invalid frameSample")
-                print ("frame sample length: "+str(len(frameSample)))
-                print ("frame sample string: "+frameSample)
+#         frameSample = f.readframes(1)
+#         # print len(frameSample)
+#         if len(frameSample):
+#             try:
+#                 data = unpack('h',frameSample)
+#             except:
+#                 print ("Unpacking error, may be from an invalid frameSample")
+#                 print ("frame sample length: "+str(len(frameSample)))
+#                 print ("frame sample string: "+frameSample)
             
-        else:
-            data = 0
-        if data:
-            amp = math.sqrt(data[0]**2)
-            wvData+=pack('h', data[0])
-            wvData+=pack('h', amp*sin(i*800.0/RATE)) #200Hz right
-        else:
-            break
-    wv.writeframes(wvData)
-    wv.close()
+#         else:
+#             data = 0
+#         if data:
+#             amp = math.sqrt(data[0]**2)
+#             wvData+=pack('h', data[0])
+#             wvData+=pack('h', amp*sin(i*800.0/RATE)) #200Hz right
+#         else:
+#             break
+#     wv.writeframes(wvData)
+#     wv.close()
 
-    print("processed file!")
+#     print("processed file!")
 
 
-    # --------------------------------------------------------
-    # playback processed audio
-    # --------------------------------------------------------
+#     # --------------------------------------------------------
+#     # playback processed audio
+#     # --------------------------------------------------------
 
-    #open a wav format music  
-    f = wave.open(r"temp.wav","rb")  
-    #instantiate PyAudio  
-    p = pyaudio.PyAudio()  
-    #open stream  
-    stream = p.open(format = p.get_format_from_width(f.getsampwidth()), 
-                    channels = 2,  
-                    rate = f.getframerate(),  
-                    output = True)  
-    #read data  
-    data = f.readframes(chunk)
+#     #open a wav format music  
+#     f = wave.open(r"temp.wav","rb")  
+#     #instantiate PyAudio  
+#     p = pyaudio.PyAudio()  
+#     #open stream  
+#     stream = p.open(format = p.get_format_from_width(f.getsampwidth()), 
+#                     channels = 2,  
+#                     rate = f.getframerate(),  
+#                     output = True)  
+#     #read data  
+#     data = f.readframes(chunk)
 
-    print("playback initialized!")
+#     print("playback initialized!")
 
-    while data:
-        stream.write(data)
-        data = f.readframes(chunk)
+#     while data:
+#         stream.write(data)
+#         data = f.readframes(chunk)
 
-    #stop stream  
-    stream.stop_stream()  
-    stream.close()  
+#     #stop stream  
+#     stream.stop_stream()  
+#     stream.close()  
 
-    print("playback ended.")
-    #close PyAudio  
-    p.terminate()  
+#     print("playback ended.")
+#     #close PyAudio  
+#     p.terminate()  
 
 # returns a randomized list of songs in the directory
-def get_wavfiles():
-    path = "stimuli/"
-    # put names of wavfiles in a list
-    wavfiles = [f for f in listdir(path) if isfile(join(path, f))]
-    if '.DS_Store' in wavfiles:
-        wavfiles.remove('.DS_Store')
-    random.shuffle(wavfiles)
-    return wavfiles
+# def get_wavfiles():
+#     path = "stimuli/"
+#     # put names of wavfiles in a list
+#     wavfiles = [f for f in listdir(path) if isfile(join(path, f))]
+#     if '.DS_Store' in wavfiles:
+#         wavfiles.remove('.DS_Store')
+#     random.shuffle(wavfiles)
+#     return wavfiles
 
-def translate(value, leftMin, leftMax, rightMin, rightMax):
-    # Figure out how 'wide' each range is
-    leftSpan = leftMax - leftMin
-    rightSpan = rightMax - rightMin
+# def translate(value, leftMin, leftMax, rightMin, rightMax):
+#     # Figure out how 'wide' each range is
+#     leftSpan = leftMax - leftMin
+#     rightSpan = rightMax - rightMin
 
-    # Convert the left range into a 0-1 range (float)
-    valueScaled = float(value - leftMin) / float(leftSpan)
+#     # Convert the left range into a 0-1 range (float)
+#     valueScaled = float(value - leftMin) / float(leftSpan)
 
-    # Convert the 0-1 range into a value in the right range.
-    return rightMin + (valueScaled * rightSpan)
+#     # Convert the 0-1 range into a value in the right range.
+#     return rightMin + (valueScaled * rightSpan)
 
 
 # ----------------------------------------------
@@ -323,6 +323,7 @@ def game_loop() :
     
     # event handling loop
     exitWindow = False  
+    
 
     while not exitWindow:
 

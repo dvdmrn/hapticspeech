@@ -117,7 +117,7 @@ def playbackScreen(file_index,files,path):
         screenDisplay.fill(p.GREY)
         pygame.display.update()
         filepath = util.constructPath(path,files[file_index])
-        playback.play_wavfile(filepath)
+        playback.haptic_playback(filepath)
         drawn = True
     
 

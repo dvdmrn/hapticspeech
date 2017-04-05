@@ -30,4 +30,7 @@ main.py
 	|- recorder.py (recording functions)
 	|- parameters.py (static variables)
 	|- textdisplay.py (text rendering)
+
+calibrationassist.py (manipulate SNR to calibrate accuracy)
+
 ```

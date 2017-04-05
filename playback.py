@@ -5,7 +5,7 @@ from math import sin, pi, sqrt
 import os
 import parameters as p
 
-def play_wavfile(filepath):
+def haptic_playback(filepath):
     """
         processes a wavfile so the left channel is sinewave output and right channel is raw wave data
         and then outputs to speakers
