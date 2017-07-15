@@ -43,8 +43,10 @@ def haptic_playback(filepath):
             data = 0
         if data:
             amp = sqrt(data[0]**2)
-            wvData+=pack('h', data[0])
-            wvData+=pack('h', amp*sin(i*800.0/RATE)) #200Hz right
+            # -- write source wav file in left channel
+            wvData += pack('h', data[0])
+            # -- write sine wave in right channel
+            wvData += pack('h', amp*sin(i*800.0/RATE)) #200Hz right
         else:
             break
     wv.writeframes(wvData)
