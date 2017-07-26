@@ -11,8 +11,7 @@ import textdisplay as txt
 import utilities as util
 import parameters as p
 import record
-import playback
-import pygame_textinput
+import playback_pulse
 
 # init pygame
 ID = str(input("Participant ID: "))
@@ -21,7 +20,6 @@ pygame.init()
 # typefaces ------------\
 titleText = pygame.font.Font('freesansbold.ttf',40)
 bodyText = pygame.font.Font('freesansbold.ttf', 32)
-# inputFont = pygame.font.Font('UbuntuMono-R', 32)
 # ----------------------/
 
 
@@ -55,9 +53,6 @@ else:
 # ============================================================================================
 # Functions
 # ============================================================================================
-textinput = pygame_textinput.TextInput("UbuntuMono-R.ttf",30)
-textinput.set_text_color(p.PINK)
-textinput.set_cursor_color(p.PINK)
 
 # ----------------------------------------------
 # Welcome Screen
@@ -66,7 +61,7 @@ textinput.set_cursor_color(p.PINK)
 def  welcomeScreen():
     global drawn
     welcomeTitle= "Welcome to the Haptic Speech Experiment!"
-    welcomeDescriptor= "During the experiment you will hear a series of words and phrases. Thereafter, you will be prompted to write what you've heard.You will feel slight vibrations.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
+    welcomeDescriptor= "During the experiment you will hear a series of words and phrases. Thereafter, you will be prompted to record yourself repeating what you've heard. Ocassionally you will feel a slight vibration.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
     complete = False
     exitWindow = False
     while not complete:
@@ -122,7 +117,7 @@ def playbackScreen(file_index,files,path):
         screenDisplay.fill(p.GREY)
         pygame.display.update()
         filepath = util.constructPath(path,files[file_index])
-        playback.haptic_playback(filepath)
+        playback_pulse.haptic_playback(filepath)
         drawn = True
     
 
@@ -140,7 +135,7 @@ def recordScreen(file_index,files):
     endoftrial = False
     complete = False
     exitWindow = False
-    recordDescriptor="Please type what you heard.\nPress [enter] to progress."
+    recordDescriptor="Now you will record yourself saying what you have just heard!\nYou are allowed to make as many recordings as you like. We will only use the last recording.\nWhen you are ready to begin press and hold the SPACE bar.\nWhen you are satisfied with your recording press ENTER to continue with the rest of the study."
 
     # event loop -- 
     """
@@ -149,30 +144,17 @@ def recordScreen(file_index,files):
         RETURN: next
     """
     while not complete:
-        screenDisplay.fill(p.GREY)
-        events = pygame.event.get()
-        textLineHeight = 40
-        inputTextPadding = 5
-        
-        # descriptor text
-        txt.textWrap(screenDisplay, recordDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
-        # textual input start --\\
-        pygame.draw.rect(screenDisplay,p.DARKGREY, pygame.Rect((p.cornerPadding,p.screen_height-p.cornerPadding-textLineHeight-200),(p.screen_width-2*p.cornerPadding,textLineHeight+inputTextPadding)))
-        textinput.update(events)
-        screenDisplay.blit(textinput.get_surface(), (p.cornerPadding+inputTextPadding, p.screen_height-p.cornerPadding-textLineHeight-200+inputTextPadding))
-        # textual input end --//
-
-        pygame.display.update()
-
         if not drawn:
-            # text input --
+            screenDisplay.fill(p.GREY)
+            txt.textWrap(screenDisplay, recordDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
+            pygame.display.update()
             drawn = True
 
         if exitWindow:
             pygame.quit()
             quit()
 
-        for event in events :
+        for event in pygame.event.get() :
             if event.type == pygame.QUIT: 
                 exitWindow = True
 
@@ -182,29 +164,21 @@ def recordScreen(file_index,files):
                     print("Escape pressed!")
                     exitWindow = True
                 
-                # record -- legacy code: uncomment for audio recording.
-                #           also uncomment the if block marked with ***
-
-                # if event.key == pygame.K_SPACE:
-                #     if not record.recording:
-                #         record.rec(screenDisplay,bodyText, files[file_index], ID)
-                #         drawn = False
-                #         endoftrial = True
+                # record
+                if event.key == pygame.K_SPACE:
+                    if not record.recording:
+                        record.rec(screenDisplay,bodyText, files[file_index], ID)
+                        drawn = False
+                        endoftrial = True
                 
                 # move on 
                 if event.key == pygame.K_RETURN:
-                    print("\n\n\nINPUT TEXT: "+textinput.get_text())
-                    textinput.clear_text()
-                    complete = True
+                    if endoftrial: 
+                        print "end of trial clause"
+                        complete = True
 
-                    # *** uncomment the following if using audio recording, and comment out 
-                    #     the complete = True statement above
-                    # if endoftrial: 
-                    #     print "end of trial clause"
-                    #     complete = True
-
-
-            clock.tick(30)
+            pygame.display.update()  
+            clock.tick(60)
 
     drawn = False
 

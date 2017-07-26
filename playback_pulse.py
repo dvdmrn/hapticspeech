@@ -26,6 +26,9 @@ def haptic_playback(filepath):
     maxVol=2**14-1.0 #maximum amplitude
     wvData=""
     i = 0
+    gain = 6000
+
+    pulseLength = RATE
 
     for i in range(0, f.getnframes()):
     
@@ -43,10 +46,16 @@ def haptic_playback(filepath):
             data = 0
         if data:
             amp = sqrt(data[0]**2)
+            # print(amp)
             # -- write source wav file in left channel
             wvData += pack('h', data[0])
             # -- write sine wave in right channel
-            wvData += pack('h', amp*sin(i*2*pi*(180.0/RATE))) #200Hz right
+            if(pulseLength>0):
+                sineWave = gain*sin(i*2*pi*(180.0/RATE))
+                wvData += pack('h', sineWave) #constant 200Hz right
+                pulseLength -= 1
+            else:
+                wvData += pack('h', 0)
         else:
             break
     wv.writeframes(wvData)
