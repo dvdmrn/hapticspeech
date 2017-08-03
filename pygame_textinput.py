@@ -80,8 +80,8 @@ class TextInput:
                     self.input_string = self.input_string[:self.cursor_position] + \
                                         self.input_string[self.cursor_position + 1:]
 
-                elif event.key == pl.K_RETURN:
-                    self.complete = True
+                # elif event.key == pl.K_RETURN:
+                #      self.complete = True
 
                 elif event.key == pl.K_RIGHT:
                     # Add one to cursor_pos, but do not exceed len(input_string)
