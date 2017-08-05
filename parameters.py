@@ -16,8 +16,10 @@ BLACK = (0,0,0)
 WHITE = (255, 255, 255)
 OFFWHITE = (200,200,200)
 GREY = (190, 190, 190)
-DARKGREY = (30,30,30)
-PINK = (200,180,200)
+BG = (30, 30, 30)
+
+DARKGREY = (10,10,10)
+PINK = (200,100,200)
 
 # files --
 wordpath = "stimuli/words/"

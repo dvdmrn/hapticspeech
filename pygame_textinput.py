@@ -71,9 +71,9 @@ class TextInput:
 
                 if event.key == pl.K_BACKSPACE: # FIXME: Delete at beginning of line?
                     print("backspace entered")
+
                     self.input_string = self.input_string[:max(self.cursor_position - 1, 0)] + \
                                         self.input_string[self.cursor_position:]
-
                     # Subtract one from cursor_pos, but do not go below zero:
                     self.cursor_position = max(self.cursor_position - 1, 0)
                 elif event.key == pl.K_DELETE:
@@ -152,6 +152,7 @@ class TextInput:
 
     def clear_text(self):
         self.input_string = ""
+        self.cursor_position = 0
 
     def get_cursor_position(self):
         return self.cursor_position

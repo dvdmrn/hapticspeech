@@ -13,10 +13,19 @@ import parameters as p
 import record
 import playback
 import pygame_textinput
+import csv
+import os
+import re
 
 # init pygame
 ID = str(input("Participant ID: "))
+participantResponseRootFilePath = ("responses/"+ID)
+
+if not os.path.exists(participantResponseRootFilePath):
+    os.makedirs(participantResponseRootFilePath)
+
 pygame.init()
+
 
 # typefaces ------------\
 titleText = pygame.font.Font('freesansbold.ttf',40)
@@ -35,6 +44,11 @@ phrases = util.get_wavfiles("stimuli/phrases/")
 words = util.get_wavfiles("stimuli/words/")
 file_index = 0
 
+# a hack ---------------\
+# look the other way
+currentFilePath = ""
+currentCsvPath = ""
+# ----------------------/
 
 # pygame setup ---------\
 
@@ -74,9 +88,9 @@ def  welcomeScreen():
     while not complete:
 
         if not drawn:
-            screenDisplay.fill(p.GREY)
-            txt.textLine(screenDisplay, welcomeTitle,"top", titleText)
-            txt.textWrap(screenDisplay, welcomeDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
+            screenDisplay.fill(p.BG)
+            txt.textLine(screenDisplay, welcomeTitle,"top", titleText, p.PINK)
+            txt.textWrap(screenDisplay, welcomeDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
 
             drawn = True
 
@@ -112,6 +126,7 @@ def playbackScreen(file_index,files,path):
     """
 
     global drawn
+    global currentFilePath
 
 
     if not drawn:
@@ -121,17 +136,17 @@ def playbackScreen(file_index,files,path):
         print("wave file: "+str(files[file_index]))
         print("files: "+str(files))
 
-        screenDisplay.fill(p.GREY)
+        screenDisplay.fill(p.BG)
         pygame.display.update()
-        filepath = util.constructPath(path,files[file_index])
-        playback.haptic_playback(filepath)
+        currentFilePath = util.constructPath(path,files[file_index])
+        playback.haptic_playback(currentFilePath)
         drawn = True
     
 
 # ----------------------------------------------
 #  Recording  Screen
 # ----------------------------------------------
-def recordScreen(file_index,files):
+def recordScreen(file_index,files,path):
     """
     draws main record screen for a given file_index
     file_index : an int
@@ -151,13 +166,13 @@ def recordScreen(file_index,files):
         RETURN: next
     """
     while not complete:
-        screenDisplay.fill(p.GREY)
+        screenDisplay.fill(p.BG)
         events = pygame.event.get()
         textLineHeight = 40
         inputTextPadding = 5
         
         # descriptor text
-        txt.textWrap(screenDisplay, recordDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
+        txt.textWrap(screenDisplay, recordDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
         # textual input start --\\
         pygame.draw.rect(screenDisplay,p.DARKGREY, pygame.Rect((p.cornerPadding,p.screen_height-p.cornerPadding-textLineHeight-200),(p.screen_width-2*p.cornerPadding,textLineHeight+inputTextPadding)))
         textinput.update(events)
@@ -196,6 +211,7 @@ def recordScreen(file_index,files):
                 # move on 
                 if event.key == pygame.K_RETURN:
                     print("\n\n\nINPUT TEXT: "+textinput.get_text())
+                    appendToAnswerSheet(textinput.get_text(),os.path.basename(currentFilePath))
                     textinput.clear_text()
                     complete = True
 
@@ -228,9 +244,9 @@ def breakScreen():
     while not complete:
 
         if not drawn:
-            screenDisplay.fill(p.GREY)
+            screenDisplay.fill(p.BG)
             # render thing here
-            txt.textWrap(screenDisplay, breakDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.BLACK, p.GREY, 1) 
+            txt.textWrap(screenDisplay, breakDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
 
             pygame.display.update()
             drawn = True
@@ -265,7 +281,7 @@ def trial(file_index,files,path):
     global endoftrial
     playbackScreen(file_index,files,path)
     drawn = False
-    recordScreen(file_index,files)
+    recordScreen(file_index,files,path)
     drawn = False
 
 
@@ -289,27 +305,47 @@ def experimentCtrlFlow():
     if (int(ID)%2==0):
         print  "phrases->words"
         # phrases --
+        initCsv("phrases")
         for file in xrange(0,len(phrases)-1):
             trial(file_index,phrases,p.phrasepath)
             file_index+=1
         breakScreen()
         file_index=0
         # words --
+        initCsv("words")
         for file in xrange(1,len(words)-1):
             trial(file_index,words,p.wordpath)
             file_index+=1
     else: 
         # words --
         print  "words->phrases"
+        initCsv("words")
         for file in xrange(1,len(words)-1):
             trial(file_index,words,p.wordpath)
             file_index+=1
         breakScreen()
         file_index=0
         # phrases --
+        initCsv("phrases")
         for file in xrange(0,len(phrases)-1):
             trial(file_index,phrases,p.phrasepath)
             file_index+=1
+
+def appendToAnswerSheet(answer,token):
+    with open(currentCsvPath,'ab') as csvFile:
+        # we format the filepath so we don't have an ugly /.../.../... .wav name
+        m = re.search('\_.*\_', token) # finds stuff that looks like _this_
+        formattedToken = m.group(0)[1:-1] # strips the _'s
+        csvWriter = csv.writer(csvFile)
+        csvWriter.writerow([answer,formattedToken])
+
+def initCsv(type):
+    global ID
+    global currentCsvPath
+    currentCsvPath = participantResponseRootFilePath+"/"+ID+"_"+type+"_responses.csv"
+    with open(currentCsvPath, 'wb') as csvFile:
+        csvWriter = csv.writer(csvFile)
+        csvWriter.writerow(["Response","Token"])
 
 
 def main():
