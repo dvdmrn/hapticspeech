@@ -1,8 +1,7 @@
 from pylab import *
 from scipy.io import wavfile
-import matplotlib.pyplot as plt
 
-sampFreq, snd = wavfile.read('../stimuli/phrases/_phoneme_a.wav')
+sampFreq, snd = wavfile.read('stimuli/calibrationassist/words/WORD_assess_male.wav')
 
 CHUNK = 512
 
@@ -27,8 +26,8 @@ def fftAnalyze(data,chunkStart,chunkEnd):
 			y := sound samples (magnitude)
 	"""
 	chunkEnd = chunkStart+chunkEnd
-	print chunkStart
-	print chunkEnd
+	# print chunkStart
+	# print chunkEnd
 	if chunkEnd > len(data):
 		return ([0],[0])
 	n = len(data[chunkStart:chunkEnd])
@@ -52,7 +51,9 @@ def fftAnalyze(data,chunkStart,chunkEnd):
 	return (freqArray,p)
 
 
-def plotLoop():
+# @TODO: get rid of while loop and instead feed it chunks from
+# 		 the main playback loop in the experiment proper. 
+def processWavefile():
 	chunksSoFar = 0
 	while(chunksSoFar<len(snd)):
 		theTuple = fftAnalyze(snd,chunksSoFar,CHUNK)
@@ -72,6 +73,7 @@ def plotLoop():
 		# show()
 		chunksSoFar += CHUNK
 
+
 # def sumBuckets(magnitudes, frequencies, subsampleWidth, subsampleDifference):
 # 	"""
 # 	magnitudes: an array
@@ -87,20 +89,33 @@ def plotLoop():
 # 	return means
 
 def thresholdCategorization(magnitudes, frequencies, threshold):
-	logMagnitudes = 10*log10(magnitudes)
-	# print frequencies
-	HzArray = map(lambda x: x/float(1000), frequencies)
-	# print HzArray
-	dataTupledList = []
-	for i in xrange(0,len(magnitudes)-1):
-		dataTupledList.append((HzArray[i],logMagnitudes[i]))
-	dataTupled = array(dataTupledList)
-	aveDiff(dataTupled,threshold)
-	# dataTupled = array([(HzArray[i],frequencies[i]) for i in xrange(0,len(magnitudes)-1)])	
-	# print dataTupled
+	if(len(magnitudes) > 1): # ensure a valid list of magnitudes
+		print("len of mags: ",len(magnitudes))
+		logMagnitudes = 10*log10(magnitudes)
+		# print frequencies
+		HzArray = map(lambda x: x/float(1000), frequencies)
+		# print HzArray
+		dataTupledList = []
+		for i in xrange(0,len(magnitudes)-1):
+			dataTupledList.append((HzArray[i],logMagnitudes[i]))
+		dataTupled = array(dataTupledList)
+		return aveDiff(dataTupled,threshold)
+		# dataTupled = array([(HzArray[i],frequencies[i]) for i in xrange(0,len(magnitudes)-1)])	
+		# print dataTupled
 
 
 def aveDiff(inputSequence, threshold):
+	"""
+	the relative difference between everything
+	below the threshold, vs everything beyond.
+	Returns true when everything there is a large difference between
+	the two values. The difference is set at 15 and was determined
+	through trial and error.
+
+	Why just a 'large difference' and not verifying if - or + (thereby
+	knowing if everything below the threshold is larger or not?)
+	Noise above the threshold seems to 
+	"""
 	# take average of everything < threshold
 	# take average of everything > threshold
 	# if < threshold ave is larger, return true
@@ -119,17 +134,21 @@ def aveDiff(inputSequence, threshold):
 	thresholdMean = mean(withinThreshold)
 	beyondMean =  mean(beyondThreshold)
 	difference = beyondMean - thresholdMean
-	# -50 - -30
-	print ("difference: ",difference)
+	
+
+	print ("difference: ",difference,"threshold: ",thresholdMean, "beyond: ",beyondMean)
+
 	if(abs(difference) > 15):
+		return True
 		print "yes"
-		print ("threshold mean: ",thresholdMean)
-		print ("beyond mean: ",beyondMean)
+		# print ("threshold mean: ",thresholdMean)
+		# print ("beyond mean: ",beyondMean)
 	else:
+		return False
 		print "no"
-		print ("threshold mean: ",thresholdMean)
-		print ("beyond mean: ",beyondMean)
+		# print ("threshold mean: ",thresholdMean)
+		# print ("beyond mean: ",beyondMean)
 
 
 
-plotLoop()
+processWavefile()
