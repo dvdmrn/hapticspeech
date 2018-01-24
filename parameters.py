@@ -24,6 +24,8 @@ PINK = (200,100,200)
 # files --
 wordpath = "stimuli/words/"
 phrasepath = "stimuli/phrases/"
+minpairs = "stimuli/minpairs/"
+
 responsePath = "responses/"
 
 # ----------------------/

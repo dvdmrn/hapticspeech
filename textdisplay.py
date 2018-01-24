@@ -37,14 +37,14 @@ def textLine(screenSurface, text, pos, font, color=parameters.BLACK, cH=0, cV=0)
         TextRect.center = (cH,cV)
         screenSurface.blit(TextSurf, TextRect)
         
-        pygame.display.update()
+        # pygame.display.update()
 
     else:        
         TextSurf, TextRect = text_objects(text, font, color)
         TextRect.center = ((parameters.screen_width/2),(parameters.screen_height/float(division)))
         screenSurface.blit(TextSurf, TextRect)
 
-        pygame.display.update()
+        # pygame.display.update()
 
 class TextWrapException:
     def __init__(self, message = None):
