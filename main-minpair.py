@@ -176,7 +176,6 @@ def recordScreen(file_index,files,path):
     mp1 = mp[1]
 
     answers = "<- "+mp0+" | "+mp1+" ->"
-    arrows = " <=  |  =>"
     print(mp0,mp1,"token: ",token)
     
 
@@ -196,7 +195,6 @@ def recordScreen(file_index,files,path):
         # descriptor text
         txt.textWrap(screenDisplay, recordDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
         txt.textLine(screenDisplay,answers, "mid", answerText, p.OFFWHITE,)
-        txt.textLine(screenDisplay,arrows, "bottom", answerText, p.OFFWHITE,)
 
         # txt.textWrap(screenDisplay, mp0, bodyText, pygame.Rect((p.screen_width/4,40, 400, 40)), p.OFFWHITE, p.BG, 1) 
         # txt.textWrap(screenDisplay, mp1, bodyText, pygame.Rect((p.screen_width/2,40,400, 40)), p.OFFWHITE, p.BG, 1) 
@@ -346,7 +344,7 @@ def experimentCtrlFlow():
     welcomeScreen()
 
     initCsv("minpair")
-    numOfTokens = len(minpairs)-1
+    numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
     for file in xrange(0,halfTokens):
         trial(file_index,minpairs,p.minpairs)

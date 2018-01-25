@@ -70,6 +70,7 @@ def get_minpairs(path):
             minpairMap.append(row)
 
     temp_wavfiles = listdir(path)
+    print("temp_wavfiles: ",temp_wavfiles)
     if '.DS_Store' in temp_wavfiles:
         temp_wavfiles.remove('.DS_Store')
     
@@ -85,7 +86,7 @@ def get_minpairs(path):
         mpSet["DATA"] = mpsToAdd
         if mpSet["DATA"]:
             minPairs.append(mpSet)
-    print minPairs
+    print "MP len: "+str(len(minPairs))
 
     for e in minPairs:
         random.shuffle(e["DATA"])
@@ -116,6 +117,7 @@ def get_minpairs(path):
     # del male_files
     # del female_files
     # random.shuffle(wavfiles)
+    print "playList: "+str(playList)
     return playList
 
 def constructPath(path,filename):
