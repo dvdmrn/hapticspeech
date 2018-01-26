@@ -1,0 +1,63 @@
+Meeting agenda:
+	+ Maybe go over LSURC presentation
+	+ Go over todos
+	+ Iterate on experimental design
+	+ discuss possible pub venues
+
+8 tokens = 40s, 1 min conservative
+100 tokens = 12.5m, 20m conservative
+
+minpair analysis = done
+recording = done ** but many are too quiet
+difference in vib style && Playing with diff word/stimuli combos:
+	- can feel freq differences, defs a peak response in terms of 200-1000Hz, it can get painful if too loud and high freq
+	- 
+	- Would be interesting to do a high pass filter and supplement high freq information (since that is commonly often lost in sensioneural hearing loss)
+- Time budget: 1 hour, 
+		budget 30m to go through 100 tokens
+		Calibration sequence: budget 15m. Suggest we do this automatically
+- Body locations: agree with neck and hands
+
+Time breakdown:
++ 15m introduction, sign papers
++ 15m calibration
++ 30m main task (will really be 20m)
+	- Note: if we want to do within subjects we could probably break it down to 50 tokens with one vib style, 50 tokens with another vib style
+
+
+Equalize power under curve between tadoma + lowfi
+	- for lowfi sine wave, take area under curve of high-fi--then make the lowfi token's amp match the high fi
+
+Criteria for in/exclusion of pairs:
+- prune minimal pair corpus: open vs closed vowels (amp distinction)
+						- +v vs -v for stops, fricatives, lowfi+highfi
+
+- fine if mps are all onset
+
+- headmounted mic for recording
+	- remove mid vowels--go for high contrast btwn vowels
+
+	- high vs low (vowels) <10 tokens for each?>
+	- voice vs unvoiced (stops) ** drop?
+	- voice vs unvoiced (fricatives) ** longer so may have a greater effect
+
+	- nasal vs oral (nasalized vowels) ** drop?
+
+	- and similar numbers of minimal pairs	
+	- use monosyl.
+	-  
+
+struct: 2x3x4??? 
+no of observations within subjects: 10 per condition (at least)
+240 trials
+
+Bringing it down: collapse contrasts...
+				  only do 2 or 3 contrasts?
+
+TODOs: ----------------------------------------------------------------------------------
+	- Try and ID trials I can afford with budget
+	- Can we cram in 240 trials in our budget?
+	   - if we can't drop some contrasts, #1 is stops, #2 nasals 
+	- power analysis? 
+	- Prelim on N=12, aim for N=24
+	- Analyze where biggest distinctions in amplitude are after recording and observing sine wave

@@ -1,7 +1,6 @@
 .DS_Store
 responses/*
 *.pyc
-*.wav
 stimuli/phrases/*
 stimuli/words/*
 stimuli/calibrationassist/*
