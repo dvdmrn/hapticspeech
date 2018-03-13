@@ -10,11 +10,6 @@
               the source wavefile. 
 """
 
-# TODO: !!! 2017-11-28
-    # writes a blank temp.wav file. I think it's because I unpack('h',...)
-    # and then pack('h',...) but inbetween I strip it into an array so I 
-    # may lose the short datatypeness of it all messing up the pack()
-
 import pyaudio
 import wave
 from struct import pack, unpack

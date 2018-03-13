@@ -7,7 +7,7 @@
 from pylab import *
 from scipy.io import wavfile
 
-sampFreq, snd = wavfile.read('stimuli/calibrationassist/words/WORD_assess_male.wav')
+sampFreq, snd = wavfile.read('stimuli/male/stops/120_bought_vs_m.wav')
 
 CHUNK = 512
 

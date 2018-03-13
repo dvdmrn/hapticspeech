@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, walk
 from os.path import isfile, join
 import random
 import re
@@ -64,24 +64,41 @@ def get_minpairs(path):
     playList = []
     global minpairMap
 
-    with open("stimuli/minpairmap.csv") as mpmap:
+    with open(join(path,"minpairmap.csv")) as mpmap:
         reader = csv.DictReader(mpmap)
         for row in reader:
+            print("appending row",row)
             minpairMap.append(row)
 
     temp_wavfiles = listdir(path)
-    print("temp_wavfiles: ",temp_wavfiles)
+    
     if '.DS_Store' in temp_wavfiles:
         temp_wavfiles.remove('.DS_Store')
     
+  
+
+
     for row in minpairMap:
+        # makes mp sets such that:
+        # {"mpID":["wave1.wav","wave2.wav", ..."waveN.wav"]}
         mpSet = {}
         idToFind = str(row["ID"])
         mpsToAdd = []
+
+
+        # search all subdirectories for matching IDs
+        for root, subFolders, files in walk(path):  
+          for f in files:
+            if idToFind in f:
+                print("FOUND MATCH:",idToFind,f)
+                mpsToAdd.append(join(root,f))
+
+
+
+
         for filename in temp_wavfiles:
             if idToFind in filename:
                 print("FOUND MATCH:",idToFind,filename)
-                mpsToAdd.append(filename)
         mpSet["ID"] = idToFind
         mpSet["DATA"] = mpsToAdd
         if mpSet["DATA"]:
@@ -91,32 +108,7 @@ def get_minpairs(path):
     for e in minPairs:
         random.shuffle(e["DATA"])
         playList.append(e["DATA"][0])
-    # for f in temp_wavfiles:
-    #     m = re.search('\_.*\_', token) # finds stuff that looks like _this_
-    #     formattedToken = m.group(0)[:-1] # strips the _'s
-    #     idList.append(formattedToken)
-    # idList = set(idList) # gets rid of duplicates
-    # idList = list(idList) # converts back to list so it's indexable
-
-    # for f in temp_wavfiles:
-    #     if 'female' in f:
-    #         female_files.append(f)
-    #     else:
-    #         male_files.append(f)
-
-    # for f in female_files:
-    #     if bool(random.getrandbits(1)):
-    #         wavfiles.append(f)
-    #     else:
-    #         m = f.replace('female', 'male')
-    #         if m in male_files:
-    #             wavfiles.append(m)
-    #         else:
-    #             wavfiles.append(f)
-
-    # del male_files
-    # del female_files
-    # random.shuffle(wavfiles)
+   
     print "playList: "+str(playList)
     return playList
 
