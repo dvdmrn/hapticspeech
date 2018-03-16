@@ -6,7 +6,7 @@ import random
 from struct import pack, unpack
 from math import sin, pi
 import wave
-import pyaudio  s
+import pyaudio
 import math
 import pygame
 import time
@@ -148,7 +148,7 @@ def get_wavfiles():
 
 def global_rms(file):
 	SST = 0
-	for i in range f.getnframes():
+	for i in range(f.getnframes()):
 		data = f.readframes(1)
 		SST += math.sqrt(data[0]**2)
 	average = SST/float(getnframes())

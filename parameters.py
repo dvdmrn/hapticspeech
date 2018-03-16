@@ -14,11 +14,12 @@ cornerPadding = 20
 # color --
 BLACK = (0,0,0)
 WHITE = (255, 255, 255)
-OFFWHITE = (200,200,200)
+OFFWHITE = (230,230,230)
 GREY = (190, 190, 190)
-BG = (30, 30, 30)
+BG = (30, 10, 20)
 
-DARKGREY = (10,10,10)
+DARKGREY = (30,10,20)
+# DARKGREY = (10,10,10)
 PINK = (200,100,200)
 
 # files --

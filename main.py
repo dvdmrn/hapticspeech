@@ -1,5 +1,10 @@
 """
     use the -w flag for windowed mode
+
+    notes:
+
+    gets files in stim based off minpairmappings.csv. Randomly populates an array called "files"
+
 """
 
 import pygame
@@ -11,13 +16,12 @@ import textdisplay as txt
 import utilities as util
 import parameters as p
 import record
-import playback_voicingrms as playback
+import playback_rms
+# import playback_lowfi
 import pygame_textinput
 import csv
 import os
 import re
-
-print("in main")
 
 # init pygame
 ID = str(input("Participant ID: "))
@@ -89,7 +93,7 @@ textinput.set_cursor_color(p.PINK)
 def  welcomeScreen():
     global drawn
     welcomeTitle= "Welcome to the Haptic Speech Experiment!"
-    welcomeDescriptor= "During the experiment you will hear a series of words and phrases. Thereafter, you will be prompted to write what you've heard.You will feel slight vibrations.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
+    welcomeDescriptor= "During the experiment you will hear a series of words. You will be prompted to identify each word in a multiple choice manner. Select the LEFT word with the left arrow key [<-], and the RIGHT word with the right arrow key [->]. \nThe experiment will begin with a calibration phase. Afterwards, you will be asked to notify a researcher to assist you with the vibrator.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
     complete = False
     exitWindow = False
     while not complete:
@@ -147,7 +151,7 @@ def playbackScreen(file_index,files,path):
         pygame.display.update()
         currentFilePath = util.constructPath(path,files[file_index])
         print("calling haptic_playback")
-        playback.haptic_playback(currentFilePath)
+        playback_rms.haptic_playback(currentFilePath)
         drawn = True
     
 
@@ -158,6 +162,9 @@ def recordScreen(file_index,files,path):
     """
     draws main record screen for a given file_index
     file_index : an int
+
+    LEFT response = mp0
+    RIGHT response = mp1
     """
 
     global drawn
@@ -167,7 +174,7 @@ def recordScreen(file_index,files,path):
     exitWindow = False
     recordDescriptor="Select the word you heard using the arrow keys:"
     print "----\nAwaiting input for: "+str(files[file_index])
-    mpIDpattern = re.match("[0-9]+_",str(files[file_index]))
+    mpIDpattern = re.search("[0-9]+_",str(files[file_index])) # match ID
     tokenName = re.search("\_\w+\_",str(files[file_index]))
     token = tokenName.group(0)[1:-1]
     mpID = mpIDpattern.group(0)[:-1]
@@ -241,13 +248,14 @@ def recordScreen(file_index,files,path):
                     # left key input
                     # p0
                     complete = True
-                    # appendToAnswerSheet(...) , some stuff
+                    appendToAnswerSheet(mp0,token)
 
                 if event.key == pygame.K_RIGHT:
                     # right key input
                     # p1
                     complete = True
-                    # appendToAnswerSheet(...)
+                    appendToAnswerSheet(mp1,token)
+                
                 # if event.key == pygame.K_RETURN:
                 #     print("\n\n\nINPUT TEXT: "+textinput.get_text())
                 #     appendToAnswerSheet(textinput.get_text(),os.path.basename(currentFilePath))
@@ -315,6 +323,14 @@ def breakScreen():
 
 
 def trial(file_index,files,path):
+    """
+    play & rec a token
+
+    file_index := an int
+    files := a list of files
+    """
+
+    print files
 
     global drawn 
     global endoftrial
@@ -402,18 +418,29 @@ def experimentCtrlFlow():
     
     breakScreen()
 
-    for file in xrange(halfTokens+1,numOfTokens):
+    for file in xrange(halfTokens,numOfTokens):
         trial(file_index,minpairs,p.minpairs)
         file_index+=1
     breakScreen()
 
 def appendToAnswerSheet(answer,token):
+    """
+    
+    """
     with open(currentCsvPath,'ab') as csvFile:
-        # we format the filepath so we don't have an ugly /.../.../... .wav name
-        m = re.search('\_.*\_', token) # finds stuff that looks like _this_
-        formattedToken = m.group(0)[1:-1] # strips the _'s
+        m = re.search(r'[A-Za-z]+',token)
+        formattedToken = m.group(0)
+
+        correct = 0
+        if answer == formattedToken:
+            correct = 1
+
+
+        # # we format the filepath so we don't have an ugly /.../.../... .wav name
+        # m = re.search('\_.*\_', token) # finds stuff that looks like _this_
+        # formattedToken = m.group(0)[1:-1] # strips the _'s
         csvWriter = csv.writer(csvFile)
-        csvWriter.writerow([answer,formattedToken])
+        csvWriter.writerow([answer,formattedToken,correct])
 
 def initCsv(type):
     """
