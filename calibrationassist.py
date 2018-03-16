@@ -7,7 +7,7 @@ import playback
 #----------------------------------------------------------------------
 csvpath = 'calibrationLogs.csv'
 
-consoleSys = 'windows' # set to 'windows' or 'unix'
+consoleSys = 'unix' # set to 'windows' or 'unix'
 
 wordspath = "stimuli/calibrationassist/words/"
 phrasespath = "stimuli/calibrationassist/phrases/"

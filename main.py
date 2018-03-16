@@ -22,6 +22,8 @@ import pygame_textinput
 import csv
 import os
 import re
+import math, random
+# import autocalibration
 
 # init pygame
 ID = str(input("Participant ID: "))
@@ -74,6 +76,23 @@ else:
     screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height),pygame.FULLSCREEN )
     pygame.display.set_caption( ' Haptic Speech Experiment ')
     clock = pygame.time.Clock()
+
+
+
+
+# refactor the following? (music)
+
+# init babble track in L channel
+# channel0 := babbletrack
+# channel1 := pure speech
+
+babbletrack = pygame.mixer.Sound('stimuli/MT_babble.wav')
+channel0 = pygame.mixer.Channel(0)
+channel1 = pygame.mixer.Channel(1)
+channel0.play(babbletrack,-1)
+BASE_VOLUME = 0.2
+babbletrack.set_volume(BASE_VOLUME)
+channel0.set_volume(1, 0.0) # 1st arg = left; 2nd arg = right
 
 # ----------------------/
 
@@ -205,15 +224,6 @@ def recordScreen(file_index,files,path):
         txt.textWrap(screenDisplay, recordDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
         txt.textLine(screenDisplay,answers, "mid", answerText, p.OFFWHITE,)
 
-        # txt.textWrap(screenDisplay, mp0, bodyText, pygame.Rect((p.screen_width/4,40, 400, 40)), p.OFFWHITE, p.BG, 1) 
-        # txt.textWrap(screenDisplay, mp1, bodyText, pygame.Rect((p.screen_width/2,40,400, 40)), p.OFFWHITE, p.BG, 1) 
-
-        # textual input start --\\
-        # pygame.draw.rect(screenDisplay,p.DARKGREY, pygame.Rect((p.cornerPadding,p.screen_height-p.cornerPadding-textLineHeight-200),(p.screen_width-2*p.cornerPadding,textLineHeight+inputTextPadding)))
-        # textinput.update(events)
-        # screenDisplay.blit(textinput.get_surface(), (p.cornerPadding+inputTextPadding, p.screen_height-p.cornerPadding-textLineHeight-200+inputTextPadding))
-        # textual input end --//
-
         pygame.display.update()
 
         if not drawn:
@@ -234,15 +244,6 @@ def recordScreen(file_index,files,path):
                     print("Escape pressed!")
                     exitWindow = True
                 
-                # record -- legacy code: uncomment for audio recording.
-                #           also uncomment the if block marked with ***
-
-                # if event.key == pygame.K_SPACE:
-                #     if not record.recording:
-                #         record.rec(screenDisplay,bodyText, files[file_index], ID)
-                #         drawn = False
-                #         endoftrial = True
-                
                 # move on 
                 if event.key == pygame.K_LEFT:
                     # left key input
@@ -256,19 +257,6 @@ def recordScreen(file_index,files,path):
                     complete = True
                     appendToAnswerSheet(mp1,token)
                 
-                # if event.key == pygame.K_RETURN:
-                #     print("\n\n\nINPUT TEXT: "+textinput.get_text())
-                #     appendToAnswerSheet(textinput.get_text(),os.path.basename(currentFilePath))
-                #     textinput.clear_text()
-                #     complete = True
-
-                    # *** uncomment the following if using audio recording, and comment out 
-                    #     the complete = True statement above
-                    # if endoftrial: 
-                    #     print "end of trial clause"
-                    #     complete = True
-
-
             clock.tick(30)
 
     drawn = False
@@ -340,51 +328,6 @@ def trial(file_index,files,path):
     drawn = False
 
 
-def calibration(): 
-    # calibration screen
-    # !!! TODO implement rest of calibration
-    global drawn
-    exitWindow = False
-    complete = False
-    calibrationDescription = "Calibration.\nPress C to continue the rest of the study."
-
-    
-    # event loop -- 
-    """
-    Press C to continue
-    Press esc to quit
-    """
-    while not complete:
-
-        if not drawn:
-            screenDisplay.fill(p.BG)
-            # render thing here
-            txt.textWrap(screenDisplay, calibrationDescription, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
-
-            pygame.display.update()
-            drawn = True
-
-        if exitWindow:
-            pygame.quit()
-            quit()
-
-        for event in pygame.event.get() :
-            if event.type == pygame.QUIT: 
-                exitWindow = True
-
-            # KEYDOWN events ---------------
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    print("Escape pressed!")
-                    exitWindow = True
-                
-                # record
-                if event.key == pygame.K_c:
-                    complete = True
-
-            pygame.display.update()  
-            clock.tick(60)
-    drawn = False
 
 def experimentCtrlFlow():
 
@@ -406,8 +349,8 @@ def experimentCtrlFlow():
             minPairMap.append(row)
 
     welcomeScreen()
-
-    calibration()
+    heuristic_calibration(0,minpairs)
+    breakScreen()
 
     initCsv("minpair")
     numOfTokens = len(minpairs)
@@ -428,19 +371,24 @@ def appendToAnswerSheet(answer,token):
     
     """
     with open(currentCsvPath,'ab') as csvFile:
-        m = re.search(r'[A-Za-z]+',token)
-        formattedToken = m.group(0)
+        evaluate_response(answer,token,csvFile)
+        
 
-        correct = 0
-        if answer == formattedToken:
-            correct = 1
+def evaluate_response(answer,token, csvFile=None):
+    m = re.findall(r'[A-Za-z]+',token)
+    formattedToken = m[0]
+    formattedContrast = m[1]
 
+    correct = 0
+    if answer == formattedToken:
+        correct = 1
 
-        # # we format the filepath so we don't have an ugly /.../.../... .wav name
-        # m = re.search('\_.*\_', token) # finds stuff that looks like _this_
-        # formattedToken = m.group(0)[1:-1] # strips the _'s
+    if csvFile:
         csvWriter = csv.writer(csvFile)
-        csvWriter.writerow([answer,formattedToken,correct])
+        csvWriter.writerow([answer,formattedToken,correct,formattedContrast])
+    
+    return correct
+
 
 def initCsv(type):
     """
@@ -449,11 +397,11 @@ def initCsv(type):
 
     CSV format:
 
-        response | token | correct
+        response | token | correct | contrast
         -----------------------------
-        p0       | p0    | 1
-        p0       | p1    | 0
-        p1       | p1    | 1
+        p0       | p0    | 1       | vf
+        p0       | p1    | 0       | Vh
+        p1       | p1    | 1       | Vh
         ...        ...     ...
 
     """
@@ -462,7 +410,7 @@ def initCsv(type):
     currentCsvPath = participantResponseRootFilePath+"/"+ID+"_"+type+"_responses.csv"
     with open(currentCsvPath, 'wb') as csvFile:
         csvWriter = csv.writer(csvFile)
-        csvWriter.writerow(["Response","Token","Correct"])
+        csvWriter.writerow(["response","token","correct","contrast"])
 
 def searchForMinPair(id):
     for row in minPairMap:
@@ -470,6 +418,200 @@ def searchForMinPair(id):
             return [row["p0"],row["p1"]]
 
     return ["NO_PAIR_FOUND","NO_PAIR_FOUND"]
+
+
+
+
+
+def calibrate():
+    pass
+
+
+
+
+
+
+
+
+
+
+
+# ============[calibration]==========================
+
+def heuristic_calibration(i,minpairs):
+    cTrials = 0
+    score = 0
+    block = 0
+    adj_factor = 0.8
+    index_mem = set()
+    ave = 0
+
+    # selects a unique random minpair --
+    for j in range(0,len(minpairs)):
+        i = int(math.floor(random.random()*len(minpairs)))
+        while i in index_mem:
+            i = int(math.floor(random.random()*len(minpairs)))
+        index_mem.add(i)
+        print "evaluating: "+str(minpairs[i])
+        cTrials += 1
+
+        # --- very aggressive calibration --------
+        if block == 0:
+            correct = eval_token(minpairs[i],i)
+            if not correct:
+                adj_volume(adj_factor*-1)
+                adj_factor = math.log10(11-cTrials)
+            else:
+                adj_volume(adj_factor)
+                adj_factor = math.log10(11-cTrials)
+            if cTrials > 4:
+                block += 1
+                cTrials = 0
+
+        # --- looks for averages in blocks of 10 ----
+        else:
+            correct = eval_token(minpairs[i],i)
+            adj_factor = max(0.1,math.log10(4+block))
+            if not correct:
+                cTrials += 1
+                ave = runningAverage(score,cTrials)
+            else:
+                cTrials += 1
+                score += 1
+                ave = runningAverage(score,cTrials)
+            if cTrials > 10:
+                if (ave > 0.22) and (ave < 0.38):
+                    print("calibrated with ave:",ave,"| volume: ",babbletrack.get_volume())
+                    return
+
+                if ave > 0.38:
+                    adj_volume(adj_factor*-1)
+                    cTrials = 0
+                    score = 0
+                    block += 1
+                if ave < 0.22:
+                    adj_volume(adj_factor)
+                    cTrials = 0
+                    score = 0
+                    block += 1
+                
+
+        #     block_n(minpairs[i])
+
+
+    calibrated = False
+
+def runningAverage(score,trialsSoFar):
+    ave = score/float(trialsSoFar)
+    print(ave)
+    return ave
+
+def adj_volume(factor):
+    global BASE_VOLUME
+    BASE_VOLUME = min(BASE_VOLUME+factor,1)
+    babbletrack.set_volume(factor)
+    print "volume adjusted to: "+str(factor)
+
+def eval_token(path,index):
+        print "block_0"
+        speech = pygame.mixer.Sound(path)
+        channel1.play(speech)
+        # play_stim(path)1
+        correct = get_calibration_response(index,minpairs,p.minpairs)
+        return correct
+
+
+def get_calibration_response(file_index,files,path):
+    """
+    draws main record screen for a given file_index
+    file_index : an int
+
+    LEFT response = mp0
+    RIGHT response = mp1
+    """
+
+    global drawn
+    global ID
+    endoftrial = False
+    complete = False
+    exitWindow = False
+    correct = 0
+
+    recordDescriptor="Select the word you heard using the arrow keys:"
+    print "----\nAwaiting input for: "+str(files[file_index])
+    mpIDpattern = re.search("[0-9]+_",str(files[file_index])) # match ID
+    tokenName = re.search("\_\w+\_",str(files[file_index]))
+    token = tokenName.group(0)[1:-1]
+    mpID = mpIDpattern.group(0)[:-1]
+    print("minpair ID: "+str(mpID))
+    mp = searchForMinPair(mpID)
+    print("minpair: ",mp)
+    mp0 = mp[0]
+    mp1 = mp[1]
+
+    answers = "<- "+mp0+" | "+mp1+" ->"
+    print(mp0,mp1,"token: ",token)
+    
+
+
+    # event loop -- 
+    """
+        SPACE: record
+        ESC: quit
+        RETURN: next
+    """
+    while not complete:
+        screenDisplay.fill(p.BG)
+        events = pygame.event.get()
+        textLineHeight = 40
+        inputTextPadding = 5
+        
+        # descriptor text
+        txt.textWrap(screenDisplay, recordDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
+        txt.textLine(screenDisplay,answers, "mid", answerText, p.OFFWHITE,)
+
+        pygame.display.update()
+
+        if not drawn:
+            # text input --
+            drawn = True
+
+        if exitWindow:
+            pygame.quit()
+            quit()
+
+        for event in events :
+            if event.type == pygame.QUIT: 
+                exitWindow = True
+
+            # KEYDOWN events ---------------
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    print("Escape pressed!")
+                    exitWindow = True
+                
+                # move on 
+                if event.key == pygame.K_LEFT:
+                    # left key input
+                    # p0
+                    complete = True
+                    correct = evaluate_response(mp0,token)
+
+                if event.key == pygame.K_RIGHT:
+                    # right key input
+                    # p1
+                    complete = True
+                    correct = evaluate_response(mp1,token)
+                
+            clock.tick(30)
+
+    drawn = False
+    return correct
+# =============================================================
+
+
+
+
 
 def main():
     setup()
