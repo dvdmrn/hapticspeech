@@ -17,6 +17,8 @@ from math import sin, pi, sqrt
 import os
 import parameters as p
 import voicingfilter
+from pygame import mixer 
+GAIN = 2
 
 def haptic_playback(filepath):
     """
@@ -96,7 +98,7 @@ def haptic_playback(filepath):
             #     t += 1
             
     for k in xrange(0,len(ampData)):
-        sine = ampData[k]*sin(t*2*pi*(180.0/RATE))
+        sine = GAIN*ampData[k]*sin(t*2*pi*(180.0/RATE))
         # -- write source wav file in left channel
         wvData += pack('h', lData[k])
         # wvData += pack('h', sine) #200Hz right
@@ -117,31 +119,37 @@ def haptic_playback(filepath):
     # playback processed audio
     # --------------------------------------------------------
 
-    #open a wav format music  
-    f = wave.open(r"temp.wav","rb")  
-    #instantiate PyAudio  
-    p = pyaudio.PyAudio()  
-    #open stream  
-    stream = p.open(format = p.get_format_from_width(f.getsampwidth()), 
-                    channels = 2,  
-                    rate = f.getframerate(),  
-                    output = True)  
-    #read data  
-    data = f.readframes(chunk)
+    stim = mixer.Sound('temp.wav')
+    channel2 = mixer.Channel(2)
+    channel2.set_volume(1, 0.0) # 1st arg = left; 2nd arg = right
+    channel2.play(stim)
 
-    print("playback initialized!")
 
-    while data:
-        stream.write(data)
-        data = f.readframes(chunk)
+    # #open a wav format music  
+    # f = wave.open(r"temp.wav","rb")  
+    # #instantiate PyAudio  
+    # p = pyaudio.PyAudio()  
+    # #open stream  
+    # stream = p.open(format = p.get_format_from_width(f.getsampwidth()), 
+    #                 channels = 2,  
+    #                 rate = f.getframerate(),  
+    #                 output = True)  
+    # #read data  
+    # data = f.readframes(chunk)
 
-    #stop stream  
-    stream.stop_stream()  
-    stream.close()  
+    # print("playback initialized!")
 
-    print("playback ended.")
-    #close PyAudio  
-    p.terminate()  
+    # while data:
+    #     stream.write(data)
+    #     data = f.readframes(chunk)
+
+    # #stop stream  
+    # stream.stop_stream()  
+    # stream.close()  
+
+    # print("playback ended.")
+    # #close PyAudio  
+    # p.terminate()  
 
 
 def RMS(dataArray):

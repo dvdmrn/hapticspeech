@@ -263,12 +263,11 @@ def recordScreen(file_index,files,path):
 
 
 
-def breakScreen():
+def breakScreen(breakDescriptor):
 
     global drawn
     exitWindow = False
     complete = False
-    breakDescriptor = "Take a break!\nPress C to continue the rest of the study."
 
     
     # event loop -- 
@@ -342,6 +341,7 @@ def experimentCtrlFlow():
 
     global file_index
     global minPairMap
+    global minpairs
 
     with open("stimuli/minpairmap.csv") as mpmap:
         reader = csv.DictReader(mpmap)
@@ -349,9 +349,9 @@ def experimentCtrlFlow():
             minPairMap.append(row)
 
     welcomeScreen()
-    heuristic_calibration(0,minpairs)
-    breakScreen()
-
+    # heuristic_calibration(0,minpairs)
+    # breakScreen("Calibration Complete!\nPlease notify a researcher.")
+    # random.shuffle(minpairs)
     initCsv("minpair")
     numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
@@ -359,12 +359,12 @@ def experimentCtrlFlow():
         trial(file_index,minpairs,p.minpairs)
         file_index+=1
     
-    breakScreen()
+    breakScreen("You're halfway through\nPlease notify a researcher to assist with vibrator placement.")
 
     for file in xrange(halfTokens,numOfTokens):
         trial(file_index,minpairs,p.minpairs)
         file_index+=1
-    breakScreen()
+    breakScreen("Complete! Thank-you!")
 
 def appendToAnswerSheet(answer,token):
     """
@@ -423,11 +423,6 @@ def searchForMinPair(id):
 
 
 
-def calibrate():
-    pass
-
-
-
 
 
 
@@ -482,6 +477,8 @@ def heuristic_calibration(i,minpairs):
             if cTrials > 10:
                 if (ave > 0.22) and (ave < 0.38):
                     print("calibrated with ave:",ave,"| volume: ",babbletrack.get_volume())
+                    with open(participantResponseRootFilePath+"/"+ID+"_calibrationSettings.txt","w") as txt:
+                        txt.write("volume: "+str(babbletrack.get_volume())+"\naccuracy: "+str(ave))
                     return
 
                 if ave > 0.38:

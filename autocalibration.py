@@ -147,13 +147,15 @@ def heuristic_calibration(i,minpairs):
 
 
 def block_0(path):
+        print "block_0"
         # play_stim(path)
         # correct = get_response(path)
-        if not correct:
-            adjustVolume(adj_factor)
+        # if not correct:
+        #     adjustVolume(adj_factor)
 
 def block_n(path):
         # play_stim()
+        print "block_n"
 
 
 heuristic_calibration(0,range(0,100))
