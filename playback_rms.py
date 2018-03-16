@@ -18,6 +18,7 @@ import os
 import parameters as p
 import voicingfilter
 from pygame import mixer 
+SHORT_MAX = 32767
 GAIN = 2
 
 def haptic_playback(filepath):
@@ -98,7 +99,12 @@ def haptic_playback(filepath):
             #     t += 1
             
     for k in xrange(0,len(ampData)):
+        
         sine = GAIN*ampData[k]*sin(t*2*pi*(180.0/RATE))
+        if sine < 0:
+            sine = max(sine,(SHORT_MAX-1)*-1)
+        if sine > 0:
+            sine = min(sine,(SHORT_MAX-1))
         # -- write source wav file in left channel
         wvData += pack('h', lData[k])
         # wvData += pack('h', sine) #200Hz right
@@ -121,7 +127,7 @@ def haptic_playback(filepath):
 
     stim = mixer.Sound('temp.wav')
     channel2 = mixer.Channel(2)
-    channel2.set_volume(1, 0.0) # 1st arg = left; 2nd arg = right
+    channel2.set_volume(0.0, 1.0) # 1st arg = left; 2nd arg = right
     channel2.play(stim)
 
 
