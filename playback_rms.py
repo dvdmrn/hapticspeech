@@ -127,7 +127,7 @@ def haptic_playback(filepath):
 
     stim = mixer.Sound('temp.wav')
     channel2 = mixer.Channel(2)
-    channel2.set_volume(0.0, 1.0) # 1st arg = left; 2nd arg = right
+    channel2.set_volume(1.0, 0.0) # 1st arg = left; 2nd arg = right
     channel2.play(stim)
 
 

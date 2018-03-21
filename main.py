@@ -349,9 +349,9 @@ def experimentCtrlFlow():
             minPairMap.append(row)
 
     welcomeScreen()
-    # heuristic_calibration(0,minpairs)
-    # breakScreen("Calibration Complete!\nPlease notify a researcher.")
-    # random.shuffle(minpairs)
+    heuristic_calibration(0,minpairs)
+    breakScreen("Calibration Complete!\nPlease notify a researcher.")
+    random.shuffle(minpairs)
     initCsv("minpair")
     numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
