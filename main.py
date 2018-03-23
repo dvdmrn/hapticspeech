@@ -6,7 +6,7 @@
     gets files in stim based off minpairmappings.csv. Randomly populates an array called "files"
 
 """
-
+from __future__ import print_function
 import pygame
 import time
 import pyaudio
@@ -23,7 +23,12 @@ import csv
 import os
 import re
 import math, random
-# import autocalibration
+
+# -- globals ------------------------\\
+STIM_VOLUME = 1.0 # 1 = max
+ACCURACY_TARGET = 60.0
+PADDING = 5.0
+# =====================================
 
 # init pygame
 ID = str(input("Participant ID: "))
@@ -50,8 +55,6 @@ recording = False
 endoftrial = False
 # ----------------------/
 
-# phrases = util.get_wavfiles("stimuli/phrases/")
-# words = util.get_wavfiles("stimuli/words/")
 minpairs = util.get_minpairs("stimuli/")
 minPairMap = [] # will be populated with minpair IDs and tokens
 
@@ -71,7 +74,7 @@ if (len(sys.argv)>1):
         screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height))
         pygame.display.set_caption( ' Haptic Speech Experiment ')
         clock = pygame.time.Clock()
-        print "window mode"
+        print ("window mode")
 else:
     screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height),pygame.FULLSCREEN )
     pygame.display.set_caption( ' Haptic Speech Experiment ')
@@ -192,19 +195,16 @@ def recordScreen(file_index,files,path):
     complete = False
     exitWindow = False
     recordDescriptor="Select the word you heard using the arrow keys:"
-    print "----\nAwaiting input for: "+str(files[file_index])
+    print("----\nAwaiting input for: "+str(files[file_index]))
     mpIDpattern = re.search("[0-9]+_",str(files[file_index])) # match ID
     tokenName = re.search("\_\w+\_",str(files[file_index]))
     token = tokenName.group(0)[1:-1]
     mpID = mpIDpattern.group(0)[:-1]
-    print("minpair ID: "+str(mpID))
     mp = searchForMinPair(mpID)
-    print("minpair: ",mp)
     mp0 = mp[0]
     mp1 = mp[1]
 
     answers = "<- "+mp0+" | "+mp1+" ->"
-    print(mp0,mp1,"token: ",token)
     
 
 
@@ -317,7 +317,7 @@ def trial(file_index,files,path):
     files := a list of files
     """
 
-    print files
+    print(files)
 
     global drawn 
     global endoftrial
@@ -349,7 +349,7 @@ def experimentCtrlFlow():
             minPairMap.append(row)
 
     welcomeScreen()
-    heuristic_calibration(0,minpairs)
+    heuristic_calibration(minpairs)
     breakScreen("Calibration Complete!\nPlease notify a researcher.")
     random.shuffle(minpairs)
     initCsv("minpair")
@@ -433,87 +433,101 @@ def searchForMinPair(id):
 
 # ============[calibration]==========================
 
-def heuristic_calibration(i,minpairs):
+def heuristic_calibration(minpairs):
+    # todo: once adjust stim volume, make sure stim in main block playback @ that vol.
+    global STIM_VOLUME
     cTrials = 0
     score = 0
     block = 0
-    adj_factor = 0.8
-    index_mem = set()
+    adj_factor = math.log10(9-cTrials)
     ave = 0
 
-    # selects a unique random minpair --
     for j in range(0,len(minpairs)):
-        i = int(math.floor(random.random()*len(minpairs)))
-        while i in index_mem:
-            i = int(math.floor(random.random()*len(minpairs)))
-        index_mem.add(i)
-        print "evaluating: "+str(minpairs[i])
+        # i = int(math.floor(random.random()*len(minpairs)))
+        # while i in index_mem:
+        #     i = int(math.floor(random.random()*len(minpairs)))
+        # index_mem.add(i)
+        print("evaluating: ",str(minpairs[j]))
         cTrials += 1
 
         # --- very aggressive calibration --------
         if block == 0:
-            correct = eval_token(minpairs[i],i)
+            print("\n\n====\nAGGRESSIVE CALIBRATION")
+            correct = eval_token(minpairs[j],j,STIM_VOLUME)
             if not correct:
                 adj_volume(adj_factor*-1)
-                adj_factor = math.log10(11-cTrials)
+                adj_factor = math.log10(9-cTrials)
             else:
                 adj_volume(adj_factor)
-                adj_factor = math.log10(11-cTrials)
-            if cTrials > 4:
+                adj_factor = math.log10(9-cTrials)
+            if cTrials >= 7:
+                print("On 8th trial: aggressive calibration complete")
                 block += 1
                 cTrials = 0
 
         # --- looks for averages in blocks of 10 ----
         else:
-            correct = eval_token(minpairs[i],i)
-            adj_factor = max(0.1,math.log10(4+block))
-            if not correct:
-                cTrials += 1
-                ave = runningAverage(score,cTrials)
-            else:
-                cTrials += 1
+            correct = eval_token(minpairs[j],j,STIM_VOLUME)
+            y = 2 - (block**2/float(block**2+3)) # a decreasing value from 2->1
+            adj_factor = max(0.1,math.log10(y))
+            if correct:
                 score += 1
+            if cTrials >= 10:
+                print("calibration trial: ",cTrials,"blocks: ",block)
                 ave = runningAverage(score,cTrials)
-            if cTrials > 10:
-                if (ave > 0.22) and (ave < 0.38):
+                cTrials = 0
+                score = 0
+                # in right range
+                if (ave < (ACCURACY_TARGET+PADDING)) and (ave > (ACCURACY_TARGET-PADDING)):
                     print("calibrated with ave:",ave,"| volume: ",babbletrack.get_volume())
                     with open(participantResponseRootFilePath+"/"+ID+"_calibrationSettings.txt","w") as txt:
                         txt.write("volume: "+str(babbletrack.get_volume())+"\naccuracy: "+str(ave))
                     return
 
+                # too accurate, make noise harder
                 if ave > 0.38:
-                    adj_volume(adj_factor*-1)
-                    cTrials = 0
-                    score = 0
+                    if ave > 0.7:
+                        # give it a little extra
+                        adj_factor += 0.10
+                    adj_volume(adj_factor)
                     block += 1
                 if ave < 0.22:
-                    adj_volume(adj_factor)
-                    cTrials = 0
-                    score = 0
+                    if ave < 0.1:
+                        # v. bad, pump it up
+                        adj_factor -= 0.10
+                    adj_volume(adj_factor*-1)
                     block += 1
                 
 
-        #     block_n(minpairs[i])
+        #     block_n(minpairs[j])
 
 
     calibrated = False
 
 def runningAverage(score,trialsSoFar):
     ave = score/float(trialsSoFar)
-    print(ave)
+    print("accuracy: ",ave,"calibration trials: ",trialsSoFar,"score: ",score)
     return ave
 
 def adj_volume(factor):
     global BASE_VOLUME
     BASE_VOLUME = min(BASE_VOLUME+factor,1)
-    babbletrack.set_volume(factor)
-    print "volume adjusted to: "+str(factor)
+    prevVolume = babbletrack.get_volume()
+    print("prev vol.:",prevVolume)
+    toSet = min(prevVolume+factor,1)
+    babbletrack.set_volume(toSet)
+    print("volume adjusted by: "+str(factor)+" current volume: ",babbletrack.get_volume())
 
-def eval_token(path,index):
-        print "block_0"
+def eval_token(path,index,gain):
         speech = pygame.mixer.Sound(path)
+        channel1.set_volume(gain,gain)
         channel1.play(speech)
+        
         # play_stim(path)1
+        screenDisplay.fill(p.BG)
+        pygame.display.update()
+
+        time.sleep(speech.get_length())
         correct = get_calibration_response(index,minpairs,p.minpairs)
         return correct
 
@@ -535,19 +549,16 @@ def get_calibration_response(file_index,files,path):
     correct = 0
 
     recordDescriptor="Select the word you heard using the arrow keys:"
-    print "----\nAwaiting input for: "+str(files[file_index])
+    print("----\nAwaiting input for: "+str(files[file_index]))
     mpIDpattern = re.search("[0-9]+_",str(files[file_index])) # match ID
     tokenName = re.search("\_\w+\_",str(files[file_index]))
     token = tokenName.group(0)[1:-1]
     mpID = mpIDpattern.group(0)[:-1]
-    print("minpair ID: "+str(mpID))
     mp = searchForMinPair(mpID)
-    print("minpair: ",mp)
     mp0 = mp[0]
     mp1 = mp[1]
 
     answers = "<- "+mp0+" | "+mp1+" ->"
-    print(mp0,mp1,"token: ",token)
     
 
 
@@ -592,11 +603,13 @@ def get_calibration_response(file_index,files,path):
                     # left key input
                     # p0
                     complete = True
+                    print("selected: ",mp0,"correct:",token)
                     correct = evaluate_response(mp0,token)
 
                 if event.key == pygame.K_RIGHT:
                     # right key input
                     # p1
+                    print("selected: ",mp1,"correct:",token)
                     complete = True
                     correct = evaluate_response(mp1,token)
                 

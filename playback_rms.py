@@ -21,6 +21,7 @@ from pygame import mixer
 SHORT_MAX = 32767
 GAIN = 2
 
+
 def haptic_playback(filepath):
     """
         processes a wavfile so the left channel is sinewave output and right channel is raw wave data
@@ -127,7 +128,7 @@ def haptic_playback(filepath):
 
     stim = mixer.Sound('temp.wav')
     channel2 = mixer.Channel(2)
-    channel2.set_volume(1.0, 0.0) # 1st arg = left; 2nd arg = right
+    channel2.set_volume(1.0, 1.0) # 1st arg = left; 2nd arg = right
     channel2.play(stim)
 
 
