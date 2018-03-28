@@ -16,7 +16,7 @@ import textdisplay as txt
 import utilities as util
 import parameters as p
 import record
-import playback_rms
+import playback
 # import playback_lowfi
 import pygame_textinput
 import csv
@@ -26,8 +26,8 @@ import math, random
 
 # -- globals ------------------------\\
 STIM_VOLUME = 1.0 # 1 = max
-ACCURACY_TARGET = 60.0
-PADDING = 5.0
+ACCURACY_TARGET = 60.0 # % of correct scores needed
+PADDING = 5.0 # +/- padding
 # =====================================
 
 # init pygame
@@ -64,6 +64,7 @@ file_index = 0
 # look the other way
 currentFilePath = ""
 currentCsvPath = ""
+includeCalibration = True
 # ----------------------/
 
 # pygame setup ---------\
@@ -75,6 +76,12 @@ if (len(sys.argv)>1):
         pygame.display.set_caption( ' Haptic Speech Experiment ')
         clock = pygame.time.Clock()
         print ("window mode")
+    if (sys.argv[1]=="-nc"):
+        screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height))
+        pygame.display.set_caption( ' Haptic Speech Experiment [NO CALIBRATION] ')
+        clock = pygame.time.Clock()
+        print ("window mode: NO CALIBRATION")
+        includeCalibration = False
 else:
     screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height),pygame.FULLSCREEN )
     pygame.display.set_caption( ' Haptic Speech Experiment ')
@@ -166,14 +173,21 @@ def playbackScreen(file_index,files,path):
         num_of_files = len(files)
             
         print("file index: "+str(file_index))
-        print("wave file: "+str(files[file_index]))
+        print("wave file: "+str(files[file_index]["file"]))
         # print("files: "+str(files))
 
         screenDisplay.fill(p.BG)
         pygame.display.update()
-        currentFilePath = util.constructPath(path,files[file_index])
+        currentFilePath = util.constructPath(path,files[file_index]["file"])
         print("calling haptic_playback")
-        playback_rms.haptic_playback(currentFilePath)
+        if files[file_index]["vib_style"] == "amp":
+            playback.rms_playback(currentFilePath)
+        elif files[file_index]["vib_style"] == "lowfi":
+            playback.lowfi_playback(currentFilePath)
+        else:
+            playFile(currentFilePath,STIM_VOLUME,"left")
+
+
         drawn = True
     
 
@@ -195,9 +209,9 @@ def recordScreen(file_index,files,path):
     complete = False
     exitWindow = False
     recordDescriptor="Select the word you heard using the arrow keys:"
-    print("----\nAwaiting input for: "+str(files[file_index]))
-    mpIDpattern = re.search("[0-9]+_",str(files[file_index])) # match ID
-    tokenName = re.search("\_\w+\_",str(files[file_index]))
+    print("----\nAwaiting input for: "+str(files[file_index]["file"]))
+    mpIDpattern = re.search("[0-9]+_",str(files[file_index]["file"])) # match ID
+    tokenName = re.search("\_\w+\_",str(files[file_index]["file"]))
     token = tokenName.group(0)[1:-1]
     mpID = mpIDpattern.group(0)[:-1]
     mp = searchForMinPair(mpID)
@@ -249,13 +263,13 @@ def recordScreen(file_index,files,path):
                     # left key input
                     # p0
                     complete = True
-                    appendToAnswerSheet(mp0,token)
+                    appendToAnswerSheet(mp0,token,files[file_index]["vib_style"])
 
                 if event.key == pygame.K_RIGHT:
                     # right key input
                     # p1
                     complete = True
-                    appendToAnswerSheet(mp1,token)
+                    appendToAnswerSheet(mp1,token,files[file_index]["vib_style"])
                 
             clock.tick(30)
 
@@ -349,10 +363,14 @@ def experimentCtrlFlow():
             minPairMap.append(row)
 
     welcomeScreen()
-    heuristic_calibration(minpairs)
-    breakScreen("Calibration Complete!\nPlease notify a researcher.")
-    random.shuffle(minpairs)
+
+    if includeCalibration:
+        heuristic_calibration(minpairs) 
+        breakScreen("Calibration Complete!\nPlease notify a researcher.")
+        random.shuffle(minpairs)
+  
     initCsv("minpair")
+  
     numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
     for file in xrange(0,halfTokens):
@@ -366,15 +384,15 @@ def experimentCtrlFlow():
         file_index+=1
     breakScreen("Complete! Thank-you!")
 
-def appendToAnswerSheet(answer,token):
+def appendToAnswerSheet(answer,token,vib_style):
     """
     
     """
     with open(currentCsvPath,'ab') as csvFile:
-        evaluate_response(answer,token,csvFile)
+        evaluate_response(answer,token,csvFile,vib_style)
         
 
-def evaluate_response(answer,token, csvFile=None):
+def evaluate_response(answer,token, csvFile=None, vibStyle=""):
     m = re.findall(r'[A-Za-z]+',token)
     formattedToken = m[0]
     formattedContrast = m[1]
@@ -385,7 +403,7 @@ def evaluate_response(answer,token, csvFile=None):
 
     if csvFile:
         csvWriter = csv.writer(csvFile)
-        csvWriter.writerow([answer,formattedToken,correct,formattedContrast])
+        csvWriter.writerow([answer,formattedToken,correct,formattedContrast,vibStyle])
     
     return correct
 
@@ -397,12 +415,12 @@ def initCsv(type):
 
     CSV format:
 
-        response | token | correct | contrast
-        -----------------------------
-        p0       | p0    | 1       | vf
-        p0       | p1    | 0       | Vh
-        p1       | p1    | 1       | Vh
-        ...        ...     ...
+        response | token | correct | contrast  | vib style
+        ------------------------------------------
+        p0       | p0    | 1       | vf        | amp
+        p0       | p1    | 0       | Vh        | lowfi
+        p1       | p1    | 1       | Vh        | ctrl
+        ...        ...     ...       ...
 
     """
     global ID
@@ -410,7 +428,7 @@ def initCsv(type):
     currentCsvPath = participantResponseRootFilePath+"/"+ID+"_"+type+"_responses.csv"
     with open(currentCsvPath, 'wb') as csvFile:
         csvWriter = csv.writer(csvFile)
-        csvWriter.writerow(["response","token","correct","contrast"])
+        csvWriter.writerow(["response","token","correct","contrast","vib_style"])
 
 def searchForMinPair(id):
     for row in minPairMap:
@@ -435,12 +453,15 @@ def searchForMinPair(id):
 
 def heuristic_calibration(minpairs):
     # todo: once adjust stim volume, make sure stim in main block playback @ that vol.
+    minpairs = util.getFilePaths(minpairs)
     global STIM_VOLUME
     cTrials = 0
     score = 0
     block = 0
     adj_factor = math.log10(9-cTrials)
     ave = 0
+    lowerBound = (ACCURACY_TARGET-PADDING)/float(100)
+    upperBound = (ACCURACY_TARGET+PADDING)/float(100)
 
     for j in range(0,len(minpairs)):
         # i = int(math.floor(random.random()*len(minpairs)))
@@ -472,30 +493,40 @@ def heuristic_calibration(minpairs):
             adj_factor = max(0.1,math.log10(y))
             if correct:
                 score += 1
-            if cTrials >= 10:
+            if cTrials >= 5*min(2,block):
                 print("calibration trial: ",cTrials,"blocks: ",block)
                 ave = runningAverage(score,cTrials)
                 cTrials = 0
                 score = 0
                 # in right range
-                if (ave < (ACCURACY_TARGET+PADDING)) and (ave > (ACCURACY_TARGET-PADDING)):
+                print("lowerBound: ",lowerBound,"ave: ",ave)
+                print("is ave < upperbound?",ave<upperBound,"is ave > lowerbound?",ave > lowerBound)
+                if (ave < upperBound) and (ave > lowerBound):
                     print("calibrated with ave:",ave,"| volume: ",babbletrack.get_volume())
                     with open(participantResponseRootFilePath+"/"+ID+"_calibrationSettings.txt","w") as txt:
                         txt.write("volume: "+str(babbletrack.get_volume())+"\naccuracy: "+str(ave))
                     return
 
                 # too accurate, make noise harder
-                if ave > 0.38:
+                if ave > upperBound:
+                    print("too accuracte, adjusting by: ",adj_factor)
                     if ave > 0.7:
+                        print("way too accurate")
                         # give it a little extra
-                        adj_factor += 0.10
+                        adj_factor += 0.20
+                        print("new adj factor: ",adj_factor)
                     adj_volume(adj_factor)
                     block += 1
-                if ave < 0.22:
-                    if ave < 0.1:
+
+                # not accurate enough, pump it up
+                if ave < lowerBound:
+                    f = adj_factor*-1
+                    if ave < 0.5:
                         # v. bad, pump it up
-                        adj_factor -= 0.10
-                    adj_volume(adj_factor*-1)
+                        adj_factor -= 0.20
+                        print("vey under lowerBound, new adj factor: ",adj_factor)
+
+                    adj_volume(f)
                     block += 1
                 
 
@@ -519,17 +550,27 @@ def adj_volume(factor):
     print("volume adjusted by: "+str(factor)+" current volume: ",babbletrack.get_volume())
 
 def eval_token(path,index,gain):
-        speech = pygame.mixer.Sound(path)
-        channel1.set_volume(gain,gain)
-        channel1.play(speech)
-        
-        # play_stim(path)1
+
+        playFile(path,gain)
+
         screenDisplay.fill(p.BG)
         pygame.display.update()
 
-        time.sleep(speech.get_length())
         correct = get_calibration_response(index,minpairs,p.minpairs)
         return correct
+
+def playFile(path,gain,channel=""):
+        """
+        plays a sound file, and also pauses for the duration of that file.
+        """
+        speech = pygame.mixer.Sound(path)
+        if channel=="left":
+            channel1.set_volume(gain,0)
+        else:
+            channel1.set_volume(gain,gain)
+        channel1.play(speech)
+        time.sleep(speech.get_length())
+    
 
 
 def get_calibration_response(file_index,files,path):

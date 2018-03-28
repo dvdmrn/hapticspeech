@@ -55,6 +55,9 @@ def get_wavfiles(path):
 def get_minpairs(path):
     """
         Populates a list of wavfiles and randomizes for gender.
+
+        Randomly encodes vibration style
+
     """
     print("in get_minpairs")
     male_files = []
@@ -64,6 +67,7 @@ def get_minpairs(path):
     playList = []
     global minpairMap
 
+    # get mappings of minpairs
     with open(join(path,"minpairmap.csv")) as mpmap:
         reader = csv.DictReader(mpmap)
         for row in reader:
@@ -71,34 +75,37 @@ def get_minpairs(path):
             minpairMap.append(row)
 
     temp_wavfiles = listdir(path)
+    print("temp_wavfiles",temp_wavfiles)
     
     if '.DS_Store' in temp_wavfiles:
         temp_wavfiles.remove('.DS_Store')
     
   
-
-
     for row in minpairMap:
         # makes mp sets such that:
         # {"mpID":["wave1.wav","wave2.wav", ..."waveN.wav"]}
         mpSet = {}
         idToFind = str(row["ID"])
-        mpsToAdd = []
-
+        mpsToAdd = [] # list of paths that match mpID
 
         # search all subdirectories for matching IDs
+
         for root, subFolders, files in walk(path):  
           for f in files:
-            if idToFind in f:
+            idMatch = re.findall(r'\d+', f)
+            try:
+                idStr = idMatch[0]
+            except:
+                idStr = "NO"
+            # TODO: strong match
+            # because 7 in 127 so .*7.* counts :'(
+            if idToFind == idStr:
                 print("FOUND MATCH:",idToFind,f)
                 mpsToAdd.append(join(root,f))
 
-
-
-
-        for filename in temp_wavfiles:
-            if idToFind in filename:
-                print("FOUND MATCH:",idToFind,filename)
+        # for filename in temp_wavfiles:
+        #     if idToFind in filename:
+        #         print("FOUND MATCH:",idToFind,filename)
         mpSet["ID"] = idToFind
         mpSet["DATA"] = mpsToAdd
         if mpSet["DATA"]:
@@ -110,7 +117,35 @@ def get_minpairs(path):
         playList.append(e["DATA"][0])
    
     print "playList: "+str(playList)
-    return playList
+
+    minPairVibMap = [] # array of dicts [{"vib_style":lowfi,"file":file.wav}, ...]
+    styleSegmentation = len(playList)/3 # assumes no. of supplied stim are divisible by 3
+
+    random.shuffle(playList)
+    namp = 0
+    nlowfi = 0
+    nctrl = 0
+    for i in range(0,len(playList)):
+        if i % 3 == 0:
+            minPairVibMap.append({"vib_style":"amp","file":playList[i]})
+            namp += 1
+        elif i % 2 == 0:
+            minPairVibMap.append({"vib_style":"lowfi","file":playList[i]})
+            nlowfi += 1
+        else:
+            minPairVibMap.append({"vib_style":"ctrl","file":playList[i]})
+            nctrl += 1
+
+    assert namp == nlowfi == nctrl == styleSegmentation
+
+    return minPairVibMap
+
+
+def getFilePaths(mapping):
+    paths = []
+    for e in mapping:
+        paths.append(e["file"])
+    return paths
 
 def constructPath(path,filename):
 	filepath = join(path, filename)

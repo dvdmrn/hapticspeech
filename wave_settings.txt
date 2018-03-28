@@ -1,0 +1,5 @@
+Sample rate: 44.1 kHz
+Bit depth: 16 bit PCM
+Container format: WAVE uncompressed
+Channels: 1 (MONO)
+Naming convention: <ID>_<WORD>_<CONTRAST>_<GENDER>.wav

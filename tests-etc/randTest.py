@@ -1,7 +1,33 @@
-a = [1,2,3,4,5,6]
-# b = map(lambda x: x/float(1000), a)
-b = [(x,"bbop") for x in a]
+# testIndexes = range(0,180)
 
-print b
+# def testIndexStyle(indexes):
+#     style1 = 0
+#     style2 = 0
+#     style3 = 0
+#     for e in indexes:
+#         if e % 3 == 0:
+#             style1 += 1
+#         elif e % 2 == 0:
+#             style2 += 1
+#         else:
+#             style3 += 1
+#     print("styles:","\n1:",style1,"\n2:",style2,"\n3:",style3)
+#     try:
+#         assert style1 == style2 == style3
+#     except:
+#         print("didn't work")
 
-# multiply = lambda x: x*2
+# testIndexStyle(testIndexes)
+
+a = 1
+i = "global"
+def add1(a):
+ return a+1
+
+def testMemory(i):
+    print "param location: "+hex(id(i))
+    i = add1(a)
+    print "new location:   "+hex(id(i))
+
+testMemory(a)
+print "global:         "+hex(id(i))

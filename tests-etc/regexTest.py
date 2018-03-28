@@ -1,16 +1,10 @@
-# import re
+import re
 
-# token = "asdf_vf"
-# m = re.findall(r'[A-Za-z]+', token)
-# # formattedToken = m
+token = "121_asdf_vf"
+m = re.findall(r'\d+', token)
+formattedToken = m
 
-# print m[0]
 
-gn = 0
-
-def thing():
-    n = 1+gn
-    return n
-
-thing()
-print gn
+print "1" in m[0]
+print "121" == m[0]
+print m[0]

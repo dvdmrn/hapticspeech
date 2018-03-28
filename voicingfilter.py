@@ -9,7 +9,7 @@ from scipy.io import wavfile
 
 sampFreq, snd = wavfile.read('stimuli/male/stops/120_bought_vs_m.wav')
 
-CHUNK = 512
+THRESHOLD_CUTOFF = 2.5 #in kHz
 
 
 snd = snd/(2.**15) # convert to floating point from -1 to 1
@@ -57,9 +57,10 @@ def processWaveChunk(data,size):
 	theTuple = fftAnalyze(data,0,len(data))
 	freqArray = theTuple[0]
 	p = theTuple[1]
+	p = [cleanZeroes(v) for v in p]
 	clf()
 	
-	cat = thresholdCategorization(p,freqArray,1) # <1kHz
+	cat = thresholdCategorization(p,freqArray,THRESHOLD_CUTOFF)
 	return cat
 
 	# ---- legacy ----
@@ -139,16 +140,25 @@ def aveDiff(inputSequence, threshold):
 	
 	thresholdMean = mean(withinThreshold)
 	beyondMean =  mean(beyondThreshold)
-	difference = beyondMean - thresholdMean
+	difference = thresholdMean - beyondMean
 	
 
 	# print ("difference: ",difference,"threshold: ",thresholdMean, "beyond: ",beyondMean)
 
-	if(abs(difference) > 24): # was 15
+	if(difference > 17): 
+		print ("difference:",difference," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean," [+V]")
 		return True
 		# print ("threshold mean: ",thresholdMean)
 		# print ("beyond mean: ",beyondMean)
 	else:
+		print ("difference:",difference," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean)
 		return False
 		# print ("threshold mean: ",thresholdMean)
 		# print ("beyond mean: ",beyondMean)
+
+
+def cleanZeroes(n):
+	if n < 1:
+		return 1
+	else:
+		return n
