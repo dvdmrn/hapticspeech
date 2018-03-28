@@ -145,7 +145,7 @@ def lowfi_playback(filepath):
     print("in haptic_playback")
     RATE= 44100
     chunk = 1024
-    lowfiGain = 4
+    lowfiGain = 3
 
 
     f = wave.open(filepath,"rb")  

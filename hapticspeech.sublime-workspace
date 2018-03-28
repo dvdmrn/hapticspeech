@@ -520,37 +520,20 @@
 	"buffers":
 	[
 		{
-			"contents": "Hannah:\n\n- Name raw files w/ index\n\n- Pre-processing tasks:\n    - Normalize David audio headset audio\n    - Normalize & reduce noise for Hannah headset audio\n    - Normalize & ??? TASCAM audio\n- Organize raw files\n- Run editor (main.py)\n- Verify all edits are legit (if not manually adjust)\n\nDavid\n\n- Implement OOO tags in autoeditor / \n- Equalize waveforms\n- Construct autocalibration\n\nFurther q:\n\nDo we need additional stimuli for calibration? Can we take from our control pool?",
+			"contents": "- can we fit in 240 tokens? Will need to pilot to find out\n    > 2x3x4 ANOVA ==> 2x3x3 {180 tokens} ***PLUS CALIBRATION??***\n        no vib; tadoma; lowfi\n    }\n    hand *30    *30     *30\n    neck *30    *30     *30\n        +/-v stops; +/-v fricatives; H/L vowels (drop +-nasal vowels)\n- re-record min pairs\n    > done\n- update software so that vibration styles are equalized, and\n    > done\n- accommodate a within subject design\n    > done\n- also automate the calibration phase\n    > done\n\n======\n\nanalysis:\nR?\n\nInterspeech\nJASA - Deadline for June: joint meeting in Victoria CAA ASA\nJASA EL (Express Letters)\n    * Paper\n    (POMA - not rec.)\n------\nAug. 1st: CAA two page \n\nMid/late march: finish running subjects\n1 month to analyze\n\ntodos:\n> make timeline\n> monthly timelines/meetings until we need more\n> \nBryan away from march 3rd-28th\nKaron also away for a chunk of march (>15th march)\n(poss. meeting the 1st)\nEarly april meeting: \n\n",
 			"settings":
 			{
-				"buffer_size": 480,
-				"line_ending": "Unix",
-				"name": "Hannah:"
-			}
-		},
-		{
-			"contents": "- can we fit in 240 tokens? Will need to pilot to find out\n    > 2x3x4 ANOVA ==> 2x3x3 {180 tokens} ***PLUS CALIBRATION??***\n        no vib; tadoma; lowfi\n    }\n    hand *30    *30     *30\n    neck *30    *30     *30\n        +/-v stops; +/-v fricatives; H/L vowels (drop +-nasal vowels)\n- re-record min pairs\n    > done\n- update software so that vibration styles are equalized, and\n    > done\n- accommodate a within subject design\n    > done\n- also automate the calibration phase\n    > in progress\n\n======\n\nanalysis:\nR?\n\nInterspeech\nJASA - Deadline for June: joint meeting in Victoria CAA ASA\nJASA EL (Express Letters)\n    * Paper\n    (POMA - not rec.)\n------\nAug. 1st: CAA two page \n\nMid/late march: finish running subjects\n1 month to analyze\n\ntodos:\n> make timeline\n> monthly timelines/meetings until we need more\n> \nBryan away from march 3rd-28th\nKaron also away for a chunk of march (>15th march)\n(poss. meeting the 1st)\nEarly april meeting: ",
-			"settings":
-			{
-				"buffer_size": 946,
+				"buffer_size": 941,
 				"line_ending": "Unix",
 				"name": "- can we fit in 240 tokens? Will need to pilot to"
 			}
 		},
 		{
-			"file": "main.py",
+			"file": "playback.py",
 			"settings":
 			{
-				"buffer_size": 13587,
+				"buffer_size": 9132,
 				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "playback_rms.py",
-			"settings":
-			{
-				"buffer_size": 5983,
 				"line_ending": "Unix"
 			}
 		}
@@ -861,6 +844,8 @@
 	},
 	"file_history":
 	[
+		"/home/dvdmrn/Documents/hapticspeech/playback",
+		"/home/dvdmrn/Documents/hapticspeech/main.py",
 		"/home/dvdmrn/Documents/speech_recog_test/heatmap.py",
 		"/home/dvdmrn/Documents/hapticspeech/parameters.py",
 		"/home/dvdmrn/Documents/hapticspeech/utilities.py",
@@ -986,13 +971,11 @@
 		"/home/dvdmrn/Dropbox/cpsc221/prog3/mapping.txt",
 		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/insertOrdRemoveRand.cpp",
 		"/home/dvdmrn/Dropbox/cpsc221/prog3/sshubc.sh",
-		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/push.sh",
-		"/home/dvdmrn/Documents/openSOROS/.gitignore",
-		"/home/dvdmrn/Documents/DAP/1_readwriteWHEDpage.py"
+		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/push.sh"
 	],
 	"find":
 	{
-		"height": 41.0
+		"height": 40.0
 	},
 	"find_in_files":
 	{
@@ -1013,6 +996,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"gain",
 			"playbackScreen(",
 			"record",
 			"response",
@@ -1139,8 +1123,7 @@
 			" ",
 			"FPS",
 			"()",
-			"FPS",
-			"fps"
+			"FPS"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1163,7 +1146,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1171,43 +1154,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 480,
+						"buffer_size": 941,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8,
-								8
-							]
-						],
-						"settings":
-						{
-							"auto_name": "Hannah:",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 946,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								506,
-								506
+								588,
+								588
 							]
 						],
 						"settings":
@@ -1216,89 +1171,40 @@
 							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 304.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "main.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13587,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								12132,
-								12132
-							]
-						],
-						"settings":
-						{
-							"auto_complete_triggers":
-							[
-								{
-									"characters": ".",
-									"selector": "source.python - string - comment - constant.numeric"
-								},
-								{
-									"characters": ".",
-									"selector": "source.python - string - constant.numeric"
-								},
-								{
-									"characters": ".",
-									"selector": "source.python - string - constant.numeric"
-								},
-								{
-									"characters": ".",
-									"selector": "source.python - string - constant.numeric"
-								}
-							],
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 7198.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "playback_rms.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5983,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								23,
-								23
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 342.0,
+						"translation.y": 486.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "playback.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9132,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4545,
+								4545
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2484.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -1306,7 +1212,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 27.0
+		"height": 26.0
 	},
 	"input":
 	{
@@ -1351,7 +1257,7 @@
 	"project": "hapticspeech.sublime-project",
 	"replace":
 	{
-		"height": 50.0
+		"height": 48.0
 	},
 	"save_all_on_build": true,
 	"select_file":
