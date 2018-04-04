@@ -146,12 +146,12 @@ def aveDiff(inputSequence, threshold):
 	# print ("difference: ",difference,"threshold: ",thresholdMean, "beyond: ",beyondMean)
 
 	if(difference > 17): 
-		print ("difference:",difference," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean," [+V]")
+		# print ("difference:",difference," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean," [+V]")
 		return True
 		# print ("threshold mean: ",thresholdMean)
 		# print ("beyond mean: ",beyondMean)
 	else:
-		print ("difference:",difference," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean)
+		# print ("difference:",difference," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean)
 		return False
 		# print ("threshold mean: ",thresholdMean)
 		# print ("beyond mean: ",beyondMean)

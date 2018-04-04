@@ -7,6 +7,7 @@
 
 """
 from __future__ import print_function
+print(" _   _             _   _      _____                      _     \n| | | |           | | (_)    /  ___|                    | |    \n| |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  \n|  _  |/ _` | '_ \| __| |/ __|`--. \ '_ \ / _ \/ _ \/ __| '_ \ \n| | | | (_| | |_) | |_| | (__/\__/ / |_) |  __/  __/ (__| | | |\n\_| |_/\__,_| .__/ \__|_|\___\____/| .__/ \___|\___|\___|_| |_|\n            | |                    | |                         \n            |_|                    |_|                         \n\nImporting modules...")
 import pygame
 import time
 import pyaudio
@@ -262,6 +263,7 @@ def recordScreen(file_index,files,path):
                 if event.key == pygame.K_LEFT:
                     # left key input
                     # p0
+                    print("selected: ",mp0)
                     complete = True
                     appendToAnswerSheet(mp0,token,files[file_index]["vib_style"])
 
@@ -269,6 +271,7 @@ def recordScreen(file_index,files,path):
                     # right key input
                     # p1
                     complete = True
+                    print("selected: ",mp1)
                     appendToAnswerSheet(mp1,token,files[file_index]["vib_style"])
                 
             clock.tick(30)
@@ -331,8 +334,7 @@ def trial(file_index,files,path):
     files := a list of files
     """
 
-    print(files)
-
+    print("\n\n==============================")
     global drawn 
     global endoftrial
     playbackScreen(file_index,files,path)
@@ -590,7 +592,7 @@ def get_calibration_response(file_index,files,path):
     correct = 0
 
     recordDescriptor="Select the word you heard using the arrow keys:"
-    print("----\nAwaiting input for: "+str(files[file_index]))
+    print("\nAwaiting input for: "+str(files[file_index]))
     mpIDpattern = re.search("[0-9]+_",str(files[file_index])) # match ID
     tokenName = re.search("\_\w+\_",str(files[file_index]))
     token = tokenName.group(0)[1:-1]
@@ -643,8 +645,8 @@ def get_calibration_response(file_index,files,path):
                 if event.key == pygame.K_LEFT:
                     # left key input
                     # p0
-                    complete = True
                     print("selected: ",mp0,"correct:",token)
+                    complete = True
                     correct = evaluate_response(mp0,token)
 
                 if event.key == pygame.K_RIGHT:

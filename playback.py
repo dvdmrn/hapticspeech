@@ -36,17 +36,16 @@ def rms_playback(filepath):
         when samplesSoFar%chunk = 0 so we know to restart our amp analysis
 
     """
-    print("in haptic_playback")
     RATE= 44100
     chunk = 512
 
 
     f = wave.open(filepath,"rb")  
-    print("\n\nopening: "+filepath)
-    print("samplerate: "+str(f.getframerate()))
-    print("frames: "+str(f.getnframes()))
-    print("channels: "+str(f.getnchannels()))
-    print("sample width: "+str(f.getsampwidth()))
+    print("\n  opening: "+filepath)
+    print("  samplerate: "+str(f.getframerate()))
+    print("  frames: "+str(f.getnframes()))
+    print("  channels: "+str(f.getnchannels()))
+    print("  sample width: "+str(f.getsampwidth()))
 
     ## GENERATE STEREO FILE ##
     wv = wave.open('temp.wav', 'w')
@@ -142,7 +141,6 @@ def lowfi_playback(filepath):
         when samplesSoFar%chunk = 0 so we know to restart our amp analysis
 
     """
-    print("in haptic_playback")
     RATE= 44100
     chunk = 1024
     lowfiGain = 3
@@ -151,11 +149,11 @@ def lowfi_playback(filepath):
     f = wave.open(filepath,"rb")  
     f2analyze = wave.open(filepath,"rb")  
 
-    print("\n\nopening: "+filepath)
-    print("samplerate: "+str(f.getframerate()))
-    print("frames: "+str(f.getnframes()))
-    print("channels: "+str(f.getnchannels()))
-    print("sample width: "+str(f.getsampwidth()))
+    print("\n  opening: "+filepath)
+    print("  samplerate: "+str(f.getframerate()))
+    print("  frames: "+str(f.getnframes()))
+    print("  channels: "+str(f.getnchannels()))
+    print("  sample width: "+str(f.getsampwidth()))
 
     ## GENERATE STEREO FILE ##
     wv = wave.open('temp.wav', 'w')

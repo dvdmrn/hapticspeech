@@ -3,6 +3,7 @@ from os.path import isfile, join
 import random
 import re
 import csv
+import tqdm
 
 
 minpairMap = []
@@ -68,20 +69,21 @@ def get_minpairs(path):
     global minpairMap
 
     # get mappings of minpairs
+    print("constructing minpair mappings with minpairmap.csv")
     with open(join(path,"minpairmap.csv")) as mpmap:
         reader = csv.DictReader(mpmap)
         for row in reader:
-            print("appending row",row)
+            # print("appending row",row)
             minpairMap.append(row)
 
     temp_wavfiles = listdir(path)
-    print("temp_wavfiles",temp_wavfiles)
+    # print("temp_wavfiles",temp_wavfiles)
     
     if '.DS_Store' in temp_wavfiles:
         temp_wavfiles.remove('.DS_Store')
     
-  
-    for row in minpairMap:
+    print("searching subdirectories for matching IDs")
+    for row in tqdm.tqdm(minpairMap):
         # makes mp sets such that:
         # {"mpID":["wave1.wav","wave2.wav", ..."waveN.wav"]}
         mpSet = {}
@@ -100,7 +102,7 @@ def get_minpairs(path):
             # TODO: strong match
             # because 7 in 127 so .*7.* counts :'(
             if idToFind == idStr:
-                print("FOUND MATCH:",idToFind,f)
+                # print("FOUND MATCH:",idToFind,f)
                 mpsToAdd.append(join(root,f))
 
         # for filename in temp_wavfiles:
@@ -116,7 +118,7 @@ def get_minpairs(path):
         random.shuffle(e["DATA"])
         playList.append(e["DATA"][0])
    
-    print "playList: "+str(playList)
+    # print "playList: "+str(playList)
 
     minPairVibMap = [] # array of dicts [{"vib_style":lowfi,"file":file.wav}, ...]
     styleSegmentation = len(playList)/3 # assumes no. of supplied stim are divisible by 3
