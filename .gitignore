@@ -1,5 +1,8 @@
 .DS_Store
 responses/*
+!responses/serverlocation
+!responses/goto_server
+!responses/upload_data.sh
 *.pyc
 stimuli/old/*
 stimuli/male/*

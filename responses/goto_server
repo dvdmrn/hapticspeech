@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if ! [ $# -eq 1 ]; then
+    echo enter username:
+    read userName
+    ssh $userName@remote.cs.ubc.ca -t "cd /ubc/cs/research/imager/project/spin/proj/haptic-speech/data; bash --login"
+else
+    ssh $1@remote.cs.ubc.ca -t "cd /ubc/cs/research/imager/project/spin/proj/haptic-speech/data; bash --login"
+fi
