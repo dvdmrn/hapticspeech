@@ -1,0 +1,12 @@
+#!/bin/sh
+
+
+if ! [ $# -eq 1 ]; then
+    echo supply a file or folder as an argument
+else
+    echo enter username
+    read userName
+    scp -r $1 $userName@remote.cs.ubc.ca:/ubc/cs/research/imager/project/spin/proj/haptic-speech/data
+fi
+
+

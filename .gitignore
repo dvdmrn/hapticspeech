@@ -2,7 +2,7 @@
 responses/*
 !responses/serverlocation
 !responses/goto_server
-!responses/upload_data.sh
+!responses/upload_data
 *.pyc
 stimuli/old/*
 stimuli/male/*
