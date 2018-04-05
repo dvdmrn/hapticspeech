@@ -527,15 +527,6 @@
 				"line_ending": "Unix",
 				"name": "- can we fit in 240 tokens? Will need to pilot to"
 			}
-		},
-		{
-			"file": "playback.py",
-			"settings":
-			{
-				"buffer_size": 9132,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
 		}
 	],
 	"build_system": "",
@@ -844,15 +835,21 @@
 	},
 	"file_history":
 	[
-		"/home/dvdmrn/Documents/hapticspeech/playback",
+		"/home/dvdmrn/Documents/hapticspeech/playback.py",
+		"/home/dvdmrn/Documents/hapticspeech/voicingfilter.py",
+		"/home/dvdmrn/Documents/hapticspeech/utilities.py",
 		"/home/dvdmrn/Documents/hapticspeech/main.py",
+		"/home/dvdmrn/Documents/hapticspeech/voicingfilter.pyc",
+		"/home/dvdmrn/Documents/hapticspeech/responses/goto_server",
+		"/home/dvdmrn/Documents/hapticspeech/responses/upload_data.sh",
+		"/home/dvdmrn/Documents/randomword.py",
+		"/home/dvdmrn/Documents/corpus.txt",
+		"/home/dvdmrn/Documents/hapticspeech/playback",
 		"/home/dvdmrn/Documents/speech_recog_test/heatmap.py",
 		"/home/dvdmrn/Documents/hapticspeech/parameters.py",
-		"/home/dvdmrn/Documents/hapticspeech/utilities.py",
 		"/home/dvdmrn/Documents/hapticspeech/playback_lowfi.py",
 		"/home/dvdmrn/Documents/hapticspeech/playback_voicingrms.py",
 		"/home/dvdmrn/Documents/hapticspeech/stimuli/testrecurse.py",
-		"/home/dvdmrn/Documents/hapticspeech/voicingfilter.py",
 		"/home/dvdmrn/Documents/hapticspeech/main-lowfi.py",
 		"/home/dvdmrn/Documents/hapticspeech/main-minpair.py",
 		"/home/dvdmrn/Documents/autoeditor/main.py",
@@ -873,7 +870,6 @@
 		"/home/dvdmrn/Documents/speech_recog_test/transcriptmatch",
 		"/home/dvdmrn/Documents/speech_recog_test/partition.py",
 		"/home/dvdmrn/Documents/speech_recog_test/test.py",
-		"/home/dvdmrn/Documents/hapticspeech/playback.py",
 		"/home/dvdmrn/Documents/hapticspeech/.gitignore",
 		"/home/dvdmrn/Documents/autoeditor/minimalpairs.csv",
 		"/home/dvdmrn/Documents/autoeditor/old/autoeditor-pairs.py",
@@ -966,16 +962,11 @@
 		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator4.cpp",
 		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator5.cpp",
 		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator3.cpp",
-		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator2.cpp",
-		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator1.cpp",
-		"/home/dvdmrn/Dropbox/cpsc221/prog3/mapping.txt",
-		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/insertOrdRemoveRand.cpp",
-		"/home/dvdmrn/Dropbox/cpsc221/prog3/sshubc.sh",
-		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/push.sh"
+		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator2.cpp"
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 26.0
 	},
 	"find_in_files":
 	{
@@ -996,6 +987,12 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"awaiting",
+			"print",
+			"playlist",
+			"print",
+			"K_RETURN",
+			"ENTER",
 			"gain",
 			"playbackScreen(",
 			"record",
@@ -1117,13 +1114,7 @@
 			"findStatsSequential",
 			"avlTree_root",
 			"findStats",
-			"newCSVname",
-			"with open",
-			"newCSVname",
-			" ",
-			"FPS",
-			"()",
-			"FPS"
+			"newCSVname"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1146,7 +1137,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -1161,8 +1152,8 @@
 						"selection":
 						[
 							[
-								588,
-								588
+								941,
+								941
 							]
 						],
 						"settings":
@@ -1172,36 +1163,6 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 486.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "playback.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 9132,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4545,
-								4545
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2484.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
