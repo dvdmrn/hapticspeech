@@ -92,7 +92,7 @@ import math, random
 
 # -- globals ------------------------\\
 STIM_VOLUME = 1.0 # 1 = max
-ACCURACY_TARGET = 60.0 # % of correct scores needed
+ACCURACY_TARGET = 62.0 # % of correct scores needed
 PADDING = 5.0 # +/- padding
 # =====================================
 
@@ -560,7 +560,7 @@ def heuristic_calibration(minpairs):
             adj_factor = max(0.1,math.log10(y))
             if correct:
                 score += 1
-            if cTrials >= 5*min(2,block):
+            if cTrials >= (5*min(2,block))+2:
                 print("calibration trial: ",cTrials,"blocks: ",block)
                 ave = runningAverage(score,cTrials)
                 cTrials = 0
