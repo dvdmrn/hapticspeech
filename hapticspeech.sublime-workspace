@@ -519,24 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"contents": "- can we fit in 240 tokens? Will need to pilot to find out\n    > 2x3x4 ANOVA ==> 2x3x3 {180 tokens} ***PLUS CALIBRATION??***\n        no vib; tadoma; lowfi\n    }\n    hand *30    *30     *30\n    neck *30    *30     *30\n        +/-v stops; +/-v fricatives; H/L vowels (drop +-nasal vowels)\n- re-record min pairs\n    > done\n- update software so that vibration styles are equalized, and\n    > done\n- accommodate a within subject design\n    > done\n- also automate the calibration phase\n    > done\n\n======\n\nanalysis:\nR?\n\nInterspeech\nJASA - Deadline for June: joint meeting in Victoria CAA ASA\nJASA EL (Express Letters)\n    * Paper\n    (POMA - not rec.)\n------\nAug. 1st: CAA two page \n\nMid/late march: finish running subjects\n1 month to analyze\n\ntodos:\n> make timeline\n> monthly timelines/meetings until we need more\n> \nBryan away from march 3rd-28th\nKaron also away for a chunk of march (>15th march)\n(poss. meeting the 1st)\nEarly april meeting: \n\n",
-			"settings":
-			{
-				"buffer_size": 941,
-				"line_ending": "Unix",
-				"name": "- can we fit in 240 tokens? Will need to pilot to"
-			}
-		},
-		{
-			"file": "main.py",
-			"settings":
-			{
-				"buffer_size": 23107,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -845,6 +827,7 @@
 	"file_history":
 	[
 		"/home/dvdmrn/Documents/hapticspeech/main.py",
+		"/home/dvdmrn/Documents/haptic-speech-analysis/make_oneway.py",
 		"/home/dvdmrn/Documents/hapticspeech/responses/goto_server",
 		"/home/dvdmrn/Documents/hapticspeech/responses/upload_data.sh",
 		"/home/dvdmrn/Documents/hapticspeech/playback.py",
@@ -970,12 +953,11 @@
 		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/insertRemoveFromStart.cpp",
 		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator4.cpp",
 		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator5.cpp",
-		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator3.cpp",
-		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator2.cpp"
+		"/home/dvdmrn/Dropbox/cpsc221/prog3/generators/old generators/generator3.cpp"
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 26.0
 	},
 	"find_in_files":
 	{
@@ -1146,67 +1128,8 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 941,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								811,
-								811
-							]
-						],
-						"settings":
-						{
-							"auto_name": "- can we fit in 240 tokens? Will need to pilot to",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 414.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "main.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 23107,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								17683,
-								17683
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 9700.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
 			]
 		}
 	],

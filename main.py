@@ -553,14 +553,14 @@ def heuristic_calibration(minpairs):
                 block += 1
                 cTrials = 0
 
-        # --- looks for averages in blocks of 10 ----
+        # --- looks for averages in blocks of 12 ----
         else:
             correct = eval_token(minpairs[j],j,STIM_VOLUME)
             y = 2 - (block**2/float(block**2+3)) # a decreasing value from 2->1
             adj_factor = max(0.1,math.log10(y))
             if correct:
                 score += 1
-            if cTrials >= (5*min(2,block))+2:
+            if cTrials >= 12: # if number of trials greater than 12
                 print("calibration trial: ",cTrials,"blocks: ",block)
                 ave = runningAverage(score,cTrials)
                 cTrials = 0
@@ -568,11 +568,18 @@ def heuristic_calibration(minpairs):
                 # in right range
                 print("lowerBound: ",lowerBound,"ave: ",ave)
                 print("is ave < upperbound?",ave<upperBound,"is ave > lowerbound?",ave > lowerBound)
+                
+                # they are accurate enough yay
                 if (ave < upperBound) and (ave > lowerBound):
-                    print("calibrated with ave:",ave,"| volume: ",babbletrack.get_volume())
-                    with open(participantResponseRootFilePath+"/"+ID+"_calibrationSettings.txt","w") as txt:
-                        txt.write("volume: "+str(babbletrack.get_volume())+"\naccuracy: "+str(ave))
-                    return
+                    if block > 1:
+                        print("calibrated with ave:",ave,"| volume: ",babbletrack.get_volume())
+
+                        # write .txt file with calibration settings
+                        with open(participantResponseRootFilePath+"/"+ID+"_calibrationSettings.txt","w") as txt:
+                            txt.write("volume: "+str(babbletrack.get_volume())+"\naccuracy: "+str(ave))
+                        return
+                    else:
+                        block += 1
 
                 # too accurate, make noise harder
                 if ave > upperBound:
@@ -580,7 +587,7 @@ def heuristic_calibration(minpairs):
                     if ave > 0.7:
                         print("way too accurate")
                         # give it a little extra
-                        adj_factor += 0.20
+                        adj_factor += 0.10
                         print("new adj factor: ",adj_factor)
                     adj_volume(adj_factor)
                     block += 1
@@ -590,7 +597,7 @@ def heuristic_calibration(minpairs):
                     f = adj_factor*-1
                     if ave < 0.5:
                         # v. bad, pump it up
-                        adj_factor -= 0.20
+                        adj_factor -= 0.10
                         print("vey under lowerBound, new adj factor: ",adj_factor)
 
                     adj_volume(f)
