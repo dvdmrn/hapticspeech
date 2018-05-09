@@ -73,18 +73,17 @@
 """
 from __future__ import print_function
 print(" _   _             _   _      _____                      _     \n| | | |           | | (_)    /  ___|                    | |    \n| |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  \n|  _  |/ _` | '_ \| __| |/ __|`--. \ '_ \ / _ \/ _ \/ __| '_ \ \n| | | | (_| | |_) | |_| | (__/\__/ / |_) |  __/  __/ (__| | | |\n\_| |_/\__,_| .__/ \__|_|\___\____/| .__/ \___|\___|\___|_| |_|\n            | |                    | |                         \n            |_|                    |_|                         \n\nImporting modules...")
-import pygame
+import pygame # game framework mainly used for its graphical capabilities here
 import time
-import pyaudio
+import pyaudio # for audio playback
 import wave
 import sys
-import textdisplay as txt
-import utilities as util
-import parameters as p
-import record
-import playback
-# import playback_lowfi
-import pygame_textinput
+import textdisplay as txt # custom text utils
+import utilities as util # common helpers
+import parameters as p # static parameters 
+import record # for recording stimuli (legacy)
+import playback # for playing back stimuli + signal processing
+import pygame_textinput # for textual user responses (legacy)
 import csv
 import os
 import re
@@ -105,14 +104,6 @@ if not os.path.exists(participantResponseRootFilePath):
 
 pygame.init()
 
-
-# typefaces ------------\
-titleText = pygame.font.Font('UbuntuMono-R.ttf',40)
-bodyText = pygame.font.Font('UbuntuMono-R.ttf', 32)
-answerText = pygame.font.Font('UbuntuMono-R.ttf', 60)
-
-# inputFont = pygame.font.Font('UbuntuMono-R', 32)
-# ----------------------/
 
 
 # state control --------\
@@ -136,7 +127,13 @@ includeCalibration = True
 # pygame setup ---------\
 
 # accepts CL input `-w` for windowed mode
+windowMode = 0
 if (len(sys.argv)>1):
+    if ("-uhd" in sys.argv):
+        # ultra hd mode
+        p.setUHD()
+
+        print("screen_width:",p.screen_width)
     if (sys.argv[1]=="-w"):
         screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height))
         pygame.display.set_caption( ' Haptic Speech Experiment ')
@@ -148,12 +145,21 @@ if (len(sys.argv)>1):
         clock = pygame.time.Clock()
         print ("window mode: NO CALIBRATION")
         includeCalibration = False
-else:
+if ((len(sys.argv) == 2 and "-uhd" in sys.argv ) or len(sys.argv) == 1):
+
     screenDisplay= pygame.display.set_mode((p.screen_width,p.screen_height),pygame.FULLSCREEN )
     pygame.display.set_caption( ' Haptic Speech Experiment ')
     clock = pygame.time.Clock()
 
 
+
+# typefaces ------------\
+titleText = pygame.font.Font('UbuntuMono-R.ttf',p.titleSize)
+bodyText = pygame.font.Font('UbuntuMono-R.ttf', p.bodySize)
+answerText = pygame.font.Font('UbuntuMono-R.ttf', p.answerSize)
+
+# inputFont = pygame.font.Font('UbuntuMono-R', 32)
+# ----------------------/
 
 
 # refactor the following? (music)
@@ -181,22 +187,33 @@ textinput.set_cursor_color(p.PINK)
 # Functions
 # ============================================================================================
 
-# ----------------------------------------------
-# Welcome Screen
-# ----------------------------------------------
+"""
+ - most of the xScreen functions (e.g. welcomeScreen, breakScreen...) contain their own render loops
+ - call an xScreen function to go to that particular screen.
+"""
 
 def  welcomeScreen():
+    """
+    draws the welcome screen
+    
+    returns: nothing
+
+    """
     global drawn
     welcomeTitle= "Welcome to the Haptic Speech Experiment!"
     welcomeDescriptor= "During the experiment you will hear a series of words. You will be prompted to identify each word in a multiple choice manner. Select the LEFT word with the left arrow key [<-], and the RIGHT word with the right arrow key [->]. \nThe experiment will begin with a calibration phase. Afterwards, you will be asked to notify a researcher to assist you with the vibrator.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
     complete = False
     exitWindow = False
+
     while not complete:
+        # this is the main game loop
+        # it will continuously draw this until complete=true
+        # similar logic is used elsewhere
 
         if not drawn:
-            screenDisplay.fill(p.BG)
-            txt.textLine(screenDisplay, welcomeTitle,"top", titleText, p.PINK)
-            txt.textWrap(screenDisplay, welcomeDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
+            screenDisplay.fill(p.BG) # render background
+            txt.textLine(screenDisplay, welcomeTitle,"top", titleText, p.PINK) # render welcome title
+            txt.textWrap(screenDisplay, welcomeDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) # render welcome text
 
             drawn = True
 
@@ -205,16 +222,18 @@ def  welcomeScreen():
             quit()
 
         for event in pygame.event.get() :
+            # if quit event occurs (i.e. closing the window)
             if event.type == pygame.QUIT: 
                 exitWindow = True
 
             # KEYDOWN events ---------------
             if event.type == pygame.KEYDOWN:
+                # if press escape
                 if event.key == pygame.K_ESCAPE:
                     print("Escape pressed!")
                     exitWindow = True
                 
-                # record
+                # if press enter
                 if event.key == pygame.K_RETURN:
                     complete = True
 
@@ -222,13 +241,13 @@ def  welcomeScreen():
             clock.tick(60)
     drawn = False
 
-# ----------------------------------------------
-#  Stimulus Play Screen
-# ----------------------------------------------    
+
+  
 def playbackScreen(file_index,files,path):
     """
     Renders the screen for signal playback
     @param file_index: an int
+    returns: nothing
     """
 
     global drawn
@@ -236,16 +255,20 @@ def playbackScreen(file_index,files,path):
 
 
     if not drawn:
+
         num_of_files = len(files)
             
+        # displays playback info to the console
         print("file index: "+str(file_index))
         print("wave file: "+str(files[file_index]["file"]))
-        # print("files: "+str(files))
 
         screenDisplay.fill(p.BG)
         pygame.display.update()
+
         currentFilePath = util.constructPath(path,files[file_index]["file"])
         print("calling haptic_playback")
+
+        # determines which type of playback is necessary based off the file dict
         if files[file_index]["vib_style"] == "amp":
             playback.rms_playback(currentFilePath)
         elif files[file_index]["vib_style"] == "lowfi":
@@ -257,9 +280,6 @@ def playbackScreen(file_index,files,path):
         drawn = True
     
 
-# ----------------------------------------------
-#  Recording  Screen
-# ----------------------------------------------
 def recordScreen(file_index,files,path):
     """
     draws main record screen for a given file_index
@@ -275,9 +295,14 @@ def recordScreen(file_index,files,path):
     complete = False
     exitWindow = False
     recordDescriptor="Select the word you heard using the arrow keys:"
+
     print("----\nAwaiting input for: "+str(files[file_index]["file"]))
-    mpIDpattern = re.search("[0-9]+_",str(files[file_index]["file"])) # match ID
-    tokenName = re.search("\_\w+\_",str(files[file_index]["file"]))
+    
+    # regex search to match ID
+    mpIDpattern = re.search("[0-9]+_",str(files[file_index]["file"])) 
+    # regex search to match token name
+    tokenName = re.search("\_\w+\_",str(files[file_index]["file"])) 
+    
     token = tokenName.group(0)[1:-1]
     mpID = mpIDpattern.group(0)[:-1]
     mp = searchForMinPair(mpID)
@@ -290,11 +315,14 @@ def recordScreen(file_index,files,path):
 
     # event loop -- 
     """
-        SPACE: record
+        SPACE: record (LEGACY: no longer available)
         ESC: quit
         RETURN: next
+        LEFT ARROW: option 1
+        RIGHT ARROW: option 2
     """
     while not complete:
+
         screenDisplay.fill(p.BG)
         events = pygame.event.get()
         textLineHeight = 40
@@ -307,7 +335,7 @@ def recordScreen(file_index,files,path):
         pygame.display.update()
 
         if not drawn:
-            # text input --
+            # text input -- LEGACY: no longer available
             drawn = True
 
         if exitWindow:
@@ -344,8 +372,14 @@ def recordScreen(file_index,files,path):
     drawn = False
 
 
-
 def breakScreen(breakDescriptor):
+    """
+    Draws the break screen
+    @param breakDescriptor: a string
+        - breakDescriptor is a message to be rendered onto the break screen
+    reuturns: nothing
+    """
+
 
     global drawn
     exitWindow = False
@@ -393,10 +427,11 @@ def breakScreen(breakDescriptor):
 
 def trial(file_index,files,path):
     """
-    play & rec a token
+    play & record a response for a given token
 
     file_index := an int
     files := a list of files
+    path := string to load
     """
 
     print("\n\n==============================")
@@ -413,11 +448,8 @@ def experimentCtrlFlow():
 
     """
     Main experiment control flow.
-    The number of trials is based off how many stimuli are contained
-    in `stimuli/words/` and `stimuli/phrases/`.
+    The number of trials is based off the number of minimal pairs.
     Counterbalancing is conducted based off the participant ID.
-    If the participant ID is even then we go phrases->words. If it is
-    odd then we go words->phrases.
     """
 
     global file_index
@@ -453,16 +485,29 @@ def experimentCtrlFlow():
 
 def appendToAnswerSheet(answer,token,vib_style):
     """
-    
+    places participant responses onto the answer sheet
+        answer := a string
+        token := a string
+        vib_style := a string
+        returns: nothing
     """
     with open(currentCsvPath,'ab') as csvFile:
+        # writes the response to the csv
         evaluate_response(answer,token,csvFile,vib_style)
         
 
 def evaluate_response(answer,token, csvFile=None, vibStyle=""):
-    m = re.findall(r'[A-Za-z]+',token)
-    formattedToken = m[0]
-    formattedContrast = m[1]
+    """
+    determines if response is correct or not
+    answer := a string [participant's response]
+    token := a string  [actual stimuli presented]
+    csvFile := a CSV File
+    vibStyle = a String
+
+    """
+    m = re.findall(r'[A-Za-z]+',token) # match alphabetical characters in the token
+    formattedToken = m[0] # m[0] is the word
+    formattedContrast = m[1] #m[1] is the contrast
 
     correct = 0
     if answer == formattedToken:
@@ -498,6 +543,10 @@ def initCsv(type):
         csvWriter.writerow(["response","token","correct","contrast","vib_style"])
 
 def searchForMinPair(id):
+    """
+    matches a minimal pair id with the corresponding item in the corpus
+    id := an integer
+    """
     for row in minPairMap:
         if row["ID"] == id:
             return [row["p0"],row["p1"]]
@@ -506,20 +555,15 @@ def searchForMinPair(id):
 
 
 
-
-
-
-
-
-
-
-
-
-
 # ============[calibration]==========================
 
 def heuristic_calibration(minpairs):
-    # todo: once adjust stim volume, make sure stim in main block playback @ that vol.
+    """
+    calibration control flow
+    minpairs := a list
+    returns: nothing
+
+    """
     minpairs = util.getFilePaths(minpairs)
     global STIM_VOLUME
     cTrials = 0
@@ -610,11 +654,22 @@ def heuristic_calibration(minpairs):
     calibrated = False
 
 def runningAverage(score,trialsSoFar):
+    """
+    determines a running average score, used in calibration
+        score := a Number
+        trialsSoFar := an int
+        returns: a float
+    """
     ave = score/float(trialsSoFar)
     print("accuracy: ",ave,"calibration trials: ",trialsSoFar,"score: ",score)
     return ave
 
 def adj_volume(factor):
+    """
+    changes the noise level by factor
+        factor := a float
+        returns: nothing
+    """
     global BASE_VOLUME
     BASE_VOLUME = min(BASE_VOLUME+factor,1)
     prevVolume = babbletrack.get_volume()
@@ -625,17 +680,27 @@ def adj_volume(factor):
 
 def eval_token(path,index,gain):
 
-        playFile(path,gain)
+    """
+    plays a token
+    path := a string
+    index := an int
+    gain := a float
+    returns: an int (1=correct, 0=incorrect)
+    """
+    playFile(path,gain)
 
-        screenDisplay.fill(p.BG)
-        pygame.display.update()
+    screenDisplay.fill(p.BG)
+    pygame.display.update()
 
-        correct = get_calibration_response(index,minpairs,p.minpairs)
-        return correct
+    correct = get_calibration_response(index,minpairs,p.minpairs)
+    return correct
 
 def playFile(path,gain,channel=""):
         """
         plays a sound file, and also pauses for the duration of that file.
+            path := a string
+            gain := a float
+            channel := a string
         """
         speech = pygame.mixer.Sound(path)
         if channel=="left":
@@ -650,10 +715,15 @@ def playFile(path,gain,channel=""):
 def get_calibration_response(file_index,files,path):
     """
     draws main record screen for a given file_index
-    file_index : an int
+        file_index := an int
+        files := a list
+        path := a string
+        returns: an int
 
-    LEFT response = mp0
-    RIGHT response = mp1
+    note:
+        LEFT response = mp0
+        RIGHT response = mp1
+
     """
 
     global drawn
@@ -739,6 +809,10 @@ def get_calibration_response(file_index,files,path):
 
 
 def main():
+    """
+    main function
+    inits everything. Not currently used???
+    """
     setup()
     pygame.init()
     experimentCtrlFlow()
