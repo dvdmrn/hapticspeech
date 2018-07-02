@@ -225,7 +225,7 @@ def  welcomeScreen():
 # ----------------------------------------------
 #  Stimulus Play Screen
 # ----------------------------------------------    
-def playbackScreen(file_index,files,path):
+def playbackScreen(file_index,files,path, ctrl= False):
     """
     Renders the screen for signal playback
     @param file_index: an int
@@ -234,6 +234,7 @@ def playbackScreen(file_index,files,path):
     global drawn
     global currentFilePath
 
+    print ("\n\n\n!!!",files[file_index])
 
     if not drawn:
         num_of_files = len(files)
@@ -246,12 +247,11 @@ def playbackScreen(file_index,files,path):
         pygame.display.update()
         currentFilePath = util.constructPath(path,files[file_index]["file"])
         print("calling haptic_playback")
-        if files[file_index]["vib_style"] == "amp":
+        if ctrl:
+            playFile(currentFilePath, STIM_VOLUME, "left")
+        else :
             playback.rms_playback(currentFilePath)
-        elif files[file_index]["vib_style"] == "lowfi":
-            playback.lowfi_playback(currentFilePath)
-        else:
-            playFile(currentFilePath,STIM_VOLUME,"left")
+            
 
 
         drawn = True
@@ -402,7 +402,7 @@ def trial(file_index,files,path):
     print("\n\n==============================")
     global drawn 
     global endoftrial
-    playbackScreen(file_index,files,path)
+    playbackScreen(file_index,files,path,True)
     drawn = False
     recordScreen(file_index,files,path)
     drawn = False
@@ -738,10 +738,10 @@ def get_calibration_response(file_index,files,path):
 
 
 
-def main():
-    setup()
-    pygame.init()
-    experimentCtrlFlow()
+# def main():
+#     setup()
+#     pygame.init()
+#     experimentCtrlFlow()
 
 
 # main()
