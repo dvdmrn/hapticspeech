@@ -9,3 +9,5 @@ stimuli/male/*
 stimuli/female/*
 stimuli/calibrationassist/*
 temp.wav
+stimuli/temporal_offset_minimal_pairs/*
+

@@ -10,10 +10,16 @@
               the source wavefile. 
 """
 
+# 2018/07/04 TODO: 
+# figure out why rms_playback is not crashing at for loop at end of wavefile data 
+# add 0 to sinewaveData for alignment 
+# deal with positive/negative offsets 
+
+
 import pyaudio
 import wave
 from struct import pack, unpack
-from math import sin, pi, sqrt
+from math import sin, pi, sqrt, floor
 import os
 import parameters as p
 import voicingfilter
@@ -25,7 +31,7 @@ SHORT_MAX = 32767
 GAIN = 2
 
 pp = pprint.PrettyPrinter()
-def rms_playback(filepath):
+def rms_playback(filepath, offset):
     """
         processes a wavfile so the left channel is sinewave output and right channel is raw wave data
         and then outputs to speakers.
@@ -38,6 +44,8 @@ def rms_playback(filepath):
     """
     RATE= 44100
     chunk = 512
+    secondsoffset = float(offset) /1000
+    samplesoffset = int( floor(secondsoffset * RATE))  
 
 
     f = wave.open(filepath,"rb")  
@@ -58,6 +66,8 @@ def rms_playback(filepath):
     amp = 0
     i = 0
     t = 0
+    sinewaveData = []  
+
 
     for i in range(0, f.getnframes()):
         # populate lData with f sample data
@@ -85,7 +95,7 @@ def rms_playback(filepath):
 
             voiced = voicingfilter.processWaveChunk(subsamples,chunk)
 
-            amp = RMS(subsamples)
+            # amp = RMS(subsamples)
 
             if voiced:
                 amp = RMS(subsamples)
@@ -98,7 +108,11 @@ def rms_playback(filepath):
             #     # write sine wave
             #     rData.append()
             #     t += 1
-            
+   
+    for sample in samplesoffset: 
+        ampData.append (0)
+
+
     for k in xrange(0,len(ampData)):
         
         sine = GAIN*ampData[k]*sin(t*2*pi*(180.0/RATE))
@@ -106,15 +120,16 @@ def rms_playback(filepath):
             sine = max(sine,(SHORT_MAX-1)*-1)
         if sine > 0:
             sine = min(sine,(SHORT_MAX-1))
-        # -- write source wav file in left channel
-        wvData += pack('h', lData[k])
-        # wvData += pack('h', sine) #200Hz right
-
-        # -- write sine wave in right channel
-        wvData += pack('h', sine) #200Hz right
-        # print (lData[k],sine)
         t += 1
-    # print("len data",len(lData),"len data / chunk", len(lData)/chunk)
+        sinewaveData.append (sine)
+
+    for s in xrange(0,len(ampData)):
+        # -- write source wav file in left channel
+        wvData += pack('h', lData[s])
+        # -- write sine wave in right channel
+        wvData += pack('h', sinewaveData[s]) #200Hz right
+      
+        
    
     wv.writeframes(wvData)
     wv.close()

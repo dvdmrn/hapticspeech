@@ -250,7 +250,7 @@ def playbackScreen(file_index,files,path, ctrl= False):
         if ctrl:
             playFile(currentFilePath, STIM_VOLUME, "left")
         else :
-            playback.rms_playback(currentFilePath)
+            playback.rms_playback(currentFilePath, 500) 
             
 
 
