@@ -75,15 +75,12 @@ from __future__ import print_function
 print(" _   _             _   _      _____                      _     \n| | | |           | | (_)    /  ___|                    | |    \n| |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  \n|  _  |/ _` | '_ \| __| |/ __|`--. \ '_ \ / _ \/ _ \/ __| '_ \ \n| | | | (_| | |_) | |_| | (__/\__/ / |_) |  __/  __/ (__| | | |\n\_| |_/\__,_| .__/ \__|_|\___\____/| .__/ \___|\___|\___|_| |_|\n            | |                    | |                         \n            |_|                    |_|                         \n\nImporting modules...")
 import pygame
 import time
-import pyaudio
 import wave
 import sys
 import textdisplay as txt
 import utilities as util
 import parameters as p
-import record
 import playback
-# import playback_lowfi
 import pygame_textinput
 import csv
 import os
@@ -251,7 +248,7 @@ def playbackScreen(file_index,files,path, ctrl= False):
             playFile(currentFilePath, STIM_VOLUME, "left")
         else :
             print("calling rms_playback")
-            playback.rms_playback(currentFilePath, 500) 
+            playback.rms_playback(currentFilePath, 200) 
             
 
 

@@ -10,10 +10,11 @@
               the source wavefile. 
 """
 
-# 2018/07/06 TODO: 
+# 2018/07/09 TODO:
+# use array instead of lists for efficiency??  
 # deal with positive/negative offsets 
 # offset optimization ??? (1000>>500ms) acceptable???? 
-# make efficient 
+
 
 import pyaudio
 import wave
