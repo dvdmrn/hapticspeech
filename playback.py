@@ -10,11 +10,10 @@
               the source wavefile. 
 """
 
-# 2018/07/04 TODO: 
-# figure out why rms_playback is not crashing at for loop at end of wavefile data 
-# add 0 to sinewaveData for alignment 
+# 2018/07/06 TODO: 
 # deal with positive/negative offsets 
-
+# offset optimization ??? (1000>>500ms) acceptable???? 
+# make efficient 
 
 import pyaudio
 import wave
@@ -32,6 +31,7 @@ GAIN = 2
 
 pp = pprint.PrettyPrinter()
 def rms_playback(filepath, offset):
+    
     """
         processes a wavfile so the left channel is sinewave output and right channel is raw wave data
         and then outputs to speakers.
@@ -46,7 +46,7 @@ def rms_playback(filepath, offset):
     chunk = 512
     secondsoffset = float(offset) /1000
     samplesoffset = int( floor(secondsoffset * RATE))  
-
+    insertZeros = [0]* samplesoffset
 
     f = wave.open(filepath,"rb")  
     print("\n  opening: "+filepath)
@@ -108,11 +108,14 @@ def rms_playback(filepath, offset):
             #     # write sine wave
             #     rData.append()
             #     t += 1
-   
-    for sample in samplesoffset: 
-        ampData.append (0)
+    print "appending 0 to lData"
+    for sample in  xrange(0,samplesoffset): 
+        if offset > 0: 
+            lData.append (0)
+            ampData.append (0) 
+           
 
-
+    print "writing sine wave" 
     for k in xrange(0,len(ampData)):
         
         sine = GAIN*ampData[k]*sin(t*2*pi*(180.0/RATE))
@@ -122,13 +125,23 @@ def rms_playback(filepath, offset):
             sine = min(sine,(SHORT_MAX-1))
         t += 1
         sinewaveData.append (sine)
+    print "inserting 0 to sinewaveData"
+    for sample in xrange(0,samplesoffset): 
+        sinewaveData.insert(0,0)
 
+    
+
+
+   
+    print "packing sinewaveData"
     for s in xrange(0,len(ampData)):
         # -- write source wav file in left channel
         wvData += pack('h', lData[s])
         # -- write sine wave in right channel
         wvData += pack('h', sinewaveData[s]) #200Hz right
-      
+    
+
+
         
    
     wv.writeframes(wvData)

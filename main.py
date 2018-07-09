@@ -250,6 +250,7 @@ def playbackScreen(file_index,files,path, ctrl= False):
         if ctrl:
             playFile(currentFilePath, STIM_VOLUME, "left")
         else :
+            print("calling rms_playback")
             playback.rms_playback(currentFilePath, 500) 
             
 
@@ -402,7 +403,7 @@ def trial(file_index,files,path):
     print("\n\n==============================")
     global drawn 
     global endoftrial
-    playbackScreen(file_index,files,path,True)
+    playbackScreen(file_index,files,path)
     drawn = False
     recordScreen(file_index,files,path)
     drawn = False
