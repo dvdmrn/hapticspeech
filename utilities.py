@@ -65,7 +65,8 @@ def get_minpairs(path):
     female_files = []
     wavfiles = []
     minPairs = []
-    playList = []
+    playListAmp = []
+    playListCtrl = []
     global minpairMap
 
     # get mappings of minpairs
@@ -116,29 +117,34 @@ def get_minpairs(path):
 
     for e in minPairs:
         random.shuffle(e["DATA"])
-        playList.append(e["DATA"][0])
+        playListAmp.append(e["DATA"][0])
+        playListCtrl.append(e["DATA"][0])
    
     # print "playList: "+str(playList)
 
-    minPairVibMap = [] # array of dicts [{"vib_style":lowfi,"file":file.wav}, ...]
-    styleSegmentation = len(playList)/3 # assumes no. of supplied stim are divisible by 3
+    minPairVibMap = [] # array of dicts [{"vib_style":amp,"file":file.wav}, ...]
+    styleSegmentation1 = len(playListAmp)/2 # assumes no. of supplied stim are divisible by 2
+    styleSegmentation2 = len(playListCtrl)/2
+    assert styleSegmentation1 == styleSegmentation2
 
-    random.shuffle(playList)
+    # random.shuffle(playList)
     namp = 0
-    nlowfi = 0
     nctrl = 0
-    for i in range(0,len(playList)):
-        if i % 3 == 0:
-            minPairVibMap.append({"vib_style":"amp","file":playList[i]})
+    bothPlayList = 0
+    if len(playListAmp) == len(playListCtrl)
+        bothPlayList == len(playListCtrl)
+    else:
+        print "playlists not equal length! " + "playlistAmp: " + len(playListAmp) + " playlistCtrl: " + len(playListCtrl)
+
+    for i in range(0,len(bothPlayList)):
+        if i % 2 == 0:
+            minPairVibMap.append({"vib_style":"amp","file":playListAmp[i]})
             namp += 1
-        elif i % 2 == 0:
-            minPairVibMap.append({"vib_style":"lowfi","file":playList[i]})
-            nlowfi += 1
         else:
-            minPairVibMap.append({"vib_style":"ctrl","file":playList[i]})
+            minPairVibMap.append({"vib_style":"ctrl","file":playListCtrl[i]})
             nctrl += 1
 
-    assert namp == nlowfi == nctrl == styleSegmentation
+    assert namp == nctrl == styleSegmentation1 == styleSegmentation2
 
     return minPairVibMap
 

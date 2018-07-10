@@ -248,8 +248,6 @@ def playbackScreen(file_index,files,path):
         print("calling haptic_playback")
         if files[file_index]["vib_style"] == "amp":
             playback.rms_playback(currentFilePath)
-        elif files[file_index]["vib_style"] == "lowfi":
-            playback.lowfi_playback(currentFilePath)
         else:
             playFile(currentFilePath,STIM_VOLUME,"left")
 
@@ -424,6 +422,9 @@ def experimentCtrlFlow():
     global minPairMap
     global minpairs
 
+   	playListCtrl = util.get_minpairs()["playListCtrl"]
+   	playlistAmp = util.get_minpairs()["playListAmp"]
+
     with open("stimuli/minpairmap.csv") as mpmap:
         reader = csv.DictReader(mpmap)
         for row in reader:
@@ -435,19 +436,26 @@ def experimentCtrlFlow():
         heuristic_calibration(minpairs) 
         breakScreen("Calibration Complete!\nPlease notify a researcher.")
         random.shuffle(minpairs)
-  
+
+  	# if ID % 2 == 0: #ID is even
+  	# 	AmptoCtrl()
+  	# else: #ID is odd
+  	# 	CtrltoAmp()
+
     initCsv("minpair")
   
+  	# amp trial block
     numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
     for file in xrange(0,halfTokens):
-        trial(file_index,minpairs,p.minpairs)
+        trial(file_index,playListAmp,p.minpairs)
         file_index+=1
     
-    breakScreen("You're halfway through\nPlease notify a researcher to assist with vibrator placement.")
+    breakScreen("You're halfway through\nPlease notify a researcher")
 
+    # control trial block
     for file in xrange(halfTokens,numOfTokens):
-        trial(file_index,minpairs,p.minpairs)
+        trial(file_index,playListCtrl,p.minpairs)
         file_index+=1
     breakScreen("Complete! Thank-you!")
 
@@ -485,7 +493,7 @@ def initCsv(type):
         response | token | correct | contrast  | vib style
         ------------------------------------------
         p0       | p0    | 1       | vf        | amp
-        p0       | p1    | 0       | Vh        | lowfi
+        p0       | p1    | 0       | Vh        | 
         p1       | p1    | 1       | Vh        | ctrl
         ...        ...     ...       ...
 
