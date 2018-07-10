@@ -131,18 +131,21 @@ def get_minpairs(path):
     namp = 0
     nctrl = 0
     bothPlayList = 0
-    if len(playListAmp) == len(playListCtrl)
-        bothPlayList == len(playListCtrl)
+    if len(playListAmp) == len(playListCtrl):
+        bothPlayList = len(playListCtrl)
     else:
         print "playlists not equal length! " + "playlistAmp: " + len(playListAmp) + " playlistCtrl: " + len(playListCtrl)
 
-    for i in range(0,len(bothPlayList)):
+    for i in range(0,bothPlayList):
         if i % 2 == 0:
             minPairVibMap.append({"vib_style":"amp","file":playListAmp[i]})
             namp += 1
         else:
             minPairVibMap.append({"vib_style":"ctrl","file":playListCtrl[i]})
             nctrl += 1
+    print ("both playlist length: ",bothPlayList)
+    print ("namp: ", namp, " nctrl: ", nctrl, " styleseg1: ", styleSegmentation1, " styleseg2: ", styleSegmentation2)
+    print ("playlist control", len(playListCtrl), "playlist amp", len(playListAmp))
 
     assert namp == nctrl == styleSegmentation1 == styleSegmentation2
 

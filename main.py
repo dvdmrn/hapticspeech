@@ -405,7 +405,17 @@ def trial(file_index,files,path):
     recordScreen(file_index,files,path)
     drawn = False
 
+def getPlaylist(style):
 
+    """
+    organizes stimuli two playlists by their vibration styles
+    then defined in experimentCtrlFlow as playListCtrl and playListAmp
+    """
+    playlist = []
+    for i in range(0,len(minpairs)):
+        if minpairs[i]["vib_style"] == style:
+            playlist.append(minpairs[i])
+    return playlist  
 
 def experimentCtrlFlow():
 
@@ -422,8 +432,11 @@ def experimentCtrlFlow():
     global minPairMap
     global minpairs
 
-   	playListCtrl = util.get_minpairs()["playListCtrl"]
-   	playlistAmp = util.get_minpairs()["playListAmp"]
+    playListCtrl = getPlaylist("ctrl")
+    playListAmp = getPlaylist("amp")
+
+    print (playListCtrl)
+    print (playListAmp)
 
     with open("stimuli/minpairmap.csv") as mpmap:
         reader = csv.DictReader(mpmap)
