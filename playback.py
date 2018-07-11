@@ -27,6 +27,8 @@ from pygame import mixer
 import time
 import pprint
 import array
+import numpy as np
+
 SHORT_MAX = 32767
 GAIN = 2
 
@@ -67,7 +69,9 @@ def rms_playback(filepath, offset):
     amp = 0
     i = 0
     t = 0
-    sinewaveData = []  
+     
+    
+
 
 
     for i in range(0, f.getnframes()):
@@ -114,8 +118,10 @@ def rms_playback(filepath, offset):
         if offset > 0: 
             lData.append (0)
             ampData.append (0) 
-           
 
+
+           
+    sinewaveDataArray = np.empty(len(ampData)+ samplesoffset) 
     print "writing sine wave" 
     for k in xrange(0,len(ampData)):
         
@@ -125,21 +131,24 @@ def rms_playback(filepath, offset):
         if sine > 0:
             sine = min(sine,(SHORT_MAX-1))
         t += 1
-        sinewaveData.append (sine)
-    print "inserting 0 to sinewaveData"
-    for sample in xrange(0,samplesoffset): 
-        sinewaveData.insert(0,0)
-
-    
+        sinewaveDataArray[ samplesoffset + k] = sine
 
 
+       # sinewaveDataArray = np.append (sinewaveDataArray, sine)
+
+
+
+    print "inserting 0 to sinewaveData"    
+    for i in xrange(0, samplesoffset): 
+        sinewaveDataArray [i] = 0
+   # sinewaveDataArray = np.insert (sinewaveDataArray,0,np.zeros(samplesoffset))
    
     print "packing sinewaveData"
     for s in xrange(0,len(ampData)):
         # -- write source wav file in left channel
         wvData += pack('h', lData[s])
         # -- write sine wave in right channel
-        wvData += pack('h', sinewaveData[s]) #200Hz right
+        wvData += pack('h', sinewaveDataArray[s]) #200Hz right
     
 
 
