@@ -411,22 +411,23 @@ def getPlaylist(style):
     organizes stimuli two playlists by their vibration styles
     then defined in experimentCtrlFlow as playListCtrl and playListAmp
     """
-    playlist = []
+    playList = []
     for i in range(0,len(minpairs)):
         if minpairs[i]["vib_style"] == style:
-            playlist.append(minpairs[i])
-    return playlist  
+            playList.append(minpairs[i])
+    print ("this is playlist:  ", playList)
+    return playList  
 
 def experimentCtrlFlow():
 
     """
     Main experiment control flow.
-    The number of trials is based off how many stimuli are contained
-    in `stimuli/words/` and `stimuli/phrases/`.
+
     Counterbalancing is conducted based off the participant ID.
-    If the participant ID is even then we go phrases->words. If it is
-    odd then we go words->phrases.
+    If the participant ID is even then we go amp->ctrl. If it is
+    odd then we go ctrl->amp.
     """
+    print ("Calling experimentCtrlFlow()")
 
     global file_index
     global minPairMap
@@ -435,8 +436,8 @@ def experimentCtrlFlow():
     playListCtrl = getPlaylist("ctrl")
     playListAmp = getPlaylist("amp")
 
-    print (playListCtrl)
-    print (playListAmp)
+    # print (playListCtrl)
+    # print (playListAmp)
 
     with open("stimuli/minpairmap.csv") as mpmap:
         reader = csv.DictReader(mpmap)
@@ -445,19 +446,23 @@ def experimentCtrlFlow():
 
     welcomeScreen()
 
+    writeCsv("minpair")
+
     if includeCalibration:
         heuristic_calibration(minpairs) 
         breakScreen("Calibration Complete!\nPlease notify a researcher.")
         random.shuffle(minpairs)
 
-  	# if ID % 2 == 0: #ID is even
-  	# 	AmptoCtrl()
-  	# else: #ID is odd
-  	# 	CtrltoAmp()
-
-    initCsv("minpair")
+    if int(ID) % 2 == 0: #ID is even
+        ampToCtrl(minpairs,file_index, playListAmp,playListCtrl)
+        print ("ampToCtrl()")
+    else: #ID is odd
+        ctrlToAmp(minpairs,file_index, playListAmp,playListCtrl)
+        print ("ctrlToAmp()")
   
-  	# amp trial block
+
+def ampToCtrl(minpairs,file_index, playListAmp,playListCtrl):
+        # amp trial block
     numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
     for file in xrange(0,halfTokens):
@@ -469,6 +474,23 @@ def experimentCtrlFlow():
     # control trial block
     for file in xrange(halfTokens,numOfTokens):
         trial(file_index,playListCtrl,p.minpairs)
+        file_index+=1
+    breakScreen("Complete! Thank-you!")
+
+def ctrlToAmp(minpairs,file_index, playListAmp,playListCtrl):
+
+    # control trial block
+    numOfTokens = len(minpairs)
+    halfTokens = numOfTokens/2
+    for file in xrange(halfTokens,numOfTokens):
+        trial(file_index,playListCtrl,p.minpairs)
+        file_index+=1
+
+    breakScreen("You're halfway through\nPlease notify a researcher")
+
+        # amp trial block
+    for file in xrange(0,halfTokens):
+        trial(file_index,playListAmp,p.minpairs)
         file_index+=1
     breakScreen("Complete! Thank-you!")
 
@@ -496,7 +518,7 @@ def evaluate_response(answer,token, csvFile=None, vibStyle=""):
     return correct
 
 
-def initCsv(type):
+def writeCsv(type):
     """
     writes the csv file of participant responses
     type:= a string
@@ -646,10 +668,10 @@ def adj_volume(factor):
 
 def eval_token(path,index,gain):
 
-        playFile(path,gain)
-
         screenDisplay.fill(p.BG)
         pygame.display.update()
+
+        playFile(path,gain)
 
         correct = get_calibration_response(index,minpairs,p.minpairs)
         return correct
