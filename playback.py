@@ -11,9 +11,8 @@
 """
 
 # 2018/07/09 TODO:
-# use array instead of lists for efficiency??  
 # deal with positive/negative offsets 
-# offset optimization ??? (1000>>500ms) acceptable???? 
+
 
 
 import pyaudio
@@ -47,7 +46,7 @@ def rms_playback(filepath, offset):
     """
     RATE= 44100
     chunk = 512
-    secondsoffset = float(offset) /1000
+    secondsoffset = sqrt((float(offset) /1000)**2)
     samplesoffset = int( floor(secondsoffset * RATE))  
     insertZeros = [0]* samplesoffset
 
@@ -113,15 +112,11 @@ def rms_playback(filepath, offset):
             #     # write sine wave
             #     rData.append()
             #     t += 1
-    print "appending 0 to lData"
-    for sample in  xrange(0,samplesoffset): 
-        if offset > 0: 
-            lData.append (0)
-            ampData.append (0) 
 
+    print ("ampData len: ",len(ampData),"lData len",len(lData))
 
-           
-    sinewaveDataArray = np.empty(len(ampData)+ samplesoffset) 
+    sinewaveDataArray = np.zeros(len(ampData) + samplesoffset) 
+
     print "writing sine wave" 
     for k in xrange(0,len(ampData)):
         
@@ -131,20 +126,62 @@ def rms_playback(filepath, offset):
         if sine > 0:
             sine = min(sine,(SHORT_MAX-1))
         t += 1
-        sinewaveDataArray[ samplesoffset + k] = sine
+        
+        if offset > 0: #positive offset
+            sinewaveDataArray [samplesoffset + k] = sine 
+        if offset < 0: #negative offset 
+            sinewaveDataArray [k] = sine 
 
+
+
+    print "adjust ampData/lData with 0 padding"
+    
+    if offset > 0: #positive offset 
+        # print "pos offset : appending 0 to back"
+        for sample in  xrange(0,samplesoffset):    
+            lData.append (0)
+            ampData.append (0) 
+
+
+        
+    if offset < 0: #negative offset 
+        print "neg offset : appending 0 to front"
+        ampDataArray = np.zeros([samplesoffset + len(ampData)])
+        lDataArray = np.zeros([samplesoffset + len(lData)])
+
+        for i in xrange (0,len(ampData)):
+            ampDataArray [i + samplesoffset] = ampData [i] 
+            # copying array but with the length of the offset 
+            lDataArray [i + samplesoffset] = lData [i] 
+
+
+        ampData = ampDataArray #abstraction 
+        lData = lDataArray 
+
+
+    print ("ampData len2: ",len(ampData),"lData len2",len(lData))
+
+
+    
+    
 
        # sinewaveDataArray = np.append (sinewaveDataArray, sine)
 
 
 
-    print "inserting 0 to sinewaveData"    
-    for i in xrange(0, samplesoffset): 
-        sinewaveDataArray [i] = 0
-   # sinewaveDataArray = np.insert (sinewaveDataArray,0,np.zeros(samplesoffset))
+    #print "inserting 0 to sinewaveData"    
+    #   for i in xrange(0, samplesoffset): 
+    #   sinewaveDataArray [i] = 0
+    # sinewaveDataArray = np.insert (sinewaveDataArray,0,np.zeros(samplesoffset))
    
+    print "sinewaveDataArray length :" + str(len(sinewaveDataArray))
+    print "lData length :" + str(len(lData))
+    print "ampData length :"+  str(len(ampData))
+   # assert len(sinewaveDataArray) == len(lData) == len(ampData)
+
+
     print "packing sinewaveData"
-    for s in xrange(0,len(ampData)):
+    for s in xrange(0,len(sinewaveDataArray)):
         # -- write source wav file in left channel
         wvData += pack('h', lData[s])
         # -- write sine wave in right channel

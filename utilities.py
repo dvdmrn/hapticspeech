@@ -83,7 +83,7 @@ def get_minpairs(path):
         temp_wavfiles.remove('.DS_Store')
     
     print("searching subdirectories for matching IDs")
-    for row in tqdm.tqdm(minpairMap):
+    for row in tqdm.tqdm(minpairMap,ascii=True):
         # makes mp sets such that:
         # {"mpID":["wave1.wav","wave2.wav", ..."waveN.wav"]}
         mpSet = {}

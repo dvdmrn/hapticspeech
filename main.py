@@ -248,7 +248,7 @@ def playbackScreen(file_index,files,path, ctrl= False):
             playFile(currentFilePath, STIM_VOLUME, "left")
         else :
             print("calling rms_playback")
-            playback.rms_playback(currentFilePath, 200) 
+            playback.rms_playback(currentFilePath, -200) 
             
 
 
