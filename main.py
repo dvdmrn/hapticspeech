@@ -417,27 +417,6 @@ def trial(file_index,files,path):
     recordScreen(file_index,files,path)
     drawn = False
 
-def trainingTrial(file_index, files, path):
-    """
-    play & rec a token
-
-    file_index := an int
-    files := a list of files
-    """
-    print("\n\n==============================")
-    global drawn 
-    moveOn = False
-    
-    while not moveOn: 
-        playbackScreen(file_index,files,path)
-        drawn = False
-        moveOn = recordScreen(file_index,files,path, True) 
-        drawn = False
-    breakScreen("Correct!")
-
-
-
-
 def getPlaylist(style):
 
     """
@@ -586,6 +565,24 @@ def ctrlToAmp(minpairs,file_index, playListAmp,playListCtrl):
         file_index+=1
     breakScreen("Complete! Thank-you!")
 
+def trainingTrial(file_index, files, path):
+    """
+    play & rec a token
+
+    file_index := an int
+    files := a list of files
+    """
+    print("\n\n==============================")
+    global drawn 
+    moveOn = False
+    
+    while not moveOn: 
+        playbackScreen(file_index,files,path)
+        # drawn = False
+        moveOn = recordScreen(file_index,files,path, True) 
+    breakScreen("Correct! \n press ENTER/RETURN")
+    drawn = False
+
 def appendToAnswerSheet(answer,token,vib_style):
 
     with open(currentCsvPath,'ab') as csvFile:
@@ -597,16 +594,14 @@ def trainingResponse(answer,token,vib_style):
 
     print("training response: ")
     print("answer: ", answer, "token: ", token)
-    answer = evaluate_response(1, token)
+    answer = evaluate_response(0, token)
     print(answer)
     if answer:
-        print ("correct in training")
         return True
     else:
-        print ("incorrect in training")
-        breakScreen("sorry that was incorrect,lets try that again")
+        breakScreen("sorry that was incorrect, lets try that again \n\n press ENTER/RETURN")
         return False
-        
+        countDownScreen(3)
 
 def evaluate_response(answer,token, csvFile=None, vibStyle=""):
     m = re.findall(r'[A-Za-z]+',token)
@@ -615,9 +610,9 @@ def evaluate_response(answer,token, csvFile=None, vibStyle=""):
     formattedToken = m[0]
     formattedContrast = m[1]
 
-    correct = 0 #incorrect response stays at 0
+    correct = 0 #correct response stays at 0
     if answer == formattedToken:
-        correct = 1 #correct response gets changed to 1
+        correct = 1 #incorrect response gets changed to 1
 
     if csvFile:
         csvWriter = csv.writer(csvFile)
