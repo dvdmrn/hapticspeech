@@ -110,6 +110,7 @@ pygame.init()
 titleText = pygame.font.Font('UbuntuMono-R.ttf',40)
 bodyText = pygame.font.Font('UbuntuMono-R.ttf', 32)
 answerText = pygame.font.Font('UbuntuMono-R.ttf', 60)
+countDownText = pygame.font.Font('UbuntuMono-R.ttf', 100)
 
 # inputFont = pygame.font.Font('UbuntuMono-R', 32)
 # ----------------------/
@@ -188,7 +189,7 @@ textinput.set_cursor_color(p.PINK)
 def  welcomeScreen():
     global drawn
     welcomeTitle= "Welcome to the Haptic Speech Experiment!"
-    welcomeDescriptor= "During the experiment you will hear a series of words. You will be prompted to identify each word in a multiple choice manner. Select the LEFT word with the left arrow key [<-], and the RIGHT word with the right arrow key [->]. \nThe experiment will begin with a calibration phase. Afterwards, you will be asked to notify a researcher to assist you with the vibrator.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
+    welcomeDescriptor= "During the experiment you will hear a series of words. You will be prompted to identify each word in a multiple choice manner. Select the LEFT word with the left arrow key [<-], and the RIGHT word with the right arrow key [->]. \nThe experiment will begin with a training phase. Afterwards, you will enter into calibration and then the trails.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
     complete = False
     exitWindow = False
     while not complete:
@@ -258,7 +259,7 @@ def playbackScreen(file_index,files,path):
 # ----------------------------------------------
 #  Recording  Screen
 # ----------------------------------------------
-def recordScreen(file_index,files,path):
+def recordScreen(file_index,files,path, training=False):
     """
     draws main record screen for a given file_index
     file_index : an int
@@ -324,30 +325,37 @@ def recordScreen(file_index,files,path):
                 
                 # move on 
                 if event.key == pygame.K_LEFT:
-                    # left key input
-                    # p0
                     print("selected: ",mp0)
                     complete = True
-                    appendToAnswerSheet(mp0,token,files[file_index]["vib_style"])
+                    if not training:
+                        # left key input
+                        # p0
+                        appendToAnswerSheet(mp0,token,files[file_index]["vib_style"])
+                    else:
+                        print("training response left: ")
+                        return trainingResponse(mp0,token,files[file_index]["vib_style"])
 
                 if event.key == pygame.K_RIGHT:
                     # right key input
                     # p1
                     complete = True
                     print("selected: ",mp1)
-                    appendToAnswerSheet(mp1,token,files[file_index]["vib_style"])
+                    if not training:
+                        appendToAnswerSheet(mp1,token,files[file_index]["vib_style"])
+                    else:
+                        print("training response right: ")
+                        return trainingResponse(mp1,token,files[file_index]["vib_style"])
                 
             clock.tick(30)
 
     drawn = False
-
-
 
 def breakScreen(breakDescriptor):
 
     global drawn
     exitWindow = False
     complete = False
+    header = "Training"
 
     
     # event loop -- 
@@ -360,6 +368,7 @@ def breakScreen(breakDescriptor):
         if not drawn:
             screenDisplay.fill(p.BG)
             # render thing here
+            txt.textLine(screenDisplay, header,"top", titleText, p.PINK)
             txt.textWrap(screenDisplay, breakDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
 
             pygame.display.update()
@@ -383,10 +392,13 @@ def breakScreen(breakDescriptor):
                 if event.key == pygame.K_c:
                     complete = True
 
+                # record
+                if event.key == pygame.K_RETURN:
+                    complete = True
+
             pygame.display.update()  
             clock.tick(60)
     drawn = False
-
 
 
 def trial(file_index,files,path):
@@ -405,6 +417,27 @@ def trial(file_index,files,path):
     recordScreen(file_index,files,path)
     drawn = False
 
+def trainingTrial(file_index, files, path):
+    """
+    play & rec a token
+
+    file_index := an int
+    files := a list of files
+    """
+    print("\n\n==============================")
+    global drawn 
+    moveOn = False
+    
+    while not moveOn: 
+        playbackScreen(file_index,files,path)
+        drawn = False
+        moveOn = recordScreen(file_index,files,path, True) 
+        drawn = False
+    breakScreen("Correct!")
+
+
+
+
 def getPlaylist(style):
 
     """
@@ -415,7 +448,7 @@ def getPlaylist(style):
     for i in range(0,len(minpairs)):
         if minpairs[i]["vib_style"] == style:
             playList.append(minpairs[i])
-    print ("this is playlist:  ", playList)
+    
     return playList  
 
 def experimentCtrlFlow():
@@ -448,6 +481,14 @@ def experimentCtrlFlow():
 
     writeCsv("minpair")
 
+    breakScreen("Please read carefully \n\n\n\n press ENTER/RETURN for next")
+    breakScreen("You are hearing the babble track that will be playing throughout this experiment. \nYou are going to hear a word spoken (either male or female voice) over this babble track during a blank screen. \n\n\n\npress ENTER/RETURN for next")
+    breakScreen("Immediately after you will be propted to pick which word you think you heard. \n\n\n\npress ENTER/RETURN for next")
+    breakScreen("This training phase is useful to familiarize yourself with the system and know what to expect in the trials.\n You will be prompted by a visual countdown. \n\n\n\npress ENTER/RETURN for next")
+    breakScreen("This countdown will help you recognize when the stimulus will play. You will hear the word and feel a vibration simultaneously over the babbble track. Here is some practice. \n\n\n\npress ENTER/RETURN to enter calibration")
+
+    trainingFlow(minpairs, file_index, playListAmp)
+
     if includeCalibration:
         heuristic_calibration(minpairs) 
         breakScreen("Calibration Complete!\nPlease notify a researcher.")
@@ -455,11 +496,62 @@ def experimentCtrlFlow():
 
     if int(ID) % 2 == 0: #ID is even
         ampToCtrl(minpairs,file_index, playListAmp,playListCtrl)
-        print ("ampToCtrl()")
+        # print ("ampToCtrl()")
     else: #ID is odd
         ctrlToAmp(minpairs,file_index, playListAmp,playListCtrl)
-        print ("ctrlToAmp()")
-  
+        # print ("ctrlToAmp()")
+
+def countDownScreen(n): 
+    """
+    screen shows participant a countdown to prompt them that the recorded simuli will play
+    """
+    global drawn
+    exitWindow = False
+    n = int(n)
+
+    #coundown loop --
+    while n != 0:
+
+        if not drawn:
+            screenDisplay.fill(p.BG)
+            # render thing here
+            txt.textWrap(screenDisplay, str(n), countDownText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
+
+            pygame.display.update()
+            drawn = True
+
+        if exitWindow:
+            pygame.quit()
+            quit()
+
+        for event in pygame.event.get() :
+            if event.type == pygame.QUIT: 
+                exitWindow = True
+
+        # KEYDOWN events ---------------
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    print("Escape pressed!")
+                    exitWindow = True
+
+            pygame.display.update()  
+        drawn = False
+
+        print(n)
+        n = n -1
+        time.sleep(1)
+
+def trainingFlow(minpairs, file_index, playListAmp): #change playListAmp to be playListTraining
+         # training trial block
+    print ("Calling trainingFlow()")
+
+    numOfTokens = len(minpairs)
+    for file in xrange(0,numOfTokens):
+        countDownScreen(3)
+        trainingTrial(file_index,playListAmp,p.minpairs)
+        trainingResponse(answer,token,vib_style)
+        file_index+=1
+    
 
 def ampToCtrl(minpairs,file_index, playListAmp,playListCtrl):
         # amp trial block
@@ -495,21 +587,37 @@ def ctrlToAmp(minpairs,file_index, playListAmp,playListCtrl):
     breakScreen("Complete! Thank-you!")
 
 def appendToAnswerSheet(answer,token,vib_style):
-    """
-    
-    """
+
     with open(currentCsvPath,'ab') as csvFile:
         evaluate_response(answer,token,csvFile,vib_style)
+
+def trainingResponse(answer,token,vib_style):
+    global drawn
+    drawn = False 
+
+    print("training response: ")
+    print("answer: ", answer, "token: ", token)
+    answer = evaluate_response(1, token)
+    print(answer)
+    if answer:
+        print ("correct in training")
+        return True
+    else:
+        print ("incorrect in training")
+        breakScreen("sorry that was incorrect,lets try that again")
+        return False
         
 
 def evaluate_response(answer,token, csvFile=None, vibStyle=""):
     m = re.findall(r'[A-Za-z]+',token)
+    #token is what the answer should be given the choice of two minimal pairs
+    #files are named like '#'_'WORD'_'contrast'_'m/f'
     formattedToken = m[0]
     formattedContrast = m[1]
 
-    correct = 0
+    correct = 0 #incorrect response stays at 0
     if answer == formattedToken:
-        correct = 1
+        correct = 1 #correct response gets changed to 1
 
     if csvFile:
         csvWriter = csv.writer(csvFile)
