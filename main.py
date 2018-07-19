@@ -222,7 +222,7 @@ def  welcomeScreen():
 # ----------------------------------------------
 #  Stimulus Play Screen
 # ----------------------------------------------    
-def playbackScreen(file_index,files,path, ctrl= False):
+def playbackScreen(file_index,files,path,offset=0):
     """
     Renders the screen for signal playback
     @param file_index: an int
@@ -243,12 +243,11 @@ def playbackScreen(file_index,files,path, ctrl= False):
         screenDisplay.fill(p.BG)
         pygame.display.update()
         currentFilePath = util.constructPath(path,files[file_index]["file"])
-        print("calling haptic_playback")
-        if ctrl:
-            playFile(currentFilePath, STIM_VOLUME, "left")
-        else :
-            print("calling rms_playback")
-            playback.rms_playback(currentFilePath, -200) 
+        # print("calling haptic_playback")
+        # if ctrl:
+        #     playFile(currentFilePath, STIM_VOLUME, "left")
+        print("calling rms_playback")
+        playback.rms_playback(currentFilePath, offset) 
             
 
 
@@ -258,7 +257,7 @@ def playbackScreen(file_index,files,path, ctrl= False):
 # ----------------------------------------------
 #  Recording  Screen
 # ----------------------------------------------
-def recordScreen(file_index,files,path):
+def recordScreen(file_index,files,path,offset):
     """
     draws main record screen for a given file_index
     file_index : an int
@@ -328,14 +327,14 @@ def recordScreen(file_index,files,path):
                     # p0
                     print("selected: ",mp0)
                     complete = True
-                    appendToAnswerSheet(mp0,token,files[file_index]["vib_style"])
+                    appendToAnswerSheet(mp0,token,files[file_index]["vib_style"],offset)
 
                 if event.key == pygame.K_RIGHT:
                     # right key input
                     # p1
                     complete = True
                     print("selected: ",mp1)
-                    appendToAnswerSheet(mp1,token,files[file_index]["vib_style"])
+                    appendToAnswerSheet(mp1,token,files[file_index]["vib_style"],offset)
                 
             clock.tick(30)
 
@@ -389,20 +388,22 @@ def breakScreen(breakDescriptor):
 
 
 
-def trial(file_index,files,path):
+def trial(file_index,files,path,offset):
     """
     play & rec a token
 
     file_index := an int
     files := a list of files
+    path := a string rep filepath
+    offset := temporal offset of vibrotactile signal in ms
     """
 
     print("\n\n==============================")
     global drawn 
     global endoftrial
-    playbackScreen(file_index,files,path)
+    playbackScreen(file_index,files,path,offset)
     drawn = False
-    recordScreen(file_index,files,path)
+    recordScreen(file_index,files,path,offset)
     drawn = False
 
 
@@ -416,11 +417,26 @@ def experimentCtrlFlow():
     Counterbalancing is conducted based off the participant ID.
     If the participant ID is even then we go phrases->words. If it is
     odd then we go words->phrases.
+
+    we are assessing accuracy scores in offsets of:
+    -200ms
+    -150ms
+    -100ms
+    -50ms
+    0
+    +50ms
+    +100ms
+    +150ms
+    +200ms
+
     """
 
     global file_index
     global minPairMap
     global minpairs
+
+
+    offsets = [200,150,100,50,0,-200,-150,-100,-50]
 
     with open("stimuli/minpairmap.csv") as mpmap:
         reader = csv.DictReader(mpmap)
@@ -438,26 +454,27 @@ def experimentCtrlFlow():
   
     numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
-    for file in xrange(0,halfTokens):
-        trial(file_index,minpairs,p.minpairs)
-        file_index+=1
-    
-    breakScreen("You're halfway through\nPlease notify a researcher to assist with vibrator placement.")
 
-    for file in xrange(halfTokens,numOfTokens):
-        trial(file_index,minpairs,p.minpairs)
-        file_index+=1
+    random.shuffle(offsets)
+    
+    for offset in offsets:
+        random.shuffle(minpairs)
+        for file in xrange(0,numOfTokens):
+            trial(file_index,minpairs,p.minpairs,offset)
+            file_index+=1
+
     breakScreen("Complete! Thank-you!")
 
-def appendToAnswerSheet(answer,token,vib_style):
+def appendToAnswerSheet(answer,token,vib_style,offset):
     """
     
     """
     with open(currentCsvPath,'ab') as csvFile:
-        evaluate_response(answer,token,csvFile,vib_style)
+        evaluate_response(answer,token,csvFile,vib_style,offset)
+
         
 
-def evaluate_response(answer,token, csvFile=None, vibStyle=""):
+def evaluate_response(answer,token,csvFile=None, vibStyle="",offset=0):
     m = re.findall(r'[A-Za-z]+',token)
     formattedToken = m[0]
     formattedContrast = m[1]
@@ -468,7 +485,7 @@ def evaluate_response(answer,token, csvFile=None, vibStyle=""):
 
     if csvFile:
         csvWriter = csv.writer(csvFile)
-        csvWriter.writerow([answer,formattedToken,correct,formattedContrast,vibStyle])
+        csvWriter.writerow([answer,formattedToken,correct,formattedContrast,vibStyle,offset])
     
     return correct
 
@@ -493,7 +510,9 @@ def initCsv(type):
     currentCsvPath = participantResponseRootFilePath+"/"+ID+"_"+type+"_responses.csv"
     with open(currentCsvPath, 'wb') as csvFile:
         csvWriter = csv.writer(csvFile)
-        csvWriter.writerow(["response","token","correct","contrast","vib_style"])
+        csvWriter.writerow(["response","token","correct","contrast","vib_style","offset"])
+
+
 
 def searchForMinPair(id):
     for row in minPairMap:
@@ -501,14 +520,6 @@ def searchForMinPair(id):
             return [row["p0"],row["p1"]]
 
     return ["NO_PAIR_FOUND","NO_PAIR_FOUND"]
-
-
-
-
-
-
-
-
 
 
 

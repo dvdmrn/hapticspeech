@@ -129,21 +129,13 @@ def rms_playback(filepath, offset):
         
         if offset > 0: #positive offset
             sinewaveDataArray [samplesoffset + k] = sine 
-        if offset < 0: #negative offset 
+        else: #negative offset 
             sinewaveDataArray [k] = sine 
 
 
 
     print "adjust ampData/lData with 0 padding"
     
-    if offset > 0: #positive offset 
-        # print "pos offset : appending 0 to back"
-        for sample in  xrange(0,samplesoffset):    
-            lData.append (0)
-            ampData.append (0) 
-
-
-        
     if offset < 0: #negative offset 
         print "neg offset : appending 0 to front"
         ampDataArray = np.zeros([samplesoffset + len(ampData)])
@@ -157,6 +149,15 @@ def rms_playback(filepath, offset):
 
         ampData = ampDataArray #abstraction 
         lData = lDataArray 
+
+    else: #positive offset 
+        # print "pos offset : appending 0 to back"
+        for sample in  xrange(0,samplesoffset):    
+            lData.append (0)
+            ampData.append (0) 
+
+
+        
 
 
     print ("ampData len2: ",len(ampData),"lData len2",len(lData))
