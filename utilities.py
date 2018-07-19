@@ -139,7 +139,7 @@ def get_minpairs(path):
             nctrl += 1
 
     assert namp == nlowfi == nctrl == styleSegmentation
-
+    print(minPairVibMap)
     return minPairVibMap
 
 
