@@ -378,7 +378,7 @@ def recordScreen(file_index,files,path):
                         # p0
                         appendToAnswerSheet(mp0,token,files[file_index]["vib_style"])
                     else:
-                        print("training response left: ")
+                        print("Left key! Selected: ",mp0)
                         return trainingResponse(mp0,token,files[file_index]["vib_style"])
 
                 if event.key == pygame.K_RIGHT:
@@ -389,7 +389,7 @@ def recordScreen(file_index,files,path):
                     if not training:
                         appendToAnswerSheet(mp1,token,files[file_index]["vib_style"])
                     else:
-                        print("training response right: ")
+                        print("Right key! Selected: ",mp1)
                         return trainingResponse(mp1,token,files[file_index]["vib_style"])
                 
             clock.tick(30)
@@ -530,6 +530,8 @@ def experimentCtrlFlow():
     breakScreen("This countdown will help you recognize when the stimulus will play. You will hear the word and feel a vibration simultaneously over the babbble track. Here is some practice. \n\n\n\npress ENTER/RETURN to enter calibration")
 
     trainingFlow(minpairs, file_index, playListAmp)
+    breakScreen("--calibration phase--\n please notify a researcher")
+
 
     if includeCalibration:
         heuristic_calibration(minpairs) 
@@ -587,11 +589,10 @@ def trainingFlow(minpairs, file_index, playListAmp): #change playListAmp to be p
          # training trial block
     print ("Calling trainingFlow()")
 
-    numOfTokens = len(minpairs)
-    for file in xrange(0,numOfTokens):
+    trainingTrials = 10
+    for file in xrange(0,trainingTrials):
         countDownScreen(3)
         trainingTrial(file_index,playListAmp,p.minpairs)
-        trainingResponse(answer,token,vib_style)
         file_index+=1
     
 
@@ -663,11 +664,18 @@ def appendToAnswerSheet(answer,token,vib_style):
 def trainingResponse(answer,token,vib_style):
     global drawn
     drawn = False 
+    print("wait answer what",answer)
 
-    print("training response: ")
-    print("answer: ", answer, "token: ", token)
-    answer = evaluate_response(0, token)
-    print(answer)
+    m = re.findall(r'[A-Za-z]+',token)
+    #token is what the answer should be given the choice of two minimal pairs
+    #files are named like '#'_'WORD'_'contrast'_'m/f'
+    formattedToken = m[0]
+    formattedContrast = m[1]
+
+    print("training response===")
+    # print("answer: ", answer, "token: ", formattedToken)
+    answer = evaluate_response(answer, token)
+    print("answer: ",answer)
     if answer:
         return True
     else:
