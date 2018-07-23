@@ -22,6 +22,13 @@ DARKGREY = (30,10,20)
 # DARKGREY = (10,10,10)
 PINK = (200,100,200)
 
+
+titleSize = 40
+bodySize = 32
+answerSize = 60
+
+
+
 # files --
 wordpath = "stimuli/words/"
 phrasepath = "stimuli/phrases/"
@@ -30,3 +37,21 @@ minpairs = ""
 responsePath = "responses/"
 
 # ----------------------/
+
+# ULTRA HD MODE
+def setUHD():
+	global screen_width
+	global screen_height
+	global titleSize
+	global bodySize
+	global answerSize
+	global recBarWidth
+	global recBarHeight
+	print("called uhd")
+	screen_width = 3480
+	screen_height = 2160
+	titleSize = 80
+	bodySize = 64
+	answerSize = 80
+	recBarWidth = 600
+	recBarHeight = 300
