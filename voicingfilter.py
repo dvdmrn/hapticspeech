@@ -7,7 +7,7 @@
 from pylab import *
 from scipy.io import wavfile
 
-sampFreq, snd = wavfile.read('stimuli/male/stops/120_bought_vs_m.wav')
+sampFreq, snd = wavfile.read('stimuli/fricatives/0_jack_vf_f.wav')
 
 THRESHOLD_CUTOFF = 2.5 #in kHz
 
