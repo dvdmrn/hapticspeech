@@ -275,6 +275,7 @@ def recordScreen(file_index,files,path,offset):
     print("----\nAwaiting input for: "+str(files[file_index]["file"]))
     mpIDpattern = re.search("[0-9]+_",str(files[file_index]["file"])) # match ID
     tokenName = re.search("\_\w+\_",str(files[file_index]["file"]))
+    print("\n\n\nfile:",files[file_index])
     token = tokenName.group(0)[1:-1]
     mpID = mpIDpattern.group(0)[:-1]
     mp = searchForMinPair(mpID)
@@ -462,6 +463,7 @@ def experimentCtrlFlow():
         for file in xrange(0,numOfTokens):
             trial(file_index,minpairs,p.minpairs,offset)
             file_index+=1
+        file_index = 0
 
     breakScreen("Complete! Thank-you!")
 
