@@ -1,76 +1,76 @@
-"""
+# """
 
-     _   _             _   _      _____                      _     
-    | | | |           | | (_)    /  ___|                    | |    
-    | |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  
-    |  _  |/ _` | '_ \| __| |/ __|`--. \ '_ \ / _ \/ _ \/ __| '_ \ 
-    | | | | (_| | |_) | |_| | (__/\__/ / |_) |  __/  __/ (__| | | |
-    \_| |_/\__,_| .__/ \__|_|\___\____/| .__/ \___|\___|\___|_| |_|
-                | |                    | |                         
-                |_|                    |_|                         
+#      _   _             _   _      _____                      _     
+#     | | | |           | | (_)    /  ___|                    | |    
+#     | |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  
+#     |  _  |/ _` | '_ \| __| |/ __|`--. \ '_ \ / _ \/ _ \/ __| '_ \ 
+#     | | | | (_| | |_) | |_| | (__/\__/ / |_) |  __/  __/ (__| | | |
+#     \_| |_/\__,_| .__/ \__|_|\___\____/| .__/ \___|\___|\___|_| |_|
+#                 | |                    | |                         
+#                 |_|                    |_|                         
     
-    ===================================================================
-    -------------------------------------------------------------------
-    ...................................................................
+#     ===================================================================
+#     -------------------------------------------------------------------
+#     ...................................................................
 
 
-    Labs: -------------------------------------------------------------
+#     Labs: -------------------------------------------------------------
 
-         _______..______    __  .__   __.
-        /       ||   _  \  |  | |  \ |  |
-       |   (----`|  |_)  | |  | |   \|  |
-        \   \    |   ___/  |  | |  . `  |
-    .----)   |   |  |      |  | |  |\   |
-    |_______/    | _|      |__| |__| \__|
+#          _______..______    __  .__   __.
+#         /       ||   _  \  |  | |  \ |  |
+#        |   (----`|  |_)  | |  | |   \|  |
+#         \   \    |   ___/  |  | |  . `  |
+#     .----)   |   |  |      |  | |  |\   |
+#     |_______/    | _|      |__| |__| \__|
                                          
-    Sensory Perception and Interaction Lab
+#     Sensory Perception and Interaction Lab
 
-    ________/\\\\\\\\\________________/\\\\\\\\\\\\_____/\\\_____________        
-     _____/\\\////////________________\/\\\////////\\\__\/\\\_____________       
-      ___/\\\/_________________________\/\\\______\//\\\_\/\\\_____________      
-       __/\\\_________________/\\\\\____\/\\\_______\/\\\_\/\\\_____________     
-        _\/\\\_______________/\\\///\\\__\/\\\_______\/\\\_\/\\\_____________    
-         _\//\\\_____________/\\\__\//\\\_\/\\\_______\/\\\_\/\\\_____________   
-          __\///\\\__________\//\\\__/\\\__\/\\\_______/\\\__\/\\\_____________  
-           ____\////\\\\\\\\\__\///\\\\\/___\/\\\\\\\\\\\\/___\/\\\\\\\\\\\\\\\_ 
-            _______\/////////_____\/////_____\////////////_____\///////////////__
+#     ________/\\\\\\\\\________________/\\\\\\\\\\\\_____/\\\_____________        
+#      _____/\\\////////________________\/\\\////////\\\__\/\\\_____________       
+#       ___/\\\/_________________________\/\\\______\//\\\_\/\\\_____________      
+#        __/\\\_________________/\\\\\____\/\\\_______\/\\\_\/\\\_____________     
+#         _\/\\\_______________/\\\///\\\__\/\\\_______\/\\\_\/\\\_____________    
+#          _\//\\\_____________/\\\__\//\\\_\/\\\_______\/\\\_\/\\\_____________   
+#           __\///\\\__________\//\\\__/\\\__\/\\\_______/\\\__\/\\\_____________  
+#            ____\////\\\\\\\\\__\///\\\\\/___\/\\\\\\\\\\\\/___\/\\\\\\\\\\\\\\\_ 
+#             _______\/////////_____\/////_____\////////////_____\///////////////__
 
-    Communications Dynamics Lab
+#     Communications Dynamics Lab
 
-    _________ _______  _______  _       
-    \__   __/(  ____ \(  ____ )( \      
-       ) (   | (    \/| (    )|| (      
-       | |   | (_____ | (____)|| |      
-       | |   (_____  )|     __)| |      
-       | |         ) || (\ (   | |      
-    ___) (___/\____) || ) \ \__| (____/\
-    \_______/\_______)|/   \__/(_______/
+#     _________ _______  _______  _       
+#     \__   __/(  ____ \(  ____ )( \      
+#        ) (   | (    \/| (    )|| (      
+#        | |   | (_____ | (____)|| |      
+#        | |   (_____  )|     __)| |      
+#        | |         ) || (\ (   | |      
+#     ___) (___/\____) || ) \ \__| (____/\
+#     \_______/\_______)|/   \__/(_______/
                                        
-    Interdisciplinary Speech Research Lab
+#     Interdisciplinary Speech Research Lab
     
     
-    Researchers: ----------------------------------------------------
-    PIs: Karon MacLean, Bryan Gick, Eric Vatikiotis-Bateson 
-    RAs: David Marino, Hannah Elbaggari, Andrew Yang, Tamara Lottering
+#     Researchers: ----------------------------------------------------
+#     PIs: Karon MacLean, Bryan Gick, Eric Vatikiotis-Bateson 
+#     RAs: David Marino, Hannah Elbaggari, Andrew Yang, Tamara Lottering
 
 
 
-    About: -----------------------------------------------------------
+#     About: -----------------------------------------------------------
     
-    + Experimental software designed to evaluate the efficacy of 
-      haptic enhancement of speech in noisy conditions.
+#     + Experimental software designed to evaluate the efficacy of 
+#       haptic enhancement of speech in noisy conditions.
 
-    + Converts speech to a haptic signal (L channel)
+#     + Converts speech to a haptic signal (L channel)
 
-    + use the `-w` flag for windowed mode
+#     + use the `-w` flag for windowed mode
     
-    + use the `-nc` (no calibration) flag to skip calibration
+#     + use the `-nc` (no calibration) flag to skip calibration
 
-    notes:
-    - gets files in stim based off minpairmappings.csv. 
-    - Randomly populates an array called "files"
+#     notes:
+#     - gets files in stim based off minpairmappings.csv. 
+#     - Randomly populates an array called "files"
 
-"""
+# """
 from __future__ import print_function
 print(" _   _             _   _      _____                      _     \n| | | |           | | (_)    /  ___|                    | |    \n| |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  \n|  _  |/ _` | '_ \| __| |/ __|`--. \ '_ \ / _ \/ _ \/ __| '_ \ \n| | | | (_| | |_) | |_| | (__/\__/ / |_) |  __/  __/ (__| | | |\n\_| |_/\__,_| .__/ \__|_|\___\____/| .__/ \___|\___|\___|_| |_|\n            | |                    | |                         \n            |_|                    |_|                         \n\nImporting modules...")
 import pygame # game framework mainly used for its graphical capabilities here
@@ -105,7 +105,7 @@ if not os.path.exists(participantResponseRootFilePath):
 pygame.init()
 
 
-<<<<<<< HEAD
+# <<<<<<< HEAD
 # typefaces ------------\
 titleText = pygame.font.Font('UbuntuMono-R.ttf',40)
 bodyText = pygame.font.Font('UbuntuMono-R.ttf', 32)
@@ -115,8 +115,8 @@ countDownText = pygame.font.Font('UbuntuMono-R.ttf', 100)
 # inputFont = pygame.font.Font('UbuntuMono-R', 32)
 # ----------------------/
 
-=======
->>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
+# =======
+# >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
 
 # state control --------\
 drawn = False
@@ -199,10 +199,10 @@ textinput.set_cursor_color(p.PINK)
 # Functions
 # ============================================================================================
 
-"""
- - most of the xScreen functions (e.g. welcomeScreen, breakScreen...) contain their own render loops
- - call an xScreen function to go to that particular screen.
-"""
+# """
+#  - most of the xScreen functions (e.g. welcomeScreen, breakScreen...) contain their own render loops
+#  - call an xScreen function to go to that particular screen.
+# """
 
 def  welcomeScreen():
     """
@@ -290,14 +290,14 @@ def playbackScreen(file_index,files,path):
         drawn = True
     
 
-<<<<<<< HEAD
+# <<<<<<< HEAD
 # ----------------------------------------------
 #  Recording  Screen
 # ----------------------------------------------
 def recordScreen(file_index,files,path, training=False):
-=======
-def recordScreen(file_index,files,path):
->>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
+# =======
+# def recordScreen(file_index,files,path):
+# >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
     """
     draws main record screen for a given file_index
     file_index : an int
@@ -331,13 +331,13 @@ def recordScreen(file_index,files,path):
 
 
     # event loop -- 
-    """
-        SPACE: record (LEGACY: no longer available)
-        ESC: quit
-        RETURN: next
-        LEFT ARROW: option 1
-        RIGHT ARROW: option 2
-    """
+    # """
+    #     SPACE: record (LEGACY: no longer available)
+    #     ESC: quit
+    #     RETURN: next
+    #     LEFT ARROW: option 1
+    #     RIGHT ARROW: option 2
+    # """
     while not complete:
 
         screenDisplay.fill(p.BG)
@@ -396,10 +396,10 @@ def recordScreen(file_index,files,path):
 
     drawn = False
 
-<<<<<<< HEAD
-=======
+# <<<<<<< HEAD
+# =======
 
->>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
+# >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
 def breakScreen(breakDescriptor):
     """
     Draws the break screen
@@ -416,10 +416,10 @@ def breakScreen(breakDescriptor):
 
     
     # event loop -- 
-    """
-    Press C to continue
-    Press esc to quit
-    """
+ 
+    # Press C to continue
+    # Press esc to quit
+    
     while not complete:
 
         if not drawn:
@@ -652,7 +652,7 @@ def trainingTrial(file_index, files, path):
         playbackScreen(file_index,files,path)
         # drawn = False
         moveOn = recordScreen(file_index,files,path, True) 
-    breakScreen("Correct! \n press ENTER/RETURN")
+    breakScreen("Correct! \n\n press ENTER/RETURN")
     drawn = False
 
 def appendToAnswerSheet(answer,token,vib_style):
@@ -684,25 +684,25 @@ def trainingResponse(answer,token,vib_style):
         countDownScreen(3)
 
 def evaluate_response(answer,token, csvFile=None, vibStyle=""):
-<<<<<<< HEAD
+# <<<<<<< HEAD
     m = re.findall(r'[A-Za-z]+',token)
     #token is what the answer should be given the choice of two minimal pairs
     #files are named like '#'_'WORD'_'contrast'_'m/f'
     formattedToken = m[0]
     formattedContrast = m[1]
-=======
-    """
-    determines if response is correct or not
-    answer := a string [participant's response]
-    token := a string  [actual stimuli presented]
-    csvFile := a CSV File
-    vibStyle = a String
+# =======
+    # """
+    # determines if response is correct or not
+    # answer := a string [participant's response]
+    # token := a string  [actual stimuli presented]
+    # csvFile := a CSV File
+    # vibStyle = a String
 
-    """
+    # """
     m = re.findall(r'[A-Za-z]+',token) # match alphabetical characters in the token
     formattedToken = m[0] # m[0] is the word
     formattedContrast = m[1] #m[1] is the contrast
->>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
+# >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
 
     correct = 0 #correct response stays at 0
     if answer == formattedToken:
@@ -875,22 +875,22 @@ def adj_volume(factor):
 
 def eval_token(path,index,gain):
 
-<<<<<<< HEAD
-        screenDisplay.fill(p.BG)
-        pygame.display.update()
+# <<<<<<< HEAD
+    screenDisplay.fill(p.BG)
+    pygame.display.update()
 
-        playFile(path,gain)
+    playFile(path,gain)
 
-        correct = get_calibration_response(index,minpairs,p.minpairs)
-        return correct
-=======
-    """
-    plays a token
-    path := a string
-    index := an int
-    gain := a float
-    returns: an int (1=correct, 0=incorrect)
-    """
+    correct = get_calibration_response(index,minpairs,p.minpairs)
+    return correct
+# =======
+    # """
+    # plays a token
+    # path := a string
+    # index := an int
+    # gain := a float
+    # returns: an int (1=correct, 0=incorrect)
+    # """
     playFile(path,gain)
 
     screenDisplay.fill(p.BG)
@@ -898,7 +898,7 @@ def eval_token(path,index,gain):
 
     correct = get_calibration_response(index,minpairs,p.minpairs)
     return correct
->>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
+# >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
 
 def playFile(path,gain,channel=""):
         """
@@ -953,11 +953,11 @@ def get_calibration_response(file_index,files,path):
 
 
     # event loop -- 
-    """
-        SPACE: record
-        ESC: quit
-        RETURN: next
-    """
+    # """
+    #     SPACE: record
+    #     ESC: quit
+    #     RETURN: next
+    # """
     while not complete:
         screenDisplay.fill(p.BG)
         events = pygame.event.get()
