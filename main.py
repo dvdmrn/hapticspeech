@@ -91,7 +91,7 @@ import math, random
 
 # -- globals ------------------------\\
 STIM_VOLUME = 1.0 # 1 = max
-ACCURACY_TARGET = 62.0 # % of correct scores needed
+ACCURACY_TARGET = 65.0 # % of correct scores needed
 PADDING = 5.0 # +/- padding
 # =====================================
 
@@ -272,7 +272,16 @@ def playbackScreen(file_index,files,path):
             
         # displays playback info to the console
         print("file index: "+str(file_index))
+<<<<<<< HEAD
         print("wave file: "+str(files[file_index]["file"]))
+=======
+        try:
+        	print("wave file: "+str(files[file_index]["file"]))
+        except:
+        	print("OHNON","file_index:",file_index,"\nnumFiles:",num_of_files,"all them files: ",files)
+
+        # print("files: "+str(files))
+>>>>>>> 3eb2ab578ee4e73cf55efd403b7727d4c5a53b55
 
         screenDisplay.fill(p.BG)
         pygame.display.update()
@@ -539,10 +548,10 @@ def experimentCtrlFlow():
         random.shuffle(minpairs)
 
     if int(ID) % 2 == 0: #ID is even
-        ampToCtrl(minpairs,file_index, playListAmp,playListCtrl)
+        ampToCtrl(minpairs,playListAmp,playListCtrl)
         # print ("ampToCtrl()")
     else: #ID is odd
-        ctrlToAmp(minpairs,file_index, playListAmp,playListCtrl)
+        ctrlToAmp(minpairs,playListAmp,playListCtrl)
         # print ("ctrlToAmp()")
 
 def countDownScreen(n): 
@@ -589,41 +598,48 @@ def trainingFlow(minpairs, file_index, playListAmp): #change playListAmp to be p
          # training trial block
     print ("Calling trainingFlow()")
 
-    trainingTrials = 10
+    trainingTrials = 1
     for file in xrange(0,trainingTrials):
         countDownScreen(3)
         trainingTrial(file_index,playListAmp,p.minpairs)
         file_index+=1
     
 
-def ampToCtrl(minpairs,file_index, playListAmp,playListCtrl):
-        # amp trial block
+def ampToCtrl(minpairs, playListAmp,playListCtrl):
+    # amp trial block
+    global file_index
+    file_index = 0
     numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
+    
     for file in xrange(0,halfTokens):
         trial(file_index,playListAmp,p.minpairs)
         file_index+=1
     
     breakScreen("You're halfway through\nPlease notify a researcher")
-
+    file_index = 0
     # control trial block
-    for file in xrange(halfTokens,numOfTokens):
+    for file in xrange(0,halfTokens):
         trial(file_index,playListCtrl,p.minpairs)
         file_index+=1
     breakScreen("Complete! Thank-you!")
 
-def ctrlToAmp(minpairs,file_index, playListAmp,playListCtrl):
+def ctrlToAmp(minpairs,playListAmp,playListCtrl):
 
     # control trial block
+    global file_index
+    file_index = 0
     numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
-    for file in xrange(halfTokens,numOfTokens):
+    
+    for file in xrange(0,halfTokens):
         trial(file_index,playListCtrl,p.minpairs)
         file_index+=1
 
     breakScreen("You're halfway through\nPlease notify a researcher")
 
-        # amp trial block
+    file_index = 0
+    # amp trial block
     for file in xrange(0,halfTokens):
         trial(file_index,playListAmp,p.minpairs)
         file_index+=1
@@ -761,6 +777,7 @@ def heuristic_calibration(minpairs):
     """
     minpairs = util.getFilePaths(minpairs)
     global STIM_VOLUME
+
     cTrials = 0
     score = 0
     block = 0
