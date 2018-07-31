@@ -272,16 +272,16 @@ def playbackScreen(file_index,files,path):
             
         # displays playback info to the console
         print("file index: "+str(file_index))
-<<<<<<< HEAD
+# <<<<<<< HEAD
         print("wave file: "+str(files[file_index]["file"]))
-=======
+# =======
         try:
         	print("wave file: "+str(files[file_index]["file"]))
         except:
         	print("OHNON","file_index:",file_index,"\nnumFiles:",num_of_files,"all them files: ",files)
 
         # print("files: "+str(files))
->>>>>>> 3eb2ab578ee4e73cf55efd403b7727d4c5a53b55
+# >>>>>>> 3eb2ab578ee4e73cf55efd403b7727d4c5a53b55
 
         screenDisplay.fill(p.BG)
         pygame.display.update()
@@ -409,7 +409,7 @@ def recordScreen(file_index,files,path, training=False):
 # =======
 
 # >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
-def breakScreen(breakDescriptor):
+def breakScreen(breakDescriptor, header):
     """
     Draws the break screen
     @param breakDescriptor: a string
@@ -421,7 +421,7 @@ def breakScreen(breakDescriptor):
     global drawn
     exitWindow = False
     complete = False
-    header = "Training"
+
 
     
     # event loop -- 
@@ -532,19 +532,19 @@ def experimentCtrlFlow():
 
     writeCsv("minpair")
 
-    breakScreen("Please read carefully \n\n\n\n press ENTER/RETURN for next")
-    breakScreen("You are hearing the babble track that will be playing throughout this experiment. \nYou are going to hear a word spoken (either male or female voice) over this babble track during a blank screen. \n\n\n\npress ENTER/RETURN for next")
-    breakScreen("Immediately after you will be propted to pick which word you think you heard. \n\n\n\npress ENTER/RETURN for next")
-    breakScreen("This training phase is useful to familiarize yourself with the system and know what to expect in the trials.\n You will be prompted by a visual countdown. \n\n\n\npress ENTER/RETURN for next")
-    breakScreen("This countdown will help you recognize when the stimulus will play. You will hear the word and feel a vibration simultaneously over the babbble track. Here is some practice. \n\n\n\npress ENTER/RETURN to enter calibration")
+    breakScreen("Please read carefully \n\n\n\n press ENTER/RETURN for next", "Training")
+    breakScreen("You are hearing the babble track that will be playing throughout this experiment. \nYou are going to hear a word spoken (either male or female voice) over this babble track during a blank screen. \n\n\n\npress ENTER/RETURN for next", "Training")
+    breakScreen("Immediately after you will be propted to pick which word you think you heard. \n\n\n\npress ENTER/RETURN for next", "Training")
+    breakScreen("This training phase is useful to familiarize yourself with the system and know what to expect in the trials.\n You will be prompted by a visual countdown. \n\n\n\npress ENTER/RETURN for next", "Training")
+    breakScreen("This countdown will help you recognize when the stimulus will play. You will hear the word and feel a vibration simultaneously over the babbble track. Here is some practice. \n\n\n\npress ENTER/RETURN to enter training", "Training")
 
     trainingFlow(minpairs, file_index, playListAmp)
-    breakScreen("--calibration phase--\n please notify a researcher")
+    breakScreen("We will now enter the calibration phase\n\n please set down the vibrator and notify a researcher", "Calibration")
 
 
     if includeCalibration:
         heuristic_calibration(minpairs) 
-        breakScreen("Calibration Complete!\nPlease notify a researcher.")
+        breakScreen("Calibration Complete!\nPlease notify a researcher.", "Calibration")
         random.shuffle(minpairs)
 
     if int(ID) % 2 == 0: #ID is even
@@ -598,7 +598,7 @@ def trainingFlow(minpairs, file_index, playListAmp): #change playListAmp to be p
          # training trial block
     print ("Calling trainingFlow()")
 
-    trainingTrials = 1
+    trainingTrials = 2
     for file in xrange(0,trainingTrials):
         countDownScreen(3)
         trainingTrial(file_index,playListAmp,p.minpairs)
@@ -616,13 +616,13 @@ def ampToCtrl(minpairs, playListAmp,playListCtrl):
         trial(file_index,playListAmp,p.minpairs)
         file_index+=1
     
-    breakScreen("You're halfway through\nPlease notify a researcher")
+    breakScreen("You're halfway through\nPlease notify a researcher", "Take a break")
     file_index = 0
     # control trial block
     for file in xrange(0,halfTokens):
         trial(file_index,playListCtrl,p.minpairs)
         file_index+=1
-    breakScreen("Complete! Thank-you!")
+    breakScreen("Complete! Thank-you!", "")
 
 def ctrlToAmp(minpairs,playListAmp,playListCtrl):
 
@@ -636,14 +636,14 @@ def ctrlToAmp(minpairs,playListAmp,playListCtrl):
         trial(file_index,playListCtrl,p.minpairs)
         file_index+=1
 
-    breakScreen("You're halfway through\nPlease notify a researcher")
+    breakScreen("You're halfway through\nPlease notify a researcher", "Take a break")
 
     file_index = 0
     # amp trial block
     for file in xrange(0,halfTokens):
         trial(file_index,playListAmp,p.minpairs)
         file_index+=1
-    breakScreen("Complete! Thank-you!")
+    breakScreen("Complete! Thank-you!", "")
 
 def trainingTrial(file_index, files, path):
     """
@@ -668,7 +668,7 @@ def trainingTrial(file_index, files, path):
         playbackScreen(file_index,files,path)
         # drawn = False
         moveOn = recordScreen(file_index,files,path, True) 
-    breakScreen("Correct! \n\n press ENTER/RETURN")
+    breakScreen("Correct! \n\n press ENTER/RETURN", "Training")
     drawn = False
 
 def appendToAnswerSheet(answer,token,vib_style):
@@ -695,7 +695,7 @@ def trainingResponse(answer,token,vib_style):
     if answer:
         return True
     else:
-        breakScreen("sorry that was incorrect, lets try that again \n\n press ENTER/RETURN")
+        breakScreen("sorry that was incorrect, lets try that again \n\n press ENTER/RETURN", "Training")
         return False
         countDownScreen(3)
 
