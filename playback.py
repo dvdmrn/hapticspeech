@@ -30,6 +30,7 @@ import numpy as np
 
 SHORT_MAX = 32767
 GAIN = 2
+AMP_THRESHOLD = 0
 
 pp = pprint.PrettyPrinter()
 def rms_playback(filepath, offset):
@@ -45,7 +46,7 @@ def rms_playback(filepath, offset):
 
     """
     RATE= 44100
-    chunk = 1024 #512
+    chunk = 1024 # previously 512
     secondsoffset = sqrt((float(offset) /1000)**2)
     samplesoffset = int( floor(secondsoffset * RATE))  
     insertZeros = [0]* samplesoffset
@@ -96,7 +97,7 @@ def rms_playback(filepath, offset):
             except:
                 # out of index range, so we are at the end
                 subsamples = lData[startChunk:len(f.getnframes()-1)]
-
+            print("amp data: ",RMS(subsamples))
             voiced = voicingfilter.processWaveChunk(subsamples,chunk)
 
             # amp = RMS(subsamples)
@@ -206,114 +207,114 @@ def rms_playback(filepath, offset):
 
 
 
-def lowfi_playback(filepath):
-    """
-        processes a wavfile so the left channel is sinewave output and right channel is raw wave data
-        and then outputs to speakers.
-        The sinewave amplitude = source amplitude, and only is present if the source file is +voice
+# def lowfi_playback(filepath):
+#     """
+#         processes a wavfile so the left channel is sinewave output and right channel is raw wave data
+#         and then outputs to speakers.
+#         The sinewave amplitude = source amplitude, and only is present if the source file is +voice
 
-        TODO: packs the voice file fine but not the sinewave. Why is this?
-        Maybe instead of iterating in chunks try iterating continuously like before but just keep track
-        when samplesSoFar%chunk = 0 so we know to restart our amp analysis
+#         TODO: packs the voice file fine but not the sinewave. Why is this?
+#         Maybe instead of iterating in chunks try iterating continuously like before but just keep track
+#         when samplesSoFar%chunk = 0 so we know to restart our amp analysis
 
-    """
-    RATE= 44100
-    chunk = 1024
-    lowfiGain = 3
-
-
-    f = wave.open(filepath,"rb")  
-    f2analyze = wave.open(filepath,"rb")  
-
-    print("\n  opening: "+filepath)
-    print("  samplerate: "+str(f.getframerate()))
-    print("  frames: "+str(f.getnframes()))
-    print("  channels: "+str(f.getnchannels()))
-    print("  sample width: "+str(f.getsampwidth()))
-
-    ## GENERATE STEREO FILE ##
-    wv = wave.open('temp.wav', 'w')
-    wv.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
-    maxVol=2**14-1.0 #maximum amplitude
-    wvData=""
-    lData = [] # source wav
-    rData = [] # sine wave
-    ampData = []
-    amp = 0
-    voicedAmp = 0
-    i = 0
-    t = 0
-    framesToNormalize = 0
+#     """
+#     RATE= 44100
+#     chunk = 1024
+#     lowfiGain = 3
 
 
-    for i in range(0, f.getnframes()):
-        # populate lData with f sample data
+#     f = wave.open(filepath,"rb")  
+#     f2analyze = wave.open(filepath,"rb")  
+
+#     print("\n  opening: "+filepath)
+#     print("  samplerate: "+str(f.getframerate()))
+#     print("  frames: "+str(f.getnframes()))
+#     print("  channels: "+str(f.getnchannels()))
+#     print("  sample width: "+str(f.getsampwidth()))
+
+#     ## GENERATE STEREO FILE ##
+#     wv = wave.open('temp.wav', 'w')
+#     wv.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
+#     maxVol=2**14-1.0 #maximum amplitude
+#     wvData=""
+#     lData = [] # source wav
+#     rData = [] # sine wave
+#     ampData = []
+#     amp = 0
+#     voicedAmp = 0
+#     i = 0
+#     t = 0
+#     framesToNormalize = 0
+
+
+#     for i in range(0, f.getnframes()):
+#         # populate lData with f sample data
 
         
 
-        if (i%chunk == 0):
-            # get amplitude data -----------
-            # for every 512 samples of 
-            startChunk = i
-            endChunk = i+chunk
-            for s in range(0,chunk):
-                try:
-                    frameSample = f.readframes(1)     
-                    shortSample = unpack('h',frameSample)
-                    lData.append(shortSample[0])
-                except:
-                    lData.append(0)
+#         if (i%chunk == 0):
+#             # get amplitude data -----------
+#             # for every 512 samples of 
+#             startChunk = i
+#             endChunk = i+chunk
+#             for s in range(0,chunk):
+#                 try:
+#                     frameSample = f.readframes(1)     
+#                     shortSample = unpack('h',frameSample)
+#                     lData.append(shortSample[0])
+#                 except:
+#                     lData.append(0)
 
-            try:
-                subsamples = lData[startChunk:endChunk]
-            except:
-                # out of index range, so we are at the end
-                subsamples = lData[startChunk:len(f.getnframes()-1)]
+#             try:
+#                 subsamples = lData[startChunk:endChunk]
+#             except:
+#                 # out of index range, so we are at the end
+#                 subsamples = lData[startChunk:len(f.getnframes()-1)]
 
-            voiced = voicingfilter.processWaveChunk(subsamples,chunk)
+#             voiced = voicingfilter.processWaveChunk(subsamples,chunk)
 
-            amp = RMS(subsamples)
+#             amp = RMS(subsamples)
 
-            if voiced:
-                if amp > 1000:
-                    voicedAmp += amp
-                    amp = 1
-                    framesToNormalize += 1
-                else:
-                    amp = 0
-            else:
-                amp = 0
-        ampData.append(amp)
+#             if voiced:
+#                 if amp > 1000:
+#                     voicedAmp += amp
+#                     amp = 1
+#                     framesToNormalize += 1
+#                 else:
+#                     amp = 0
+#             else:
+#                 amp = 0
+#         ampData.append(amp)
 
-    aveAmp = voicedAmp/float(framesToNormalize)
+#     aveAmp = voicedAmp/float(framesToNormalize)
 
-    ampData = [x*aveAmp for x in ampData]
+#     ampData = [x*aveAmp for x in ampData]
 
-    for k in xrange(0,len(ampData)):
+#     for k in xrange(0,len(ampData)):
         
-        sine = lowfiGain*ampData[k]*sin(t*2*pi*(180.0/RATE))
-        if sine < 0:
-            sine = max(sine,(SHORT_MAX-1)*-1)
-        if sine > 0:
-            sine = min(sine,(SHORT_MAX-1))
-        # -- write source wav file in left channel
-        wvData += pack('h', lData[k])
-        # wvData += pack('h', sine) #200Hz right
+#         sine = lowfiGain*ampData[k]*sin(t*2*pi*(180.0/RATE))
+#         if sine < 0:
+#             sine = max(sine,(SHORT_MAX-1)*-1)
+#         if sine > 0:
+#             sine = min(sine,(SHORT_MAX-1))
+#         # -- write source wav file in left channel
+#         wvData += pack('h', lData[k])
+#         # wvData += pack('h', sine) #200Hz right
 
-        # -- write sine wave in right channel
-        wvData += pack('h', sine) #200Hz right
-        # print (lData[k],sine)
-        t += 1
-    # print("len data",len(lData),"len data / chunk", len(lData)/chunk)
+#         # -- write sine wave in right channel
+#         wvData += pack('h', sine) #200Hz right
+#         # print (lData[k],sine)
+#         t += 1
+#     # print("len data",len(lData),"len data / chunk", len(lData)/chunk)
    
-    wv.writeframes(wvData)
-    wv.close()
+#     wv.writeframes(wvData)
+#     wv.close()
 
-    # --------------------------------------------------------
-    # playback processed audio
-    # --------------------------------------------------------
+#     # --------------------------------------------------------
+#     # playback processed audio
+#     # --------------------------------------------------------
 
-    playProcessedAudio()
+#     playProcessedAudio()
 
 
 
