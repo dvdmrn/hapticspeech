@@ -1,4 +1,5 @@
 """
+
      _   _             _   _      _____                      _     
     | | | |           | | (_)    /  ___|                    | |    
     | |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  
@@ -11,7 +12,10 @@
     ===================================================================
     -------------------------------------------------------------------
     ...................................................................
+
+
     Labs: -------------------------------------------------------------
+
          _______..______    __  .__   __.
         /       ||   _  \  |  | |  \ |  |
        |   (----`|  |_)  | |  | |   \|  |
@@ -20,6 +24,7 @@
     |_______/    | _|      |__| |__| \__|
                                          
     Sensory Perception and Interaction Lab
+
     ________/\\\\\\\\\________________/\\\\\\\\\\\\_____/\\\_____________        
      _____/\\\////////________________\/\\\////////\\\__\/\\\_____________       
       ___/\\\/_________________________\/\\\______\//\\\_\/\\\_____________      
@@ -29,7 +34,9 @@
           __\///\\\__________\//\\\__/\\\__\/\\\_______/\\\__\/\\\_____________  
            ____\////\\\\\\\\\__\///\\\\\/___\/\\\\\\\\\\\\/___\/\\\\\\\\\\\\\\\_ 
             _______\/////////_____\/////_____\////////////_____\///////////////__
+
     Communications Dynamics Lab
+
     _________ _______  _______  _       
     \__   __/(  ____ \(  ____ )( \      
        ) (   | (    \/| (    )|| (      
@@ -45,31 +52,35 @@
     Researchers: ----------------------------------------------------
     PIs: Karon MacLean, Bryan Gick, Eric Vatikiotis-Bateson 
     RAs: David Marino, Hannah Elbaggari, Andrew Yang, Tamara Lottering
+
+
+
     About: -----------------------------------------------------------
     
     + Experimental software designed to evaluate the efficacy of 
       haptic enhancement of speech in noisy conditions.
+
     + Converts speech to a haptic signal (L channel)
+
     + use the `-w` flag for windowed mode
     
     + use the `-nc` (no calibration) flag to skip calibration
+
     notes:
     - gets files in stim based off minpairmappings.csv. 
     - Randomly populates an array called "files"
+
 """
 from __future__ import print_function
 print(" _   _             _   _      _____                      _     \n| | | |           | | (_)    /  ___|                    | |    \n| |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  \n|  _  |/ _` | '_ \| __| |/ __|`--. \ '_ \ / _ \/ _ \/ __| '_ \ \n| | | | (_| | |_) | |_| | (__/\__/ / |_) |  __/  __/ (__| | | |\n\_| |_/\__,_| .__/ \__|_|\___\____/| .__/ \___|\___|\___|_| |_|\n            | |                    | |                         \n            |_|                    |_|                         \n\nImporting modules...")
 import pygame
 import time
-import pyaudio
 import wave
 import sys
 import textdisplay as txt
 import utilities as util
 import parameters as p
-import record
 import playback
-# import playback_lowfi
 import pygame_textinput
 import csv
 import os
@@ -211,11 +222,7 @@ def  welcomeScreen():
 # ----------------------------------------------
 #  Stimulus Play Screen
 # ----------------------------------------------    
-<<<<<<< HEAD
-def playbackScreen(file_index,files,path, ctrl = False):
-=======
 def playbackScreen(file_index,files,path,offset=0):
->>>>>>> 4d620973cc617fdd97b0ddeb1dd6e001d36dc22a
     """
     Renders the screen for signal playback
     @param file_index: an int
@@ -224,6 +231,7 @@ def playbackScreen(file_index,files,path,offset=0):
     global drawn
     global currentFilePath
 
+    print ("\n\n\n!!!",files[file_index])
 
     if not drawn:
         num_of_files = len(files)
@@ -235,20 +243,12 @@ def playbackScreen(file_index,files,path,offset=0):
         screenDisplay.fill(p.BG)
         pygame.display.update()
         currentFilePath = util.constructPath(path,files[file_index]["file"])
-<<<<<<< HEAD
-        print("calling haptic_playback")
-        if files[file_index]["vib_style"] == "amp":
-            playback.rms_playback(currentFilePath,200)
-        else:
-            playFile(currentFilePath,STIM_VOLUME,"left")
-=======
         # print("calling haptic_playback")
         # if ctrl:
         #     playFile(currentFilePath, STIM_VOLUME, "left")
         print("calling rms_playback")
         playback.rms_playback(currentFilePath, offset) 
             
->>>>>>> 4d620973cc617fdd97b0ddeb1dd6e001d36dc22a
 
 
         drawn = True
@@ -261,6 +261,7 @@ def recordScreen(file_index,files,path,offset):
     """
     draws main record screen for a given file_index
     file_index : an int
+
     LEFT response = mp0
     RIGHT response = mp1
     """
@@ -391,6 +392,7 @@ def breakScreen(breakDescriptor):
 def trial(file_index,files,path,offset):
     """
     play & rec a token
+
     file_index := an int
     files := a list of files
     path := a string rep filepath
@@ -405,60 +407,38 @@ def trial(file_index,files,path,offset):
     recordScreen(file_index,files,path,offset)
     drawn = False
 
-def getPlaylist(style):
 
-    """
-    organizes stimuli two playlists by their vibration styles
-    then defined in experimentCtrlFlow as playListCtrl and playListAmp
-    """
-    playList = []
-    for i in range(0,len(minpairs)):
-        if minpairs[i]["vib_style"] == style:
-            playList.append(minpairs[i])
-    print ("this is playlist:  ", playList)
-    return playList  
 
 def experimentCtrlFlow():
 
     """
     Main experiment control flow.
+    The number of trials is based off how many stimuli are contained
+    in `stimuli/words/` and `stimuli/phrases/`.
     Counterbalancing is conducted based off the participant ID.
-<<<<<<< HEAD
-    If the participant ID is even then we go amp->ctrl. If it is
-    odd then we go ctrl->amp.
-=======
     If the participant ID is even then we go phrases->words. If it is
     odd then we go words->phrases.
 
     we are assessing accuracy scores in offsets of:
+    -300ms
+    -250ms
     -200ms
-    -150ms
     -100ms
-    -50ms
     0
-    +50ms
     +100ms
-    +150ms
     +200ms
+    +250ms
+    +300ms
 
->>>>>>> 4d620973cc617fdd97b0ddeb1dd6e001d36dc22a
     """
-    print ("Calling experimentCtrlFlow()")
 
     global file_index
     global minPairMap
     global minpairs
 
-<<<<<<< HEAD
-    playListCtrl = getPlaylist("ctrl")
-    playListAmp = getPlaylist("amp")
 
-    # print (playListCtrl)
-    # print (playListAmp)
-=======
-
-    offsets = [200,150,100,50,0,-200,-150,-100,-50]
->>>>>>> 4d620973cc617fdd97b0ddeb1dd6e001d36dc22a
+    # offsets = [300,250,200,100,0,-100,-200,-250,-300]
+    offsets = [0]
 
     with open("stimuli/minpairmap.csv") as mpmap:
         reader = csv.DictReader(mpmap)
@@ -467,54 +447,15 @@ def experimentCtrlFlow():
 
     welcomeScreen()
 
-    writeCsv("minpair")
-
     if includeCalibration:
         heuristic_calibration(minpairs) 
         breakScreen("Calibration Complete!\nPlease notify a researcher.")
         random.shuffle(minpairs)
-
-    if int(ID) % 2 == 0: #ID is even
-        ampToCtrl(minpairs,file_index, playListAmp,playListCtrl)
-        print ("ampToCtrl()")
-    else: #ID is odd
-        ctrlToAmp(minpairs,file_index, playListAmp,playListCtrl)
-        print ("ctrlToAmp()")
   
-
-def ampToCtrl(minpairs,file_index, playListAmp,playListCtrl):
-        # amp trial block
+    initCsv("minpair")
+  
     numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
-<<<<<<< HEAD
-    for file in xrange(0,halfTokens):
-        trial(file_index,playListAmp,p.minpairs)
-        file_index+=1
-    
-    breakScreen("You're halfway through\nPlease notify a researcher")
-
-    # control trial block
-    for file in xrange(halfTokens,numOfTokens):
-        trial(file_index,playListCtrl,p.minpairs)
-        file_index+=1
-    breakScreen("Complete! Thank-you!")
-
-def ctrlToAmp(minpairs,file_index, playListAmp,playListCtrl):
-
-    # control trial block
-    numOfTokens = len(minpairs)
-    halfTokens = numOfTokens/2
-    for file in xrange(halfTokens,numOfTokens):
-        trial(file_index,playListCtrl,p.minpairs)
-        file_index+=1
-
-    breakScreen("You're halfway through\nPlease notify a researcher")
-
-        # amp trial block
-    for file in xrange(0,halfTokens):
-        trial(file_index,playListAmp,p.minpairs)
-        file_index+=1
-=======
 
     random.shuffle(offsets)
     
@@ -525,7 +466,6 @@ def ctrlToAmp(minpairs,file_index, playListAmp,playListCtrl):
             file_index+=1
         file_index = 0
 
->>>>>>> 4d620973cc617fdd97b0ddeb1dd6e001d36dc22a
     breakScreen("Complete! Thank-you!")
 
 def appendToAnswerSheet(answer,token,vib_style,offset):
@@ -553,17 +493,20 @@ def evaluate_response(answer,token,csvFile=None, vibStyle="",offset=0):
     return correct
 
 
-def writeCsv(type):
+def initCsv(type):
     """
     writes the csv file of participant responses
     type:= a string
+
     CSV format:
+
         response | token | correct | contrast  | vib style
         ------------------------------------------
         p0       | p0    | 1       | vf        | amp
-        p0       | p1    | 0       | Vh        | 
+        p0       | p1    | 0       | Vh        | lowfi
         p1       | p1    | 1       | Vh        | ctrl
         ...        ...     ...       ...
+
     """
     global ID
     global currentCsvPath
@@ -694,10 +637,10 @@ def adj_volume(factor):
 
 def eval_token(path,index,gain):
 
+        playFile(path,gain)
+
         screenDisplay.fill(p.BG)
         pygame.display.update()
-
-        playFile(path,gain)
 
         correct = get_calibration_response(index,minpairs,p.minpairs)
         return correct
@@ -720,6 +663,7 @@ def get_calibration_response(file_index,files,path):
     """
     draws main record screen for a given file_index
     file_index : an int
+
     LEFT response = mp0
     RIGHT response = mp1
     """
@@ -806,10 +750,10 @@ def get_calibration_response(file_index,files,path):
 
 
 
-def main():
-    setup()
-    pygame.init()
-    experimentCtrlFlow()
+# def main():
+#     setup()
+#     pygame.init()
+#     experimentCtrlFlow()
 
 
 # main()

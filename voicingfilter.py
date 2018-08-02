@@ -9,7 +9,7 @@ from scipy.io import wavfile
 
 sampFreq, snd = wavfile.read('stimuli/temporal-offset-minimal-pairs/0_ba_vs_f-2.wav')
 
-THRESHOLD_CUTOFF = 2.5 #in kHz
+THRESHOLD_CUTOFF = 1 #in kHz 2.7 seems to work???? 
 
 
 snd = snd/(2.**15) # convert to floating point from -1 to 1
@@ -141,18 +141,21 @@ def aveDiff(inputSequence, threshold):
 	thresholdMean = mean(withinThreshold)
 	beyondMean =  mean(beyondThreshold)
 	difference = thresholdMean - beyondMean
-	
+	thresholdDifference = 10
+
 
 	# print ("difference: ",difference,"threshold: ",thresholdMean, "beyond: ",beyondMean)
 
-	if(difference > 17): 
+	if(difference > thresholdDifference ): #16.6 seems to work??? 
 		# print ("difference:",difference," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean," [+V]")
 		return True
 		# print ("threshold mean: ",thresholdMean)
 		# print ("beyond mean: ",beyondMean)
 	else:
 		# print ("difference:",difference," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean)
+		print(difference)
 		return False
+
 		# print ("threshold mean: ",thresholdMean)
 		# print ("beyond mean: ",beyondMean)
 

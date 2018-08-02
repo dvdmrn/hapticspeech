@@ -45,7 +45,7 @@ def rms_playback(filepath, offset):
 
     """
     RATE= 44100
-    chunk = 512
+    chunk = 1024 #512
     secondsoffset = sqrt((float(offset) /1000)**2)
     samplesoffset = int( floor(secondsoffset * RATE))  
     insertZeros = [0]* samplesoffset
