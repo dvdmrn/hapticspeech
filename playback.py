@@ -102,7 +102,7 @@ def rms_playback(filepath, offset):
 
             # amp = RMS(subsamples)
 
-            if voiced:
+            if voiced > 200:
                 amp = RMS(subsamples)
             else:
                 amp = 0 
