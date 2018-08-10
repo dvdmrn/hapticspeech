@@ -437,8 +437,8 @@ def experimentCtrlFlow():
     global minpairs
 
 
-    # offsets = [300,200,100,50,0,-50,-100,-200,-300]
-    offsets = [0]
+    offsets = [300,200,100,50,0,-50,-100,-200,-300]
+    # offsets = [0]
 
     with open("stimuli/minpairmap.csv") as mpmap:
         reader = csv.DictReader(mpmap)
@@ -449,7 +449,6 @@ def experimentCtrlFlow():
 
     if includeCalibration:
         heuristic_calibration(minpairs) 
-        breakScreen("Calibration Complete!\nPlease notify a researcher.")
         random.shuffle(minpairs)
   
     initCsv("minpair")
@@ -457,14 +456,23 @@ def experimentCtrlFlow():
     numOfTokens = len(minpairs)
     halfTokens = numOfTokens/2
 
-    random.shuffle(offsets)
+    # random.shuffle(offsets)
+    
+    breakScreen("Calibration Complete!\nPlease notify a researcher.")
+
+    toPlay = []
     
     for offset in offsets:
         random.shuffle(minpairs)
         for file in xrange(0,numOfTokens):
-            trial(file_index,minpairs,p.minpairs,offset)
+            toPlay.append({"offset":offset,"file_index":file_index})
             file_index+=1
         file_index = 0
+    
+    random.shuffle(toPlay)
+    print(toPlay)
+    for f in toPlay:
+        trial(f["file_index"],minpairs,p.minpairs,f["offset"])
 
     breakScreen("Complete! Thank-you!")
 
