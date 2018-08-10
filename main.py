@@ -89,7 +89,7 @@ import math, random
 
 # -- globals ------------------------\\
 STIM_VOLUME = 1.0 # 1 = max
-ACCURACY_TARGET = 62.0 # % of correct scores needed
+ACCURACY_TARGET = 70.0 # % of correct scores needed
 PADDING = 5.0 # +/- padding
 # =====================================
 
@@ -421,13 +421,13 @@ def experimentCtrlFlow():
 
     we are assessing accuracy scores in offsets of:
     -300ms
-    -250ms
     -200ms
     -100ms
+    -50ms
     0
+    +50ms
     +100ms
     +200ms
-    +250ms
     +300ms
 
     """
@@ -437,8 +437,8 @@ def experimentCtrlFlow():
     global minpairs
 
 
-    # offsets = [300,250,200,100,0,-100,-200,-250,-300]
-    offsets = [0]
+    offsets = [300,200,100,50,0,-50,-100,-200,-300]
+    #offsets = [0]
 
     with open("stimuli/minpairmap.csv") as mpmap:
         reader = csv.DictReader(mpmap)
