@@ -9,7 +9,9 @@ from scipy.io import wavfile
 
 sampFreq, snd = wavfile.read('stimuli/temporal-offset-minimal-pairs/0_ba_vs_f-2.wav')
 
-THRESHOLD_CUTOFF = 1 #in kHz 2.7 seems to work???? 
+THRESHOLD_CUTOFF = 0.5 #in kHz prev 1.7 
+PREV_VOICE = False
+UNVOICED_STOP = False
 
 
 snd = snd/(2.**15) # convert to floating point from -1 to 1
@@ -49,11 +51,20 @@ def fftAnalyze(data,chunkStart,chunkEnd):
 
 
 
-def processWaveChunk(data,size):
+def processWaveChunk(data,size,filepath):
 	"""
 		data : an array?
 		size : an int
 	"""
+	global UNVOICED_STOP
+	global THRESHOLD_CUTOFF
+	if ("vs" in filepath) and ("_pa_" in filepath):
+		UNVOICED_STOP = True
+		THRESHOLD_CUTOFF = 2.0
+	else:
+		UNVOICED_STOP = False
+		THRESHOLD_CUTOFF = 0.5
+
 	theTuple = fftAnalyze(data,0,len(data))
 	freqArray = theTuple[0]
 	p = theTuple[1]
@@ -112,6 +123,7 @@ def thresholdCategorization(magnitudes, frequencies, threshold):
 
 
 def aveDiff(inputSequence, threshold):
+	global PREV_VOICE
 	"""
 	the relative difference between everything
 	below the threshold, vs everything beyond.
@@ -134,26 +146,52 @@ def aveDiff(inputSequence, threshold):
 		# e[0] := frequency
 		# e[1] := magnitude
 		if e[0] < threshold:
-			withinThreshold.append(e[1])
+			if PREV_VOICE:
+				bleedVoice = 1500
+			else:
+				bleedVoice = 0
+			withinThreshold.append((e[1]**4+bleedVoice)/float(1000))
+			PREV_VOICE = False
 		else:
-			beyondThreshold.append(e[1])
+			beyondThreshold.append(e[1]**4/float(1000))
 	
 	thresholdMean = mean(withinThreshold)
 	beyondMean =  mean(beyondThreshold)
 	difference = thresholdMean - beyondMean
-	thresholdDifference = 10
+	thresholdDifference = 2500 
 
 
 	# print ("difference: ",difference,"threshold: ",thresholdMean, "beyond: ",beyondMean)
+	# consider differences in terms of magnitude
 
-	if(difference > thresholdDifference ): #16.6 seems to work??? 
-		# print ("difference:",difference," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean," [+V]")
+	differenceRatio = beyondMean/float(thresholdMean)
+	ratioPass = 0.05 # ratio to determine if voiced or not !!!
+
+	# if(differenceRatio < 0.014 or (difference > thresholdDifference)): #16.6 seems to work??? 
+	if UNVOICED_STOP:
+		if (difference > thresholdDifference) or (differenceRatio < 0.01 and difference > 1000):
+			PREV_VOICE = True
+			print("+V ",difference,differenceRatio)
+
+			return True
+		else:
+			print("-V ",difference,differenceRatio)
+			return False
+
+	elif(thresholdMean>1700):
+		# print ("[+V] DR:",differenceRatio," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean)
+		# print("+V: ","dR:",differenceRatio,"dT:",difference)
+		print("+V ",thresholdMean)
+		PREV_VOICE = True
 		return True
 		# print ("threshold mean: ",thresholdMean)
 		# print ("beyond mean: ",beyondMean)
 	else:
-		# print ("difference:",difference," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean)
-		print(difference)
+		# print("-V: ",differenceRatio)
+		# print ("[-V] DR:",differenceRatio," | thresholdMean: ",thresholdMean," | beyondMean: ",beyondMean)
+		# print("-V: ","dR:",differenceRatio,"dT:",difference)
+		print("-V ",thresholdMean)
+ 
 		return False
 
 		# print ("threshold mean: ",thresholdMean)

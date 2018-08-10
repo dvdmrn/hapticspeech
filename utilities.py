@@ -138,7 +138,7 @@ def get_minpairs(path):
             minPairVibMap.append({"vib_style":"ctrl","file":playList[i]})
             nctrl += 1
 
-    assert namp == nlowfi == nctrl == styleSegmentation
+    # assert namp == nlowfi == nctrl == styleSegmentation
     print(minPairVibMap)
     return minPairVibMap
 

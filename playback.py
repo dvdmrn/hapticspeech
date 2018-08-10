@@ -97,14 +97,11 @@ def rms_playback(filepath, offset):
             except:
                 # out of index range, so we are at the end
                 subsamples = lData[startChunk:len(f.getnframes()-1)]
-            print("amp data: ",RMS(subsamples))
-            voiced = voicingfilter.processWaveChunk(subsamples,chunk)
+            voiced = voicingfilter.processWaveChunk(subsamples,chunk,filepath)
 
-            # amp = RMS(subsamples)
-
-            if voiced > 0.25:
-                amp = RMS(subsamples)
-            else:
+            amp = RMS(subsamples)
+            # print("amp: ",amp)
+            if not (voiced and amp > 250): # if it's unvoiced or rly quiet our sine amp is 0
                 amp = 0 
         ampData.append(amp)
             # print("amp: ",amp)
@@ -253,7 +250,7 @@ def normal_playback(filepath):
         plays the wavfile specified by filepath
     """
     #define stream chunk   
-    chunk = 2048  
+    chunk = 512  
 
     #open a wav format music  
     f = wave.open(filepath,"rb")  

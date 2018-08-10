@@ -437,8 +437,8 @@ def experimentCtrlFlow():
     global minpairs
 
 
-    offsets = [300,200,100,50,0,-50,-100,-200,-300]
-    #offsets = [0]
+    # offsets = [300,200,100,50,0,-50,-100,-200,-300]
+    offsets = [0]
 
     with open("stimuli/minpairmap.csv") as mpmap:
         reader = csv.DictReader(mpmap)
