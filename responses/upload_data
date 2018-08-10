@@ -6,7 +6,7 @@ if ! [ $# -eq 1 ]; then
 else
     echo enter username
     read userName
-    scp -r $1 $userName@remote.cs.ubc.ca:/ubc/cs/research/imager/project/spin/proj/haptic-speech/data
+    scp -r $1 $userName@remote.cs.ubc.ca:/ubc/cs/research/imager/project/spin/proj/haptic-speech/temporal/data
 fi
 
 
