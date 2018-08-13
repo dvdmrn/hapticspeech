@@ -501,15 +501,8 @@ def experimentCtrlFlow():
 
     """
     Main experiment control flow.
-<<<<<<< HEAD
-
-    Counterbalancing is conducted based off the participant ID.
-    If the participant ID is even then we go amp->ctrl. If it is
-    odd then we go ctrl->amp.
-=======
     The number of trials is based off the number of minimal pairs.
     Counterbalancing is conducted based off the participant ID.
->>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
     """
     print ("Calling experimentCtrlFlow()")
 
@@ -546,6 +539,10 @@ def experimentCtrlFlow():
         heuristic_calibration(minpairs) 
         breakScreen("Calibration Complete!\nPlease notify a researcher.", "Calibration")
         random.shuffle(minpairs)
+
+    
+    random.shuffle(playListAmp)
+    random.shuffle(playListCtrl)
 
     if int(ID) % 2 == 0: #ID is even
         ampToCtrl(minpairs,playListAmp,playListCtrl)
