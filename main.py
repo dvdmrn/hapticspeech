@@ -89,7 +89,7 @@ import math, random
 
 # -- globals ------------------------\\
 STIM_VOLUME = 1.0 # 1 = max
-ACCURACY_TARGET = 70.0 # % of correct scores needed
+ACCURACY_TARGET = 73.0 # % of correct scores needed
 PADDING = 5.0 # +/- padding
 # =====================================
 
@@ -471,6 +471,8 @@ def experimentCtrlFlow():
     
     random.shuffle(toPlay)
     print(toPlay)
+
+
     for f in toPlay:
         trial(f["file_index"],minpairs,p.minpairs,f["offset"])
 
@@ -539,92 +541,76 @@ def searchForMinPair(id):
 # ============[calibration]==========================
 
 def heuristic_calibration(minpairs):
-    # todo: once adjust stim volume, make sure stim in main block playback @ that vol.
     minpairs = util.getFilePaths(minpairs)
     global STIM_VOLUME
     cTrials = 0
     score = 0
     block = 0
-    adj_factor = math.log10(9-cTrials)
     ave = 0
     lowerBound = (ACCURACY_TARGET-PADDING)/float(100)
     upperBound = (ACCURACY_TARGET+PADDING)/float(100)
+    numAggressiveTrials = 8
 
-    for j in range(0,len(minpairs)):
-        # i = int(math.floor(random.random()*len(minpairs)))
-        # while i in index_mem:
-        #     i = int(math.floor(random.random()*len(minpairs)))
-        # index_mem.add(i)
-        print("evaluating: ",str(minpairs[j]))
-        cTrials += 1
+    cumulative_average = 0.5
+    responses = []
 
-        # --- very aggressive calibration --------
-        if block == 0:
-            print("\n\n====\nAGGRESSIVE CALIBRATION")
-            correct = eval_token(minpairs[j],j,STIM_VOLUME)
-            if not correct:
-                adj_volume(adj_factor*-1)
-                adj_factor = math.log10(9-cTrials)
-            else:
-                adj_volume(adj_factor)
-                adj_factor = math.log10(9-cTrials)
-            if cTrials >= 7:
-                print("On 8th trial: aggressive calibration complete")
-                block += 1
-                cTrials = 0
+    winningStreak = 0
+    strikes = 0
 
-        # --- looks for averages in blocks of 12 ----
-        else:
-            correct = eval_token(minpairs[j],j,STIM_VOLUME)
-            y = 2 - (block**2/float(block**2+3)) # a decreasing value from 2->1
-            adj_factor = max(0.1,math.log10(y))
-            if correct:
-                score += 1
-            if cTrials >= 12: # if number of trials greater than 12
-                print("calibration trial: ",cTrials,"blocks: ",block)
-                ave = runningAverage(score,cTrials)
-                cTrials = 0
-                score = 0
-                # in right range
-                print("lowerBound: ",lowerBound,"ave: ",ave)
-                print("is ave < upperbound?",ave<upperBound,"is ave > lowerbound?",ave > lowerBound)
-                
-                # they are accurate enough yay
-                if (ave < upperBound) and (ave > lowerBound):
-                    if block > 1:
-                        print("calibrated with ave:",ave,"| volume: ",babbletrack.get_volume())
+    tTrials = 20
+    while 1: 
+        for j in range(0,len(minpairs)):
 
-                        # write .txt file with calibration settings
-                        with open(participantResponseRootFilePath+"/"+ID+"_calibrationSettings.txt","w") as txt:
-                            txt.write("volume: "+str(babbletrack.get_volume())+"\naccuracy: "+str(ave))
-                        return
-                    else:
-                        block += 1
+            print("evaluating: ",str(minpairs[j]))
+            cTrials += 1
 
-                # too accurate, make noise harder
-                if ave > upperBound:
-                    print("too accuracte, adjusting by: ",adj_factor)
-                    if ave > 0.7:
-                        print("way too accurate")
-                        # give it a little extra
-                        adj_factor += 0.10
-                        print("new adj factor: ",adj_factor)
+            # --- very aggressive calibration --------
+            if block == 0:
+                adj_factor = max(math.log10((numAggressiveTrials+1)-cTrials),0.15)
+                print("\n\n====\nAGGRESSIVE CALIBRATION")
+                print("\n\nADJUSTMENT FACTOR: ",adj_factor,"\n--\n")
+                correct = eval_token(minpairs[j],j,STIM_VOLUME)
+                if not correct:
+                    adj_volume(adj_factor*-1)
+                else:
                     adj_volume(adj_factor)
+                if cTrials >= numAggressiveTrials:
+                    print("On 8th trial: aggressive calibration complete")
                     block += 1
+                    cTrials = 0
+            else:
 
-                # not accurate enough, pump it up
-                if ave < lowerBound:
-                    f = adj_factor*-1
-                    if ave < 0.5:
-                        # v. bad, pump it up
-                        adj_factor -= 0.10
-                        print("vey under lowerBound, new adj factor: ",adj_factor)
+                adj_factor = 0.10
+                correct = eval_token(minpairs[j],j,STIM_VOLUME)
+                responses.append(correct)
+                if cTrials%tTrials == 0:
+                    ave = sum(responses) / float(cTrials)
+                    
+                    cTrials = 0
+                    responses = []
 
-                    adj_volume(f)
-                    block += 1
-                
+                    if (ave > lowerBound) and (ave < upperBound):
+                        if(block==1):
+                            block += 1
+                            # retest
+                        if(block==2):                            
+                            with open(participantResponseRootFilePath+"/"+ID+"_calibrationSettings.txt","w") as txt:
+                                txt.write("volume: "+str(babbletrack.get_volume())+"\naccuracy: "+str(ave)+"\n blah blah blah")
+                            return
+                    elif ave < lowerBound: # too hard
+                        if (block==2):
+                            adj_volume(adj_factor*-2)
+                            block = 1
+                        else:
+                            adj_volume(adj_factor*-1)
 
-        #     block_n(minpairs[j])
+                        
+                    elif ave > upperBound: # too ez
+                        if (block==2):
+                            adj_volume(adj_factor*2)
+                            block = 1
+                        else:
+                            adj_volume(adj_factor)
 
 
     calibrated = False
@@ -644,11 +630,11 @@ def adj_volume(factor):
     print("volume adjusted by: "+str(factor)+" current volume: ",babbletrack.get_volume())
 
 def eval_token(path,index,gain):
+        screenDisplay.fill(p.BG)
+        pygame.display.update()
 
         playFile(path,gain)
 
-        screenDisplay.fill(p.BG)
-        pygame.display.update()
 
         correct = get_calibration_response(index,minpairs,p.minpairs)
         return correct
@@ -765,6 +751,7 @@ def get_calibration_response(file_index,files,path):
 
 
 # main()
+
 experimentCtrlFlow()
 pygame.quit()
 quit()
