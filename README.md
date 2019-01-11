@@ -1,33 +1,11 @@
-# Haptic speech
+# HAPTIC SPEECH
 
-### Generates a sine wave coupled to the RMS amplitude of a sound file.
+This study evaluates the efficacy of using haptic feedback to enhance the intelligibility of speech.
 
-- Left channel: input signal (i.e. speech)  
-- Right channel: output signal (i.e. sine wave)  
+See the papers published here for our results!
+https://asa.scitation.org/doi/abs/10.1121/1.5067937
+https://asa.scitation.org/doi/pdf/10.1121/1.5067938
+---
 
-The right channel may be piped to a vibrotactile actuator for a haptic representation of vocal amplitude.
-
-### Running the software:
-- In terminal run `python main.py`
-- You may specify windowed mode with the `-w` flag (`python main.py -w`)
-
-#### Requirements:
-
-- [Python 2.7](https://python.org)  
-- Pygame  
-- Pyaudio  
-
-#### Setup instructions:
-You can install modules using the pip package manager:
-- pygame: `pip install pygame`
-- pyaudio: `pip install pyaudio` 
-
-#### Module structure:
-```
-main.py
-	|- utilities.py (helper functions)
-	|- playback.py (playback functions)
-	|- recorder.py (recording functions)
-	|- parameters.py (static variables)
-	|- textdisplay.py (text rendering)
-```
+#### go to branch "enhancement" for the enhancing study
+#### go to branch "temporal" for the temporal offset study
