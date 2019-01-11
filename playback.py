@@ -10,11 +10,6 @@
               the source wavefile. 
 """
 
-# 2018/07/09 TODO:
-# deal with positive/negative offsets 
-
-
-
 import pyaudio
 import wave
 from struct import pack, unpack

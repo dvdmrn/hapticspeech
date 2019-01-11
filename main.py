@@ -1,5 +1,6 @@
 """
 
+	TEMPORAL OFFSET 
      _   _             _   _      _____                      _     
     | | | |           | | (_)    /  ___|                    | |    
     | |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  
@@ -51,9 +52,9 @@
     
     Researchers: ----------------------------------------------------
     PIs: Karon MacLean, Bryan Gick, Eric Vatikiotis-Bateson 
-    RAs: David Marino, Hannah Elbaggari, Andrew Yang, Tamara Lottering
+    RAs: David Marino, Sophy Chu, Hannah Elbaggari, Andrew Yang, Tamara Lottering
 
-
+	
 
     About: -----------------------------------------------------------
     
@@ -90,7 +91,7 @@ import math, random
 # -- globals ------------------------\\
 STIM_VOLUME = 1.0 # 1 = max
 ACCURACY_TARGET = 73.0 # % of correct scores needed
-PADDING = 5.0 # +/- padding
+PADDING = 5.0 # +/- n% for accuracy
 # =====================================
 
 # init pygame
@@ -480,7 +481,7 @@ def experimentCtrlFlow():
 
 def appendToAnswerSheet(answer,token,vib_style,offset):
     """
-    
+    continuously writes to a csv
     """
     with open(currentCsvPath,'ab') as csvFile:
         evaluate_response(answer,token,csvFile,vib_style,offset)
@@ -488,6 +489,9 @@ def appendToAnswerSheet(answer,token,vib_style,offset):
         
 
 def evaluate_response(answer,token,csvFile=None, vibStyle="",offset=0):
+	"""
+	determines if the response is correct
+	"""
     m = re.findall(r'[A-Za-z]+',token)
     formattedToken = m[0]
     formattedContrast = m[1]

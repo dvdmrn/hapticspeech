@@ -6,6 +6,10 @@ import csv
 import tqdm
 
 
+"""
+Helper functions
+"""
+
 minpairMap = []
 
 def translate(value, leftMin, leftMax, rightMin, rightMax):

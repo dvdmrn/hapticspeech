@@ -1,6 +1,11 @@
 import parameters
 import pygame
 
+"""
+textdisplay.py
+Text rendering functions
+"""
+
 # ----------------------------------------------
 #  Text objects
 #      - helper for text_display

@@ -1,6 +1,0 @@
-stats that worked for /p/:
-THRESHOLD_CUTOFF = 1.7
-...
-thresholdDifference = 1550 
-..
-thresholdMean > thresholdDifference
