@@ -1,5 +1,5 @@
 # Haptic speech
-## ~temporal offset~
+## _temporal offset_
 
 Examines the effect of temporal asynchronies between auditory and vibrotactile signals.
 
