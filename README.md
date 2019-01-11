@@ -9,5 +9,10 @@ See the papers published here for our results!
 
 ---
 
-#### go to branch "enhancement" for the enhancing study
-#### go to branch "temporal" for the temporal offset study
+## go to branch "enhancement" for the enhancing study
+## go to branch "temporal" for the temporal offset study
+---
+
+Researchers 
+PIs: Karon MacLean, Bryan Gick, Eric Vatikiotis-Bateson 
+RAs: David Marino, Sophy Chu, Hannah Elbaggari, Andrew Yang, Tamara Lottering
