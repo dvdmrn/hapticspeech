@@ -1,76 +1,76 @@
-"""
+# """
 
-     _   _             _   _      _____                      _     
-    | | | |           | | (_)    /  ___|                    | |    
-    | |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  
-    |  _  |/ _` | '_ \| __| |/ __|`--. \ '_ \ / _ \/ _ \/ __| '_ \ 
-    | | | | (_| | |_) | |_| | (__/\__/ / |_) |  __/  __/ (__| | | |
-    \_| |_/\__,_| .__/ \__|_|\___\____/| .__/ \___|\___|\___|_| |_|
-                | |                    | |                         
-                |_|                    |_|                         
+#      _   _             _   _      _____                      _     
+#     | | | |           | | (_)    /  ___|                    | |    
+#     | |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  
+#     |  _  |/ _` | '_ \| __| |/ __|`--. \ '_ \ / _ \/ _ \/ __| '_ \ 
+#     | | | | (_| | |_) | |_| | (__/\__/ / |_) |  __/  __/ (__| | | |
+#     \_| |_/\__,_| .__/ \__|_|\___\____/| .__/ \___|\___|\___|_| |_|
+#                 | |                    | |                         
+#                 |_|                    |_|                         
     
-    ===================================================================
-    -------------------------------------------------------------------
-    ...................................................................
+#     ===================================================================
+#     -------------------------------------------------------------------
+#     ...................................................................
 
 
-    Labs: -------------------------------------------------------------
+#     Labs: -------------------------------------------------------------
 
-         _______..______    __  .__   __.
-        /       ||   _  \  |  | |  \ |  |
-       |   (----`|  |_)  | |  | |   \|  |
-        \   \    |   ___/  |  | |  . `  |
-    .----)   |   |  |      |  | |  |\   |
-    |_______/    | _|      |__| |__| \__|
+#          _______..______    __  .__   __.
+#         /       ||   _  \  |  | |  \ |  |
+#        |   (----`|  |_)  | |  | |   \|  |
+#         \   \    |   ___/  |  | |  . `  |
+#     .----)   |   |  |      |  | |  |\   |
+#     |_______/    | _|      |__| |__| \__|
                                          
-    Sensory Perception and Interaction Lab
+#     Sensory Perception and Interaction Lab
 
-    ________/\\\\\\\\\________________/\\\\\\\\\\\\_____/\\\_____________        
-     _____/\\\////////________________\/\\\////////\\\__\/\\\_____________       
-      ___/\\\/_________________________\/\\\______\//\\\_\/\\\_____________      
-       __/\\\_________________/\\\\\____\/\\\_______\/\\\_\/\\\_____________     
-        _\/\\\_______________/\\\///\\\__\/\\\_______\/\\\_\/\\\_____________    
-         _\//\\\_____________/\\\__\//\\\_\/\\\_______\/\\\_\/\\\_____________   
-          __\///\\\__________\//\\\__/\\\__\/\\\_______/\\\__\/\\\_____________  
-           ____\////\\\\\\\\\__\///\\\\\/___\/\\\\\\\\\\\\/___\/\\\\\\\\\\\\\\\_ 
-            _______\/////////_____\/////_____\////////////_____\///////////////__
+#     ________/\\\\\\\\\________________/\\\\\\\\\\\\_____/\\\_____________        
+#      _____/\\\////////________________\/\\\////////\\\__\/\\\_____________       
+#       ___/\\\/_________________________\/\\\______\//\\\_\/\\\_____________      
+#        __/\\\_________________/\\\\\____\/\\\_______\/\\\_\/\\\_____________     
+#         _\/\\\_______________/\\\///\\\__\/\\\_______\/\\\_\/\\\_____________    
+#          _\//\\\_____________/\\\__\//\\\_\/\\\_______\/\\\_\/\\\_____________   
+#           __\///\\\__________\//\\\__/\\\__\/\\\_______/\\\__\/\\\_____________  
+#            ____\////\\\\\\\\\__\///\\\\\/___\/\\\\\\\\\\\\/___\/\\\\\\\\\\\\\\\_ 
+#             _______\/////////_____\/////_____\////////////_____\///////////////__
 
-    Communications Dynamics Lab
+#     Communications Dynamics Lab
 
-    _________ _______  _______  _       
-    \__   __/(  ____ \(  ____ )( \      
-       ) (   | (    \/| (    )|| (      
-       | |   | (_____ | (____)|| |      
-       | |   (_____  )|     __)| |      
-       | |         ) || (\ (   | |      
-    ___) (___/\____) || ) \ \__| (____/\
-    \_______/\_______)|/   \__/(_______/
+#     _________ _______  _______  _       
+#     \__   __/(  ____ \(  ____ )( \      
+#        ) (   | (    \/| (    )|| (      
+#        | |   | (_____ | (____)|| |      
+#        | |   (_____  )|     __)| |      
+#        | |         ) || (\ (   | |      
+#     ___) (___/\____) || ) \ \__| (____/\
+#     \_______/\_______)|/   \__/(_______/
                                        
-    Interdisciplinary Speech Research Lab
+#     Interdisciplinary Speech Research Lab
     
     
-    Researchers: ----------------------------------------------------
-    PIs: Karon MacLean, Bryan Gick, Eric Vatikiotis-Bateson 
-    RAs: David Marino, Hannah Elbaggari, Andrew Yang, Tamara Lottering
+#     Researchers: ----------------------------------------------------
+#     PIs: Karon MacLean, Bryan Gick, Eric Vatikiotis-Bateson 
+#     RAs: David Marino, Hannah Elbaggari, Andrew Yang, Tamara Lottering
 
 
 
-    About: -----------------------------------------------------------
+#     About: -----------------------------------------------------------
     
-    + Experimental software designed to evaluate the efficacy of 
-      haptic enhancement of speech in noisy conditions.
+#     + Experimental software designed to evaluate the efficacy of 
+#       haptic enhancement of speech in noisy conditions.
 
-    + Converts speech to a haptic signal (L channel)
+#     + Converts speech to a haptic signal (L channel)
 
-    + use the `-w` flag for windowed mode
+#     + use the `-w` flag for windowed mode
     
-    + use the `-nc` (no calibration) flag to skip calibration
+#     + use the `-nc` (no calibration) flag to skip calibration
 
-    notes:
-    - gets files in stim based off minpairmappings.csv. 
-    - Randomly populates an array called "files"
+#     notes:
+#     - gets files in stim based off minpairmappings.csv. 
+#     - Randomly populates an array called "files"
 
-"""
+# """
 from __future__ import print_function
 print(" _   _             _   _      _____                      _     \n| | | |           | | (_)    /  ___|                    | |    \n| |_| | __ _ _ __ | |_ _  ___\ `--. _ __   ___  ___  ___| |__  \n|  _  |/ _` | '_ \| __| |/ __|`--. \ '_ \ / _ \/ _ \/ __| '_ \ \n| | | | (_| | |_) | |_| | (__/\__/ / |_) |  __/  __/ (__| | | |\n\_| |_/\__,_| .__/ \__|_|\___\____/| .__/ \___|\___|\___|_| |_|\n            | |                    | |                         \n            |_|                    |_|                         \n\nImporting modules...")
 import pygame # game framework mainly used for its graphical capabilities here
@@ -91,7 +91,7 @@ import math, random
 
 # -- globals ------------------------\\
 STIM_VOLUME = 1.0 # 1 = max
-ACCURACY_TARGET = 62.0 # % of correct scores needed
+ACCURACY_TARGET = 65.0 # % of correct scores needed
 PADDING = 5.0 # +/- padding
 # =====================================
 
@@ -105,6 +105,18 @@ if not os.path.exists(participantResponseRootFilePath):
 pygame.init()
 
 
+# <<<<<<< HEAD
+# typefaces ------------\
+titleText = pygame.font.Font('UbuntuMono-R.ttf',40)
+bodyText = pygame.font.Font('UbuntuMono-R.ttf', 32)
+answerText = pygame.font.Font('UbuntuMono-R.ttf', 60)
+countDownText = pygame.font.Font('UbuntuMono-R.ttf', 100)
+
+# inputFont = pygame.font.Font('UbuntuMono-R', 32)
+# ----------------------/
+
+# =======
+# >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
 
 # state control --------\
 drawn = False
@@ -187,10 +199,10 @@ textinput.set_cursor_color(p.PINK)
 # Functions
 # ============================================================================================
 
-"""
- - most of the xScreen functions (e.g. welcomeScreen, breakScreen...) contain their own render loops
- - call an xScreen function to go to that particular screen.
-"""
+# """
+#  - most of the xScreen functions (e.g. welcomeScreen, breakScreen...) contain their own render loops
+#  - call an xScreen function to go to that particular screen.
+# """
 
 def  welcomeScreen():
     """
@@ -201,7 +213,7 @@ def  welcomeScreen():
     """
     global drawn
     welcomeTitle= "Welcome to the Haptic Speech Experiment!"
-    welcomeDescriptor= "During the experiment you will hear a series of words. You will be prompted to identify each word in a multiple choice manner. Select the LEFT word with the left arrow key [<-], and the RIGHT word with the right arrow key [->]. \nThe experiment will begin with a calibration phase. Afterwards, you will be asked to notify a researcher to assist you with the vibrator.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
+    welcomeDescriptor= "During the experiment you will hear a series of words. You will be prompted to identify each word in a multiple choice manner. Select the LEFT word with the left arrow key [<-], and the RIGHT word with the right arrow key [->]. \nThe experiment will begin with a training phase. Afterwards, you will enter into calibration and then the trails.\n\nWhen you are ready to begin, press the ENTER/RETURN key to continue."
     complete = False
     exitWindow = False
 
@@ -260,7 +272,16 @@ def playbackScreen(file_index,files,path):
             
         # displays playback info to the console
         print("file index: "+str(file_index))
+# <<<<<<< HEAD
         print("wave file: "+str(files[file_index]["file"]))
+# =======
+        try:
+        	print("wave file: "+str(files[file_index]["file"]))
+        except:
+        	print("OHNON","file_index:",file_index,"\nnumFiles:",num_of_files,"all them files: ",files)
+
+        # print("files: "+str(files))
+# >>>>>>> 3eb2ab578ee4e73cf55efd403b7727d4c5a53b55
 
         screenDisplay.fill(p.BG)
         pygame.display.update()
@@ -271,8 +292,6 @@ def playbackScreen(file_index,files,path):
         # determines which type of playback is necessary based off the file dict
         if files[file_index]["vib_style"] == "amp":
             playback.rms_playback(currentFilePath)
-        elif files[file_index]["vib_style"] == "lowfi":
-            playback.lowfi_playback(currentFilePath)
         else:
             playFile(currentFilePath,STIM_VOLUME,"left")
 
@@ -280,7 +299,14 @@ def playbackScreen(file_index,files,path):
         drawn = True
     
 
-def recordScreen(file_index,files,path):
+# <<<<<<< HEAD
+# ----------------------------------------------
+#  Recording  Screen
+# ----------------------------------------------
+def recordScreen(file_index,files,path, training=False):
+# =======
+# def recordScreen(file_index,files,path):
+# >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
     """
     draws main record screen for a given file_index
     file_index : an int
@@ -314,13 +340,13 @@ def recordScreen(file_index,files,path):
 
 
     # event loop -- 
-    """
-        SPACE: record (LEGACY: no longer available)
-        ESC: quit
-        RETURN: next
-        LEFT ARROW: option 1
-        RIGHT ARROW: option 2
-    """
+    # """
+    #     SPACE: record (LEGACY: no longer available)
+    #     ESC: quit
+    #     RETURN: next
+    #     LEFT ARROW: option 1
+    #     RIGHT ARROW: option 2
+    # """
     while not complete:
 
         screenDisplay.fill(p.BG)
@@ -354,25 +380,36 @@ def recordScreen(file_index,files,path):
                 
                 # move on 
                 if event.key == pygame.K_LEFT:
-                    # left key input
-                    # p0
                     print("selected: ",mp0)
                     complete = True
-                    appendToAnswerSheet(mp0,token,files[file_index]["vib_style"])
+                    if not training:
+                        # left key input
+                        # p0
+                        appendToAnswerSheet(mp0,token,files[file_index]["vib_style"])
+                    else:
+                        print("Left key! Selected: ",mp0)
+                        return trainingResponse(mp0,token,files[file_index]["vib_style"])
 
                 if event.key == pygame.K_RIGHT:
                     # right key input
                     # p1
                     complete = True
                     print("selected: ",mp1)
-                    appendToAnswerSheet(mp1,token,files[file_index]["vib_style"])
+                    if not training:
+                        appendToAnswerSheet(mp1,token,files[file_index]["vib_style"])
+                    else:
+                        print("Right key! Selected: ",mp1)
+                        return trainingResponse(mp1,token,files[file_index]["vib_style"])
                 
             clock.tick(30)
 
     drawn = False
 
+# <<<<<<< HEAD
+# =======
 
-def breakScreen(breakDescriptor):
+# >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
+def breakScreen(breakDescriptor, header):
     """
     Draws the break screen
     @param breakDescriptor: a string
@@ -385,17 +422,19 @@ def breakScreen(breakDescriptor):
     exitWindow = False
     complete = False
 
+
     
     # event loop -- 
-    """
-    Press C to continue
-    Press esc to quit
-    """
+ 
+    # Press C to continue
+    # Press esc to quit
+    
     while not complete:
 
         if not drawn:
             screenDisplay.fill(p.BG)
             # render thing here
+            txt.textLine(screenDisplay, header,"top", titleText, p.PINK)
             txt.textWrap(screenDisplay, breakDescriptor, bodyText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
 
             pygame.display.update()
@@ -419,10 +458,13 @@ def breakScreen(breakDescriptor):
                 if event.key == pygame.K_c:
                     complete = True
 
+                # record
+                if event.key == pygame.K_RETURN:
+                    complete = True
+
             pygame.display.update()  
             clock.tick(60)
     drawn = False
-
 
 
 def trial(file_index,files,path):
@@ -442,7 +484,18 @@ def trial(file_index,files,path):
     recordScreen(file_index,files,path)
     drawn = False
 
+def getPlaylist(style):
 
+    """
+    organizes stimuli two playlists by their vibration styles
+    then defined in experimentCtrlFlow as playListCtrl and playListAmp
+    """
+    playList = []
+    for i in range(0,len(minpairs)):
+        if minpairs[i]["vib_style"] == style:
+            playList.append(minpairs[i])
+    
+    return playList  
 
 def experimentCtrlFlow():
 
@@ -451,10 +504,17 @@ def experimentCtrlFlow():
     The number of trials is based off the number of minimal pairs.
     Counterbalancing is conducted based off the participant ID.
     """
+    print ("Calling experimentCtrlFlow()")
 
     global file_index
     global minPairMap
     global minpairs
+
+    playListCtrl = getPlaylist("ctrl")
+    playListAmp = getPlaylist("amp")
+
+    # print (playListCtrl)
+    # print (playListAmp)
 
     with open("stimuli/minpairmap.csv") as mpmap:
         reader = csv.DictReader(mpmap)
@@ -463,55 +523,202 @@ def experimentCtrlFlow():
 
     welcomeScreen()
 
+    writeCsv("minpair")
+
+    breakScreen("Please read carefully \n\n\n\n press ENTER/RETURN for next", "Training")
+    breakScreen("You are hearing the babble track that will be playing throughout this experiment. \nYou are going to hear a word spoken (either male or female voice) over this babble track during a blank screen. \n\n\n\npress ENTER/RETURN for next", "Training")
+    breakScreen("Immediately after you will be propted to pick which word you think you heard. \n\n\n\npress ENTER/RETURN for next", "Training")
+    breakScreen("This training phase is useful to familiarize yourself with the system and know what to expect in the trials.\n You will be prompted by a visual countdown. \n\n\n\npress ENTER/RETURN for next", "Training")
+    breakScreen("This countdown will help you recognize when the stimulus will play. You will hear the word and feel a vibration simultaneously over the babbble track. Here is some practice. \n\n\n\npress ENTER/RETURN to enter training", "Training")
+
+    trainingFlow(minpairs, file_index, playListAmp)
+    breakScreen("We will now enter the calibration phase\n\n please set down the vibrator and notify a researcher", "Calibration")
+
+
     if includeCalibration:
         heuristic_calibration(minpairs) 
-        breakScreen("Calibration Complete!\nPlease notify a researcher.")
+        breakScreen("Calibration Complete!\nPlease notify a researcher.", "Calibration")
         random.shuffle(minpairs)
-  
-    initCsv("minpair")
-  
-    numOfTokens = len(minpairs)
-    halfTokens = numOfTokens/2
-    for file in xrange(0,halfTokens):
-        trial(file_index,minpairs,p.minpairs)
+
+    
+    random.shuffle(playListAmp)
+    random.shuffle(playListCtrl)
+
+    if int(ID) % 2 == 0: #ID is even
+        ampToCtrl(minpairs,playListAmp,playListCtrl)
+        # print ("ampToCtrl()")
+    else: #ID is odd
+        ctrlToAmp(minpairs,playListAmp,playListCtrl)
+        # print ("ctrlToAmp()")
+
+def countDownScreen(n): 
+    """
+    screen shows participant a countdown to prompt them that the recorded simuli will play
+    """
+    global drawn
+    exitWindow = False
+    n = int(n)
+
+    #coundown loop --
+    while n != 0:
+
+        if not drawn:
+            screenDisplay.fill(p.BG)
+            # render thing here
+            txt.textWrap(screenDisplay, str(n), countDownText, pygame.Rect((40,40,p.screen_width, p.recBarWidth)), p.OFFWHITE, p.BG, 1) 
+
+            pygame.display.update()
+            drawn = True
+
+        if exitWindow:
+            pygame.quit()
+            quit()
+
+        for event in pygame.event.get() :
+            if event.type == pygame.QUIT: 
+                exitWindow = True
+
+        # KEYDOWN events ---------------
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    print("Escape pressed!")
+                    exitWindow = True
+
+            pygame.display.update()  
+        drawn = False
+
+        print(n)
+        n = n -1
+        time.sleep(1)
+
+def trainingFlow(minpairs, file_index, playListAmp): #change playListAmp to be playListTraining
+         # training trial block
+    print ("Calling trainingFlow()")
+
+    trainingTrials = 24
+    for file in xrange(0,trainingTrials):
+        countDownScreen(3)
+        trainingTrial(file_index,playListAmp,p.minpairs)
         file_index+=1
     
-    breakScreen("You're halfway through\nPlease notify a researcher to assist with vibrator placement.")
 
-    for file in xrange(halfTokens,numOfTokens):
-        trial(file_index,minpairs,p.minpairs)
+def ampToCtrl(minpairs, playListAmp,playListCtrl):
+    # amp trial block
+    global file_index
+    file_index = 0
+    numOfTokens = len(minpairs)
+    halfTokens = numOfTokens/2
+    
+    for file in xrange(0,halfTokens):
+        trial(file_index,playListAmp,p.minpairs)
         file_index+=1
-    breakScreen("Complete! Thank-you!")
+    
+    breakScreen("You're halfway through\nPlease notify a researcher", "Take a break")
+    file_index = 0
+    # control trial block
+    for file in xrange(0,halfTokens):
+        trial(file_index,playListCtrl,p.minpairs)
+        file_index+=1
+    breakScreen("Complete! Thank-you!", "")
 
-def appendToAnswerSheet(answer,token,vib_style):
+def ctrlToAmp(minpairs,playListAmp,playListCtrl):
+
+    # control trial block
+    global file_index
+    file_index = 0
+    numOfTokens = len(minpairs)
+    halfTokens = numOfTokens/2
+    
+    for file in xrange(0,halfTokens):
+        trial(file_index,playListCtrl,p.minpairs)
+        file_index+=1
+
+    breakScreen("You're halfway through\nPlease notify a researcher", "Take a break")
+
+    file_index = 0
+    # amp trial block
+    for file in xrange(0,halfTokens):
+        trial(file_index,playListAmp,p.minpairs)
+        file_index+=1
+    breakScreen("Complete! Thank-you!", "")
+
+def trainingTrial(file_index, files, path):
     """
+    play & rec a token
+
+    file_index := an int
+    files := a list of files
+=======
     places participant responses onto the answer sheet
         answer := a string
         token := a string
         vib_style := a string
         returns: nothing
     """
+    print("\n\n==============================")
+    global drawn 
+    moveOn = False
+    
+    while not moveOn:
+        trial(file_index,files,path)
+        # playbackScreen(file_index,files,path) !!!
+        # drawn = False
+        moveOn = recordScreen(file_index,files,path, True) 
+    breakScreen("Correct! \n\n press ENTER/RETURN", "Training")
+    drawn = False
+
+def appendToAnswerSheet(answer,token,vib_style):
+
     with open(currentCsvPath,'ab') as csvFile:
         # writes the response to the csv
         evaluate_response(answer,token,csvFile,vib_style)
-        
+
+def trainingResponse(answer,token,vib_style):
+    global drawn
+    drawn = False 
+    print("wait answer what",answer)
+
+    m = re.findall(r'[A-Za-z]+',token)
+    #token is what the answer should be given the choice of two minimal pairs
+    #files are named like '#'_'WORD'_'contrast'_'m/f'
+    formattedToken = m[0]
+    formattedContrast = m[1]
+
+    print("training response===")
+    # print("answer: ", answer, "token: ", formattedToken)
+    answer = evaluate_response(answer, token)
+    print("answer: ",answer)
+    if answer:
+        return True
+    else:
+        breakScreen("sorry that was incorrect, lets try that again \n\n press ENTER/RETURN", "Training")
+        return False
+        countDownScreen(3)
 
 def evaluate_response(answer,token, csvFile=None, vibStyle=""):
-    """
-    determines if response is correct or not
-    answer := a string [participant's response]
-    token := a string  [actual stimuli presented]
-    csvFile := a CSV File
-    vibStyle = a String
+# <<<<<<< HEAD
+    m = re.findall(r'[A-Za-z]+',token)
+    #token is what the answer should be given the choice of two minimal pairs
+    #files are named like '#'_'WORD'_'contrast'_'m/f'
+    formattedToken = m[0]
+    formattedContrast = m[1]
+# =======
+    # """
+    # determines if response is correct or not
+    # answer := a string [participant's response]
+    # token := a string  [actual stimuli presented]
+    # csvFile := a CSV File
+    # vibStyle = a String
 
-    """
+    # """
     m = re.findall(r'[A-Za-z]+',token) # match alphabetical characters in the token
     formattedToken = m[0] # m[0] is the word
     formattedContrast = m[1] #m[1] is the contrast
+# >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
 
-    correct = 0
+    correct = 0 #correct response stays at 0
     if answer == formattedToken:
-        correct = 1
+        correct = 1 #incorrect response gets changed to 1
 
     if csvFile:
         csvWriter = csv.writer(csvFile)
@@ -520,7 +727,7 @@ def evaluate_response(answer,token, csvFile=None, vibStyle=""):
     return correct
 
 
-def initCsv(type):
+def writeCsv(type):
     """
     writes the csv file of participant responses
     type:= a string
@@ -530,7 +737,7 @@ def initCsv(type):
         response | token | correct | contrast  | vib style
         ------------------------------------------
         p0       | p0    | 1       | vf        | amp
-        p0       | p1    | 0       | Vh        | lowfi
+        p0       | p1    | 0       | Vh        | 
         p1       | p1    | 1       | Vh        | ctrl
         ...        ...     ...       ...
 
@@ -558,97 +765,76 @@ def searchForMinPair(id):
 # ============[calibration]==========================
 
 def heuristic_calibration(minpairs):
-    """
-    calibration control flow
-    minpairs := a list
-    returns: nothing
-
-    """
     minpairs = util.getFilePaths(minpairs)
     global STIM_VOLUME
     cTrials = 0
     score = 0
     block = 0
-    adj_factor = math.log10(9-cTrials)
     ave = 0
     lowerBound = (ACCURACY_TARGET-PADDING)/float(100)
     upperBound = (ACCURACY_TARGET+PADDING)/float(100)
+    numAggressiveTrials = 8
 
-    for j in range(0,len(minpairs)):
-        # i = int(math.floor(random.random()*len(minpairs)))
-        # while i in index_mem:
-        #     i = int(math.floor(random.random()*len(minpairs)))
-        # index_mem.add(i)
-        print("evaluating: ",str(minpairs[j]))
-        cTrials += 1
+    cumulative_average = 0.5
+    responses = []
 
-        # --- very aggressive calibration --------
-        if block == 0:
-            print("\n\n====\nAGGRESSIVE CALIBRATION")
-            correct = eval_token(minpairs[j],j,STIM_VOLUME)
-            if not correct:
-                adj_volume(adj_factor*-1)
-                adj_factor = math.log10(9-cTrials)
-            else:
-                adj_volume(adj_factor)
-                adj_factor = math.log10(9-cTrials)
-            if cTrials >= 7:
-                print("On 8th trial: aggressive calibration complete")
-                block += 1
-                cTrials = 0
+    winningStreak = 0
+    strikes = 0
 
-        # --- looks for averages in blocks of 12 ----
-        else:
-            correct = eval_token(minpairs[j],j,STIM_VOLUME)
-            y = 2 - (block**2/float(block**2+3)) # a decreasing value from 2->1
-            adj_factor = max(0.1,math.log10(y))
-            if correct:
-                score += 1
-            if cTrials >= 12: # if number of trials greater than 12
-                print("calibration trial: ",cTrials,"blocks: ",block)
-                ave = runningAverage(score,cTrials)
-                cTrials = 0
-                score = 0
-                # in right range
-                print("lowerBound: ",lowerBound,"ave: ",ave)
-                print("is ave < upperbound?",ave<upperBound,"is ave > lowerbound?",ave > lowerBound)
-                
-                # they are accurate enough yay
-                if (ave < upperBound) and (ave > lowerBound):
-                    if block > 1:
-                        print("calibrated with ave:",ave,"| volume: ",babbletrack.get_volume())
+    tTrials = 20
+    while 1: 
+        for j in range(0,len(minpairs)):
 
-                        # write .txt file with calibration settings
-                        with open(participantResponseRootFilePath+"/"+ID+"_calibrationSettings.txt","w") as txt:
-                            txt.write("volume: "+str(babbletrack.get_volume())+"\naccuracy: "+str(ave))
-                        return
-                    else:
-                        block += 1
+            print("evaluating: ",str(minpairs[j]))
+            cTrials += 1
 
-                # too accurate, make noise harder
-                if ave > upperBound:
-                    print("too accuracte, adjusting by: ",adj_factor)
-                    if ave > 0.7:
-                        print("way too accurate")
-                        # give it a little extra
-                        adj_factor += 0.10
-                        print("new adj factor: ",adj_factor)
+            # --- very aggressive calibration --------
+            if block == 0:
+                adj_factor = max(math.log10((numAggressiveTrials+1)-cTrials),0.15)
+                print("\n\n====\nAGGRESSIVE CALIBRATION")
+                print("\n\nADJUSTMENT FACTOR: ",adj_factor,"\n--\n")
+                correct = eval_token(minpairs[j],j,STIM_VOLUME)
+                if not correct:
+                    adj_volume(adj_factor*-1)
+                else:
                     adj_volume(adj_factor)
+                if cTrials >= numAggressiveTrials:
+                    print("On 8th trial: aggressive calibration complete")
                     block += 1
+                    cTrials = 0
+            else:
 
-                # not accurate enough, pump it up
-                if ave < lowerBound:
-                    f = adj_factor*-1
-                    if ave < 0.5:
-                        # v. bad, pump it up
-                        adj_factor -= 0.10
-                        print("vey under lowerBound, new adj factor: ",adj_factor)
+                adj_factor = 0.10
+                correct = eval_token(minpairs[j],j,STIM_VOLUME)
+                responses.append(correct)
+                if cTrials%tTrials == 0:
+                    ave = sum(responses) / float(cTrials)
+                    
+                    cTrials = 0
+                    responses = []
 
-                    adj_volume(f)
-                    block += 1
-                
+                    if (ave > lowerBound) and (ave < upperBound):
+                        if(block==1):
+                            block += 1
+                            # retest
+                        if(block==2):                            
+                            with open(participantResponseRootFilePath+"/"+ID+"_calibrationSettings.txt","w") as txt:
+                                txt.write("volume: "+str(babbletrack.get_volume())+"\naccuracy: "+str(ave)+"\n blah blah blah")
+                            return
+                    elif ave < lowerBound: # too hard
+                        if (block==2):
+                            adj_volume(adj_factor*-2)
+                            block = 1
+                        else:
+                            adj_volume(adj_factor*-1)
 
-        #     block_n(minpairs[j])
+                        
+                    elif ave > upperBound: # too ez
+                        if (block==2):
+                            adj_volume(adj_factor*2)
+                            block = 1
+                        else:
+                            adj_volume(adj_factor)
 
 
     calibrated = False
@@ -680,13 +866,22 @@ def adj_volume(factor):
 
 def eval_token(path,index,gain):
 
-    """
-    plays a token
-    path := a string
-    index := an int
-    gain := a float
-    returns: an int (1=correct, 0=incorrect)
-    """
+# <<<<<<< HEAD
+    screenDisplay.fill(p.BG)
+    pygame.display.update()
+
+    playFile(path,gain)
+
+    correct = get_calibration_response(index,minpairs,p.minpairs)
+    return correct
+# =======
+    # """
+    # plays a token
+    # path := a string
+    # index := an int
+    # gain := a float
+    # returns: an int (1=correct, 0=incorrect)
+    # """
     playFile(path,gain)
 
     screenDisplay.fill(p.BG)
@@ -694,6 +889,7 @@ def eval_token(path,index,gain):
 
     correct = get_calibration_response(index,minpairs,p.minpairs)
     return correct
+# >>>>>>> 0e9aa3379b2f9e67cc1bd839a15bb856de997f3c
 
 def playFile(path,gain,channel=""):
         """
@@ -748,11 +944,11 @@ def get_calibration_response(file_index,files,path):
 
 
     # event loop -- 
-    """
-        SPACE: record
-        ESC: quit
-        RETURN: next
-    """
+    # """
+    #     SPACE: record
+    #     ESC: quit
+    #     RETURN: next
+    # """
     while not complete:
         screenDisplay.fill(p.BG)
         events = pygame.event.get()

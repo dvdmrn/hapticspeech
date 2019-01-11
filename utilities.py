@@ -1,3 +1,4 @@
+from __future__ import print_function
 from os import listdir, walk
 from os.path import isfile, join
 import random
@@ -65,7 +66,8 @@ def get_minpairs(path):
     female_files = []
     wavfiles = []
     minPairs = []
-    playList = []
+    playListAmp = []
+    playListCtrl = []
     global minpairMap
 
     # get mappings of minpairs
@@ -112,34 +114,46 @@ def get_minpairs(path):
         mpSet["DATA"] = mpsToAdd
         if mpSet["DATA"]:
             minPairs.append(mpSet)
-    print "MP len: "+str(len(minPairs))
+    print ("MP len: "+str(len(minPairs)))
 
+    # shuffles male/female waves, populates amp & ctrl with those waves
+    minPairWavPaths = []
     for e in minPairs:
         random.shuffle(e["DATA"])
-        playList.append(e["DATA"][0])
+        minPairWavPaths.append(e["DATA"][0])
    
     # print "playList: "+str(playList)
 
-    minPairVibMap = [] # array of dicts [{"vib_style":lowfi,"file":file.wav}, ...]
-    styleSegmentation = len(playList)/3 # assumes no. of supplied stim are divisible by 3
+    minPairVibMap = [] # array of dicts [{"vib_style":amp,"file":file.wav}, ...]
 
-    random.shuffle(playList)
-    namp = 0
-    nlowfi = 0
-    nctrl = 0
-    for i in range(0,len(playList)):
-        if i % 3 == 0:
-            minPairVibMap.append({"vib_style":"amp","file":playList[i]})
-            namp += 1
-        elif i % 2 == 0:
-            minPairVibMap.append({"vib_style":"lowfi","file":playList[i]})
-            nlowfi += 1
+    random.shuffle(minPairWavPaths)
+    for i in range(0,len(minPairWavPaths)):
+        if i < (len(minPairWavPaths)/2):
+            playListAmp.append(minPairWavPaths[i])
         else:
-            minPairVibMap.append({"vib_style":"ctrl","file":playList[i]})
-            nctrl += 1
+            playListCtrl.append(minPairWavPaths[i])
 
-    assert namp == nlowfi == nctrl == styleSegmentation
+    namp = 0
+    nctrl = 0
+    bothPlayList = 0 #both playlists are equal in length
+    if len(playListAmp) == len(playListCtrl):
+        bothPlayList = len(playListCtrl) + len (playListAmp)
+    else:
+        print ("playLists not equal length! " + "playListAmp: " + len(playListAmp) + " playListCtrl: " + len(playListCtrl))
 
+    for e in playListAmp:
+        minPairVibMap.append({"vib_style":"amp","file":e})
+
+    for e in playListCtrl:
+        minPairVibMap.append({"vib_style":"ctrl","file":e})
+
+
+    # print ("both playList length: ",bothPlayList)
+    # print ("namp: ", namp, " nctrl: ", nctrl, " styleseg1: ", styleSegmentation1, " styleseg2: ", styleSegmentation2)
+    # print ("playList control", len(playListCtrl), "playList amp", len(playListAmp))
+
+    # assert namp == nctrl == styleSegmentation1 == styleSegmentation2
+    # print ("\n\n\n\n\n", "min pair vib map: ",minPairVibMap, "\n\n", "\n\n", "length of min pair vib map:  ", len(minPairVibMap), "\n\n", "playList Control: ", len(playListCtrl), "playList Amp:  ", len(playListAmp))
     return minPairVibMap
 
 
